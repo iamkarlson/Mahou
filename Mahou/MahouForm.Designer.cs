@@ -43,6 +43,7 @@
             this.TrayIconCheckBox = new System.Windows.Forms.CheckBox();
             this.btnHelp = new System.Windows.Forms.Button();
             this.GitHubLink = new System.Windows.Forms.LinkLabel();
+            this.cbAutorun = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnOK
@@ -170,7 +171,7 @@
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(270, 9);
+            this.label3.Location = new System.Drawing.Point(285, 8);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(145, 13);
             this.label3.TabIndex = 13;
@@ -202,19 +203,33 @@
             // GitHubLink
             // 
             this.GitHubLink.AutoSize = true;
+            this.GitHubLink.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.GitHubLink.Location = new System.Drawing.Point(12, 9);
             this.GitHubLink.Name = "GitHubLink";
-            this.GitHubLink.Size = new System.Drawing.Size(81, 13);
+            this.GitHubLink.Size = new System.Drawing.Size(89, 13);
             this.GitHubLink.TabIndex = 16;
             this.GitHubLink.TabStop = true;
             this.GitHubLink.Text = "View on GitHub";
             this.GitHubLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.GitHubLink_LinkClicked);
+            // 
+            // cbAutorun
+            // 
+            this.cbAutorun.AutoSize = true;
+            this.cbAutorun.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cbAutorun.Location = new System.Drawing.Point(127, 8);
+            this.cbAutorun.Name = "cbAutorun";
+            this.cbAutorun.Size = new System.Drawing.Size(152, 17);
+            this.cbAutorun.TabIndex = 17;
+            this.cbAutorun.Text = "Autostart with Windows";
+            this.cbAutorun.UseVisualStyleBackColor = true;
+            this.cbAutorun.CheckedChanged += new System.EventHandler(this.cbAutorun_CheckedChanged);
             // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(496, 120);
+            this.Controls.Add(this.cbAutorun);
             this.Controls.Add(this.GitHubLink);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.TrayIconCheckBox);
@@ -261,5 +276,6 @@
         private System.Windows.Forms.CheckBox TrayIconCheckBox;
         private System.Windows.Forms.Button btnHelp;
         private System.Windows.Forms.LinkLabel GitHubLink;
+        private System.Windows.Forms.CheckBox cbAutorun;
     }
 }

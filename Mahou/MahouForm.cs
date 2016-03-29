@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using System.Reflection;
+using IWshRuntimeLibrary;
 
 namespace Mahou
 {
@@ -37,6 +39,10 @@ namespace Mahou
             cbLangTwo.SelectedIndex = lcnmid.IndexOf(MMain.MySetts.locale2Lang + "(" + MMain.MySetts.locale2uId + ")");
             Debug.WriteLine(lcnmid.IndexOf(MMain.MySetts.locale2Lang + "(" + MMain.MySetts.locale2uId + ")") + MMain.MySetts.locale2Lang + "(" + MMain.MySetts.locale2uId + ")");
             TrayIconCheckBox.Checked = MMain.MySetts.IconVisibility;
+            cbAutorun.Checked =
+            System.IO.File.Exists(System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Startup),
+            "Mahou.lnk")) ? true : false;
         }
 
         private void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -56,6 +62,18 @@ namespace Mahou
         private void MahouForm_Activated(object sender, EventArgs e)
         {
             RefreshLocales();
+        }
+
+        private void cbAutorun_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbAutorun.Checked)
+            {
+                CreateShortcut();
+            }
+            else
+            {
+                DeleteShortcut();
+            }
         }
 
         private void cbLangOne_SelectedIndexChanged(object sender, EventArgs e)
@@ -118,11 +136,6 @@ namespace Mahou
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExitProgram();
-        }
-
-        private void LocalesListSouce_CurrentChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void TrayIconCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -195,6 +208,34 @@ namespace Mahou
             {
                 icon.Hide();
                 Refresh();
+            }
+        }
+        public static void CreateShortcut()
+        {
+            var currentPath = Assembly.GetExecutingAssembly().Location;
+            var shortcutLocation = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Startup),
+                "Mahou.lnk");
+            var description = "Mahou - Magick layout switcher";
+            if (System.IO.File.Exists(shortcutLocation))
+            {
+                return;
+            }
+            WshShell shell = new WshShell();
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
+            shortcut.Description = description;
+            shortcut.TargetPath = currentPath;
+            shortcut.Save();
+        }
+        public static void DeleteShortcut()
+        {
+            if (System.IO.File.Exists(System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Startup),
+            "Mahou.lnk")))
+            {
+                System.IO.File.Delete(System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Startup),
+                    "Mahou.lnk"));
             }
         }
         #endregion
