@@ -167,7 +167,8 @@ namespace Mahou
                     }
                 }
                 if (Key == Keys.Enter || Key == Keys.Home || Key == Keys.End ||
-                    Key == Keys.Tab || Key == Keys.PageDown || Key == Keys.PageUp)
+                    Key == Keys.Tab || Key == Keys.PageDown || Key == Keys.PageUp ||
+                    Key == Keys.Left||Key == Keys.Right|| Key == Keys.Down|| Key == Keys.Up)
                 {
                     MMain.c_word.Clear();
                 }
