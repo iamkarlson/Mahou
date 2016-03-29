@@ -84,6 +84,9 @@ namespace Mahou
                 {
 
                     Locales.IfLessThan2();
+                    //This prevents from converting text that alredy exist in Clipboard
+                    //by pressing Scroll without selected text.
+                    Clipboard.Clear();
                     //Without Thread.Sleep() below - Clipboard.GetText() will crash,
                     self = true;
                     KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, true, true) }, false);
