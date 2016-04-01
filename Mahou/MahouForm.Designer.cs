@@ -44,13 +44,14 @@
             this.btnHelp = new System.Windows.Forms.Button();
             this.GitHubLink = new System.Windows.Forms.LinkLabel();
             this.cbAutorun = new System.Windows.Forms.CheckBox();
+            this.cbSpaceBreak = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
             this.btnOK.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnOK.Location = new System.Drawing.Point(238, 88);
+            this.btnOK.Location = new System.Drawing.Point(247, 88);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
@@ -62,7 +63,7 @@
             // 
             this.btnApply.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
             this.btnApply.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnApply.Location = new System.Drawing.Point(319, 88);
+            this.btnApply.Location = new System.Drawing.Point(328, 88);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 1;
@@ -74,7 +75,7 @@
             // 
             this.btnCancel.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
             this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnCancel.Location = new System.Drawing.Point(400, 88);
+            this.btnCancel.Location = new System.Drawing.Point(409, 88);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 2;
@@ -182,7 +183,7 @@
             this.TrayIconCheckBox.AutoSize = true;
             this.TrayIconCheckBox.BackColor = System.Drawing.Color.Transparent;
             this.TrayIconCheckBox.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TrayIconCheckBox.Location = new System.Drawing.Point(12, 88);
+            this.TrayIconCheckBox.Location = new System.Drawing.Point(12, 101);
             this.TrayIconCheckBox.Name = "TrayIconCheckBox";
             this.TrayIconCheckBox.Size = new System.Drawing.Size(110, 17);
             this.TrayIconCheckBox.TabIndex = 14;
@@ -192,7 +193,7 @@
             // 
             // btnHelp
             // 
-            this.btnHelp.Location = new System.Drawing.Point(157, 88);
+            this.btnHelp.Location = new System.Drawing.Point(170, 88);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(75, 23);
             this.btnHelp.TabIndex = 15;
@@ -224,11 +225,23 @@
             this.cbAutorun.UseVisualStyleBackColor = true;
             this.cbAutorun.CheckedChanged += new System.EventHandler(this.cbAutorun_CheckedChanged);
             // 
+            // cbSpaceBreak
+            // 
+            this.cbSpaceBreak.AutoSize = true;
+            this.cbSpaceBreak.Location = new System.Drawing.Point(12, 82);
+            this.cbSpaceBreak.Name = "cbSpaceBreak";
+            this.cbSpaceBreak.Size = new System.Drawing.Size(152, 17);
+            this.cbSpaceBreak.TabIndex = 18;
+            this.cbSpaceBreak.Text = "Space will begin new word";
+            this.cbSpaceBreak.UseVisualStyleBackColor = true;
+            this.cbSpaceBreak.CheckedChanged += new System.EventHandler(this.cbSpaceBreak_CheckedChanged);
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(496, 120);
+            this.Controls.Add(this.cbSpaceBreak);
             this.Controls.Add(this.cbAutorun);
             this.Controls.Add(this.GitHubLink);
             this.Controls.Add(this.btnHelp);
@@ -277,5 +290,6 @@
         private System.Windows.Forms.Button btnHelp;
         private System.Windows.Forms.LinkLabel GitHubLink;
         private System.Windows.Forms.CheckBox cbAutorun;
+        private System.Windows.Forms.CheckBox cbSpaceBreak;
     }
 }

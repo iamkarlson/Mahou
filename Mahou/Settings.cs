@@ -19,6 +19,14 @@ namespace Mahou
         }
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
+        [DefaultSettingValue("true")]
+        public bool SpaceBreak
+        {
+            get { return (bool)this["SpaceBreak"]; }
+            set { this["SpaceBreak"] = (bool)value; }
+        }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
         public uint locale1uId
         {
             get { return (uint)this["locale1uId"]; }

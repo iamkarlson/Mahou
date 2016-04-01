@@ -43,6 +43,7 @@ namespace Mahou
             System.IO.File.Exists(System.IO.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Startup),
             "Mahou.lnk")) ? true : false;
+            cbSpaceBreak.Checked = MMain.MySetts.SpaceBreak;
         }
 
         private void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -142,6 +143,23 @@ namespace Mahou
         {
             MMain.MySetts.IconVisibility = TrayIconCheckBox.Checked;
         }
+
+        private void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/BladeMight/Mahou");
+        }
+
+        private void cbSpaceBreak_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbSpaceBreak.Checked)
+            {
+                MMain.MySetts.SpaceBreak = true;
+            }
+            else
+            {
+                MMain.MySetts.SpaceBreak = false;
+            }
+        }
         #endregion
         #region Functions & WndProc
         protected override void WndProc(ref Message m)
@@ -172,7 +190,10 @@ namespace Mahou
             }
             else
             {
+                this.TopMost = true;
                 this.Visible = true;
+                System.Threading.Thread.Sleep(5);
+                this.TopMost = false;
             }
             Refresh();
         }
@@ -240,9 +261,5 @@ namespace Mahou
         }
         #endregion
 
-        private void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://github.com/BladeMight/Mahou");
-        }
     }
 }

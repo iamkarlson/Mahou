@@ -16,7 +16,7 @@ namespace Mahou
         public const int WH_KEYBOARD_LL = 13;
         public const int WM_KEYDOWN = 0x0100;
         public const int WM_KEYUP = 0x0101;
-        public static bool shift = false, self = false,
+        public static bool shift = false, self = false, afterConversion = false,
                            other = false, bothnotmatch = false, printable = false;
         public static Exception notinany = new Exception("Selected text is not in any of selected layouts(locales/languages) in settings\nor contains characters from other than selected layouts(locales/languages).");
 
@@ -78,6 +78,7 @@ namespace Mahou
                             KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true, false) }, yk.upper);
                         }
                         self = false;
+                        afterConversion = true;
                     }
                 }
                 if (Key == Keys.Scroll && !self)//here too
@@ -159,6 +160,11 @@ namespace Mahou
                     }
                     self = false;
                 }
+                if (Key == Keys.Space && afterConversion)
+                {
+                    MMain.c_word.Clear();
+                    afterConversion = false;
+                }
                 if (Key == Keys.Back && !self)
                 {
                     if (MMain.c_word.Count != 0)
@@ -174,7 +180,14 @@ namespace Mahou
                 }
                 if (Key == Keys.Space && !self)
                 {
-                    WriteEveryWhere(" ", new YuKey() { yukey = Keys.Space, upper = false });
+                    if (MMain.MySetts.SpaceBreak)
+                    {
+                        MMain.c_word.Clear();
+                    }
+                    else
+                    {
+                        WriteEveryWhere(" ", new YuKey() { yukey = Keys.Space, upper = false });
+                    }
                 }
                 if (
                     (Key >= Keys.D0 && Key <= Keys.Z) ||
