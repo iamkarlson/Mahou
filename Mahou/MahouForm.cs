@@ -45,7 +45,7 @@ namespace Mahou
             "Mahou.lnk")) ? true : false;
             cbSpaceBreak.Checked = MMain.MySetts.SpaceBreak;
         }
-
+        
         private void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
@@ -54,17 +54,14 @@ namespace Mahou
                 this.Visible = false;
             }
         }
-
         private void MahouForm_VisibleChanged(object sender, EventArgs e)
         {
             RefreshLocales();
         }
-
         private void MahouForm_Activated(object sender, EventArgs e)
         {
             RefreshLocales();
         }
-
         private void cbAutorun_CheckedChanged(object sender, EventArgs e)
         {
             if (cbAutorun.Checked)
@@ -76,7 +73,6 @@ namespace Mahou
                 DeleteShortcut();
             }
         }
-
         private void cbLangOne_SelectedIndexChanged(object sender, EventArgs e)
         {
             foreach (Locales.Locale lc in MMain.locales)
@@ -88,7 +84,6 @@ namespace Mahou
                 }
             }
         }
-
         private void cbLangTwo_SelectedIndexChanged(object sender, EventArgs e)
         {
             foreach (Locales.Locale lc in MMain.locales)
@@ -100,25 +95,21 @@ namespace Mahou
                 }
             }
         }
-
         private void btnApply_Click(object sender, EventArgs e)
         {
             MMain.MySetts.Save();
             RefreshIconVisibility();
         }
-
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Visible = false;
         }
-
         private void btnOK_Click(object sender, EventArgs e)
         {
             MMain.MySetts.Save();
             RefreshIconVisibility();
             this.Visible = false;
         }
-
         private void btnHelp_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Press Pause to Convert last selection.\nPress Scroll while selected text is focused to convert it.\nPress Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), pressing \"Pause\" will switch typed text to Language 1.", "****Attention****", MessageBoxButtons.OK, MessageBoxIcon.Information);
