@@ -17,7 +17,7 @@ class UltimateUnicodeConverter
             return "ERROR";
         }
         #region Variables
-        //This is the symbols that can be writen just with Shift, for most locales these are fine
+        //This is the symbols that can be writen just with Shift, for most locales these are fine, but...
         Regex UpperSymbols = new Regex("[!@#$%^&*()_+|{}:\"<>?№;~]");
         //This is CaseChars(chars with attribute lower or upper case)
         List<CaseChar> CaseChars = new List<CaseChar>();
@@ -55,7 +55,7 @@ class UltimateUnicodeConverter
         if (countofminus == ercher.Count && countofminus > 0 && !firstcall) //because of two locales we should use !firstcall
         {
             //this will stop even foreach class in KeyHook class(it is in Try/Catch, so this will stop it immediately)
-            throw Mahou.KeyHook.notinany;
+            throw Mahou.KeyHook.notINany;
         }
         checking(ercher);
         if (ercher.Contains(-1) && !Mahou.KeyHook.bothnotmatch && firstcall)

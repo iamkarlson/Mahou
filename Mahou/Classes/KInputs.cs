@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 class KInputs
 {
     #region Native Win32
@@ -128,7 +129,15 @@ class KInputs
         {
             SendInput(1, new INPUT[] { AddKey(Keys.ShiftKey, true, true) }, Marshal.SizeOf(typeof(INPUT)));
         }
-        SendInput((UInt16)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
+        foreach (INPUT INPT in inputs)
+        {
+            SendInput(1, new INPUT[] { INPT }, Marshal.SizeOf(typeof(INPUT)));
+            //Send UP for last input
+            //because of repeations of chars (aaaaa, 00100000 etc.) without below, conversion won't work properly
+            INPUT sendlastUP = new INPUT { Type = INPT.Type, Data = INPT.Data };
+            sendlastUP.Data.Keyboard.Flags = (KEYEVENTF_UNICODE | KEYEVENTF_KEYUP);
+            SendInput(1, new INPUT[] {sendlastUP}, Marshal.SizeOf(typeof(INPUT)));
+        }
         SendInput(1, new INPUT[] { AddKey(Keys.ShiftKey, false, true) }, Marshal.SizeOf(typeof(INPUT)));
     }
     #region DLL
