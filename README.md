@@ -1,4 +1,6 @@
-# Mahou(魔法) - The magic Layout Switcher
+# Mahou(魔法)<br/>
+![Mahou Logo](https://2.bp.blogspot.com/-WJ80OMwwWco/VwepGf4LJNI/AAAAAAAAAck/9DulUt7QaXE2VaSX3xgxslOUIF255WkHA/s1600/Mahou.png)<br/>
+_The magic Layout Switcher_
 ### How it works
 He works completely different from other Layout Swithcer Programs, it switches *not by next layout*, but by **specified in settings** layouts. <br/>
 Even selected text switches just between **selected** layouts.
