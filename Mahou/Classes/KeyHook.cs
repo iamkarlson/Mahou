@@ -105,93 +105,94 @@ namespace Mahou
         public static void ConvertSelection()
         {
             Locales.IfLessThan2();
-            //This prevents from converting text that alredy exist in Clipboard
-            //by pressing Scroll without selected text.
-            Clipboard.Clear();
-            //Without Thread.Sleep() below - Clipboard.GetText() will crash,
-            self = true;
-            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, true, true) }, false);
-            System.Threading.Thread.Sleep(5);
-            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Insert, true, true) }, false);
-            System.Threading.Thread.Sleep(5);
-            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Insert, false, true) }, false);
-            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, false, true) }, false);
-            System.Threading.Thread.Sleep(20);
-            string clipst = "";
-            //and whithout try too will crash
-            try
+            //This prevents reconversion while it still works on previous
+            if (!self)
             {
-                clipst = Clipboard.GetText();
-            }
-            catch { }
-            System.Threading.Thread.Sleep(20);
-            if (!String.IsNullOrEmpty(clipst))
-            {
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
-                var result = "";
-                do
+                self = true;
+                string clipst = "";
+                Clipboard.Clear();
+                //Without Thread.Sleep() below - Clipboard.GetText() will crash,
+                KInputs.MakeInput(new KInputs.INPUT[2] { KInputs.AddKey(Keys.RControlKey, true, true), KInputs.AddKey(Keys.Insert, true, true) }, false);
+                System.Threading.Thread.Sleep(20);
+                KInputs.MakeInput(new KInputs.INPUT[2] { KInputs.AddKey(Keys.RControlKey, false, true), KInputs.AddKey(Keys.Insert, false, true) }, false);
+                for (int i = 3; i != 0; i--) // try get text from clipboard 3 times for sure
                 {
-                    if (MMain.MySetts.locale1uId == MMain.MySetts.locale2uId)
+                    if (clipst != "") //if getting text succesed, skip next tries
                     {
-                        result = clipst;
                         break;
                     }
                     try
                     {
-                        result = UltimateUnicodeConverter.InAnother(clipst, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
-                        Debug.WriteLine("1/2 =" + MMain.MySetts.locale2uId + "/" + MMain.MySetts.locale1uId);
-                        //if errored first time try switching locales
-                        if (result == "ERROR")
+                        clipst = Clipboard.GetText();
+                    }
+                    catch { }//if one of times fails this will ignore it
+                }
+                //This prevents from converting text that alredy exist in Clipboard
+                //by pressing Scroll without selected text.
+                if (!String.IsNullOrEmpty(clipst))
+                {
+                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
+                    var result = "";
+                    do
+                    {
+                        if (MMain.MySetts.locale1uId == MMain.MySetts.locale2uId)
                         {
-                            result = UltimateUnicodeConverter.InAnother(clipst, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId, true);
-                            Debug.WriteLine("1/2 = " + MMain.MySetts.locale1uId + "/" + MMain.MySetts.locale2uId);
-                            Debug.WriteLine(result);
-                            //if errored again throw exception
+                            result = clipst;
+                            break;
+                        }
+                        try
+                        {
+                            result = UltimateUnicodeConverter.InAnother(clipst, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
+                            Debug.WriteLine("1/2 =" + MMain.MySetts.locale2uId + "/" + MMain.MySetts.locale1uId);
+                            //if errored first time try switching locales
                             if (result == "ERROR")
                             {
-                                bothnotmatch = true;
-                                throw notINany;
+                                result = UltimateUnicodeConverter.InAnother(clipst, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId, true);
+                                Debug.WriteLine("1/2 = " + MMain.MySetts.locale1uId + "/" + MMain.MySetts.locale2uId);
+                                Debug.WriteLine(result);
+                                //if errored again throw exception
+                                if (result == "ERROR")
+                                {
+                                    bothnotmatch = true;
+                                    throw notINany;
+                                }
+                                bothnotmatch = false;
                             }
-                            bothnotmatch = false;
                         }
-                    }
-                    catch (Exception e)
+                        catch (Exception e)
+                        {
+                            MessageBox.Show(e.Message, "WARNING!!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            //resets result
+                            result = clipst;
+                            break;
+                        }
+                        if (result != "ERROR")
+                        {
+                            break;
+                        }
+                    } while (result == "ERROR");
+                    Debug.WriteLine("+" + result + "+");
+                    //Fix for multiline duplications
+                    result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
+                    Debug.WriteLine("-" + result + "-");
+                    //This method is with using clipboard, it is faster than below
+                    //Using SetDataObject() that sets result to clipboard 5 times will 100% will work instead of SetText()
+                    Clipboard.SetDataObject(result, true, 5, 1);
+                    KInputs.MakeInput(new KInputs.INPUT[2] { KInputs.AddKey(Keys.RControlKey, true, true), KInputs.AddKey(Keys.V, true, false) }, false);
+                    System.Threading.Thread.Sleep(20);
+                    KInputs.MakeInput(new KInputs.INPUT[2] { KInputs.AddKey(Keys.RControlKey, false, true), KInputs.AddKey(Keys.V, false, false) }, false);
+                    //Old method, slower than above
+                    //KInputs.MakeInput(KInputs.AddString(result, true), false);
+                    //reselects text
+                    for (int i = result.Length; i != 0; i--)
                     {
-                        MessageBox.Show(e.Message, "WARNING!!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        //resets result
-                        result = clipst;
-                        break;
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true, true) }, true);
                     }
-                    if (result != "ERROR")
-                    {
-                        break;
-                    }
-                } while (result == "ERROR");
-                Debug.WriteLine("\"" + result + "\"");
-                //Fix for multiline duplications
-                result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
-                Debug.WriteLine("\"" + result + "\"");
-                //This method is with using clipboard, it is faster than below
-                Clipboard.Clear();
-                Clipboard.SetText(result);
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, true, true) }, false);
-                System.Threading.Thread.Sleep(5);
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.V, true, true) }, false);
-                System.Threading.Thread.Sleep(5);
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.V, false, true) }, false);
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, false, true) }, false);
-                System.Threading.Thread.Sleep(20);
-                //Old method
-                //KInputs.MakeInput(KInputs.AddString(result, true), false);
-
-                //reselects text
-                for (int i = result.Length; i != 0; i--)
-                {
-                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true, true) }, true);
+                    Clipboard.Clear();
                 }
-                Clipboard.Clear();
+                System.Threading.Thread.Sleep(30);
+                self = false;
             }
-            self = false;
         }
         public static void ConvertLast()
         {

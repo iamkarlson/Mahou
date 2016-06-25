@@ -19,7 +19,7 @@ namespace Mahou
         [DllImport("user32.dll")]
         static extern short MapVirtualKey(int wCode, int wMapType);
         #endregion
-        HotkeyHandler Mainhk, ExitHk, HKConvertLast, HKConvertSelection; // Hotkeys
+        public static HotkeyHandler Mainhk, ExitHk, HKConvertLast, HKConvertSelection; // Hotkeys
         static bool HKCLReg = false, HKCSReg = false; // These to prevent re-registering of same HotKey
         bool shift = false, alt = false, ctrl = false;
         static string tempCLMods, tempCSMods; // Temporary modifiers
@@ -314,7 +314,7 @@ namespace Mahou
                     KeyHook.ConvertLast();
                 }
                 CheckModifiers(MMain.MySetts.HKCSMods);
-                if ((Keys)(((int)m.LParam >> 16) & 0xFFFF) == (Keys)MMain.MySetts.HKCSKey && ((int)m.LParam & 0xFFFF) == (alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000))
+                if ((Keys)(((int)m.LParam >> 16) & 0xFFFF) == (Keys)MMain.MySetts.HKCSKey && ((int)m.LParam & 0xFFFF) == (alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000) && !KeyHook.self)
                 {
                     Debug.WriteLine("Hotkey CS Pressed");
                     //same as above comment
