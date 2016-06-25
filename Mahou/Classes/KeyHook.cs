@@ -124,7 +124,7 @@ namespace Mahou
                 clipst = Clipboard.GetText();
             }
             catch { }
-            System.Threading.Thread.Sleep(5);
+            System.Threading.Thread.Sleep(20);
             if (!String.IsNullOrEmpty(clipst))
             {
                 KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
@@ -171,7 +171,19 @@ namespace Mahou
                 //Fix for multiline duplications
                 result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
                 Debug.WriteLine("\"" + result + "\"");
-                KInputs.MakeInput(KInputs.AddString(result, true), false);
+                //This method is with using clipboard, it is faster than below
+                Clipboard.Clear();
+                Clipboard.SetText(result);
+                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, true, true) }, false);
+                System.Threading.Thread.Sleep(5);
+                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.V, true, true) }, false);
+                System.Threading.Thread.Sleep(5);
+                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.V, false, true) }, false);
+                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, false, true) }, false);
+                System.Threading.Thread.Sleep(20);
+                //Old method
+                //KInputs.MakeInput(KInputs.AddString(result, true), false);
+
                 //reselects text
                 for (int i = result.Length; i != 0; i--)
                 {
