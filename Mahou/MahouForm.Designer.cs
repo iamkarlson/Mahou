@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -46,6 +47,8 @@
             this.cbSpaceBreak = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.cbCapsLayoutSwitch = new System.Windows.Forms.CheckBox();
+            this.HelpTT = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -54,7 +57,7 @@
             // 
             this.btnOK.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
             this.btnOK.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnOK.Location = new System.Drawing.Point(87, 230);
+            this.btnOK.Location = new System.Drawing.Point(87, 195);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
@@ -66,7 +69,7 @@
             // 
             this.btnApply.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
             this.btnApply.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnApply.Location = new System.Drawing.Point(6, 230);
+            this.btnApply.Location = new System.Drawing.Point(6, 195);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 1;
@@ -78,7 +81,7 @@
             // 
             this.btnCancel.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
             this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnCancel.Location = new System.Drawing.Point(168, 230);
+            this.btnCancel.Location = new System.Drawing.Point(168, 195);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 2;
@@ -91,7 +94,7 @@
             this.lbl1lng.AutoSize = true;
             this.lbl1lng.BackColor = System.Drawing.Color.Transparent;
             this.lbl1lng.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbl1lng.Location = new System.Drawing.Point(9, 24);
+            this.lbl1lng.Location = new System.Drawing.Point(5, 24);
             this.lbl1lng.Name = "lbl1lng";
             this.lbl1lng.Size = new System.Drawing.Size(70, 13);
             this.lbl1lng.TabIndex = 3;
@@ -102,7 +105,7 @@
             this.lbl2lng.AutoSize = true;
             this.lbl2lng.BackColor = System.Drawing.Color.Transparent;
             this.lbl2lng.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbl2lng.Location = new System.Drawing.Point(9, 53);
+            this.lbl2lng.Location = new System.Drawing.Point(5, 54);
             this.lbl2lng.Name = "lbl2lng";
             this.lbl2lng.Size = new System.Drawing.Size(70, 13);
             this.lbl2lng.TabIndex = 4;
@@ -112,9 +115,9 @@
             // 
             this.cbLangOne.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbLangOne.FormattingEnabled = true;
-            this.cbLangOne.Location = new System.Drawing.Point(87, 21);
+            this.cbLangOne.Location = new System.Drawing.Point(81, 23);
             this.cbLangOne.Name = "cbLangOne";
-            this.cbLangOne.Size = new System.Drawing.Size(219, 21);
+            this.cbLangOne.Size = new System.Drawing.Size(102, 21);
             this.cbLangOne.TabIndex = 5;
             this.cbLangOne.SelectedIndexChanged += new System.EventHandler(this.cbLangOne_SelectedIndexChanged);
             // 
@@ -122,9 +125,9 @@
             // 
             this.cbLangTwo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbLangTwo.FormattingEnabled = true;
-            this.cbLangTwo.Location = new System.Drawing.Point(87, 50);
+            this.cbLangTwo.Location = new System.Drawing.Point(81, 50);
             this.cbLangTwo.Name = "cbLangTwo";
-            this.cbLangTwo.Size = new System.Drawing.Size(219, 21);
+            this.cbLangTwo.Size = new System.Drawing.Size(102, 21);
             this.cbLangTwo.TabIndex = 6;
             this.cbLangTwo.SelectedIndexChanged += new System.EventHandler(this.cbLangTwo_SelectedIndexChanged);
             // 
@@ -133,7 +136,7 @@
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(7, 16);
+            this.label1.Location = new System.Drawing.Point(5, 21);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(101, 13);
             this.label1.TabIndex = 9;
@@ -144,7 +147,7 @@
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(9, 43);
+            this.label2.Location = new System.Drawing.Point(5, 43);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(99, 13);
             this.label2.TabIndex = 10;
@@ -179,7 +182,7 @@
             this.TrayIconCheckBox.AutoSize = true;
             this.TrayIconCheckBox.BackColor = System.Drawing.Color.Transparent;
             this.TrayIconCheckBox.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TrayIconCheckBox.Location = new System.Drawing.Point(171, 111);
+            this.TrayIconCheckBox.Location = new System.Drawing.Point(201, 159);
             this.TrayIconCheckBox.Name = "TrayIconCheckBox";
             this.TrayIconCheckBox.Size = new System.Drawing.Size(110, 17);
             this.TrayIconCheckBox.TabIndex = 14;
@@ -189,7 +192,7 @@
             // 
             // btnHelp
             // 
-            this.btnHelp.Location = new System.Drawing.Point(249, 230);
+            this.btnHelp.Location = new System.Drawing.Point(249, 195);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(75, 23);
             this.btnHelp.TabIndex = 15;
@@ -224,13 +227,14 @@
             // cbSpaceBreak
             // 
             this.cbSpaceBreak.AutoSize = true;
-            this.cbSpaceBreak.Location = new System.Drawing.Point(7, 111);
+            this.cbSpaceBreak.Location = new System.Drawing.Point(201, 136);
             this.cbSpaceBreak.Name = "cbSpaceBreak";
-            this.cbSpaceBreak.Size = new System.Drawing.Size(158, 17);
+            this.cbSpaceBreak.Size = new System.Drawing.Size(141, 17);
             this.cbSpaceBreak.TabIndex = 18;
-            this.cbSpaceBreak.Text = "Space will begin new word?";
+            this.cbSpaceBreak.Text = "Space begin new word?";
             this.cbSpaceBreak.UseVisualStyleBackColor = true;
             this.cbSpaceBreak.CheckedChanged += new System.EventHandler(this.cbSpaceBreak_CheckedChanged);
+            this.cbSpaceBreak.MouseHover += new System.EventHandler(this.cbSpaceBreak_MouseHover);
             // 
             // groupBox1
             // 
@@ -238,12 +242,12 @@
             this.groupBox1.Controls.Add(this.lbl2lng);
             this.groupBox1.Controls.Add(this.cbLangOne);
             this.groupBox1.Controls.Add(this.cbLangTwo);
-            this.groupBox1.Location = new System.Drawing.Point(6, 140);
+            this.groupBox1.Location = new System.Drawing.Point(6, 105);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(312, 83);
+            this.groupBox1.Size = new System.Drawing.Size(189, 83);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Switch beteven languages:";
+            this.groupBox1.Text = "Switch between layouts";
             // 
             // groupBox2
             // 
@@ -258,11 +262,24 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "HotKeys";
             // 
+            // cbCapsLayoutSwitch
+            // 
+            this.cbCapsLayoutSwitch.AutoSize = true;
+            this.cbCapsLayoutSwitch.Location = new System.Drawing.Point(202, 113);
+            this.cbCapsLayoutSwitch.Name = "cbCapsLayoutSwitch";
+            this.cbCapsLayoutSwitch.Size = new System.Drawing.Size(129, 17);
+            this.cbCapsLayoutSwitch.TabIndex = 21;
+            this.cbCapsLayoutSwitch.Text = "Caps switcher layout?";
+            this.cbCapsLayoutSwitch.UseVisualStyleBackColor = true;
+            this.cbCapsLayoutSwitch.CheckedChanged += new System.EventHandler(this.cbCapsLayoutSwitch_CheckedChanged);
+            this.cbCapsLayoutSwitch.MouseHover += new System.EventHandler(this.cbCapsLayoutSwitch_MouseHover);
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(336, 264);
+            this.ClientSize = new System.Drawing.Size(336, 234);
+            this.Controls.Add(this.cbCapsLayoutSwitch);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.cbSpaceBreak);
@@ -311,5 +328,7 @@
         private System.Windows.Forms.CheckBox cbSpaceBreak;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox cbCapsLayoutSwitch;
+        private System.Windows.Forms.ToolTip HelpTT;
     }
 }

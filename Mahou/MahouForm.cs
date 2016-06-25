@@ -13,12 +13,6 @@ namespace Mahou
 {
     public partial class MahouForm : Form
     {
-        #region DLL imports
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
-        public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
-        [DllImport("user32.dll")]
-        static extern short MapVirtualKey(int wCode, int wMapType);
-        #endregion
         public static HotkeyHandler Mainhk, ExitHk, HKConvertLast, HKConvertSelection; // Hotkeys
         static bool HKCLReg = false, HKCSReg = false; // These to prevent re-registering of same HotKey
         bool shift = false, alt = false, ctrl = false;
@@ -108,6 +102,7 @@ namespace Mahou
             cbLangTwo.SelectedIndex = lcnmid.IndexOf(MMain.MySetts.locale2Lang + "(" + MMain.MySetts.locale2uId + ")");
             Debug.WriteLine(lcnmid.IndexOf(MMain.MySetts.locale2Lang + "(" + MMain.MySetts.locale2uId + ")") + MMain.MySetts.locale2Lang + "(" + MMain.MySetts.locale2uId + ")");
             TrayIconCheckBox.Checked = MMain.MySetts.IconVisibility;
+            cbCapsLayoutSwitch.Checked = MMain.MySetts.SwitchLayoutByCaps;
             cbAutorun.Checked =
             System.IO.File.Exists(System.IO.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Startup),
@@ -164,6 +159,10 @@ namespace Mahou
                     MMain.MySetts.locale1uId = lc.uId;
                 }
             }
+        }
+        private void cbCapsLayoutSwitch_CheckedChanged(object sender, EventArgs e)
+        {
+            MMain.MySetts.SwitchLayoutByCaps = cbCapsLayoutSwitch.Checked;
         }
         private void cbLangTwo_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -308,9 +307,9 @@ namespace Mahou
                     Debug.WriteLine("Hotkey CL Pressed");
                     //These three below are needed to release all modifiers, so even if you will still hold any of it
                     //it will skip them and do as it must.
-                    keybd_event((int)Keys.Menu, (byte)MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
-                    keybd_event((int)Keys.ShiftKey, (byte)MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
-                    keybd_event((int)Keys.ControlKey, (byte)MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                    KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
+                    KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
+                    KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
                     KeyHook.ConvertLast();
                 }
                 CheckModifiers(MMain.MySetts.HKCSMods);
@@ -318,9 +317,9 @@ namespace Mahou
                 {
                     Debug.WriteLine("Hotkey CS Pressed");
                     //same as above comment
-                    keybd_event((int)Keys.Menu, (byte)MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
-                    keybd_event((int)Keys.ShiftKey, (byte)MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
-                    keybd_event((int)Keys.ControlKey, (byte)MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                    KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
+                    KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
+                    KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
                     KeyHook.ConvertSelection();
                 }
                 if ((Keys)(((int)m.LParam >> 16) & 0xFFFF) == Keys.Insert && ((int)m.LParam & 0xFFFF) == Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT)
@@ -415,6 +414,16 @@ namespace Mahou
                     Environment.GetFolderPath(Environment.SpecialFolder.Startup),
                     "Mahou.lnk"));
             }
+        }
+        #endregion
+        #region TOOLTIPS!!!
+        private void cbCapsLayoutSwitch_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.Show("Pressing CapsLock will toggle between selected, layouts in settings",cbCapsLayoutSwitch);
+        }
+        private void cbSpaceBreak_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.Show("Pressing Space will clear last word, that is converted by Pause, otherwise it will convert ally typed text.",cbSpaceBreak);
         }
         #endregion
     }

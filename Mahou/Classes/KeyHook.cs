@@ -47,6 +47,16 @@ namespace Mahou
             }
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
             {
+                if (Key == Keys.CapsLock && MMain.MySetts.SwitchLayoutByCaps && !self)
+                {
+                    SwitchToAnotherLayout();
+                    self = true;
+                    //Code below removes CapsLock original action
+                    keybd_event((int)Keys.CapsLock, (byte)MapVirtualKey((int)Keys.CapsLock,0), 1, 0);
+                    keybd_event((int)Keys.CapsLock, (byte)MapVirtualKey((int)Keys.CapsLock,0), 1 | 2, 0);
+                    self = false;
+                    return (IntPtr)0;
+                }
                 if (Key == Keys.Space && afterConversion)
                 {
                     MMain.c_word.Clear();
@@ -201,21 +211,7 @@ namespace Mahou
             if (YuKeys.Length > 0)
             {
                 self = true;
-                var nowLocale = Locales.GetCurrentLocale();
-                uint notnowLocale = 0;
-                if (MMain.locales != null)
-                {
-                    if (nowLocale == MMain.MySetts.locale1uId)
-                    {
-                        notnowLocale = MMain.MySetts.locale2uId;
-                    }
-                    else if (nowLocale == MMain.MySetts.locale2uId)
-                    {
-                        notnowLocale = MMain.MySetts.locale1uId;
-                    }
-                    PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
-                    Debug.WriteLine(notnowLocale);
-                }
+                SwitchToAnotherLayout();
                 for (int e = YuKeys.Length; e != 0; e--)
                 {
                     KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
@@ -226,6 +222,24 @@ namespace Mahou
                 }
                 self = false;
                 afterConversion = true;
+            }
+        }
+        private static void SwitchToAnotherLayout()
+        {
+            var nowLocale = Locales.GetCurrentLocale();
+            uint notnowLocale = 0;
+            if (MMain.locales != null)
+            {
+                if (nowLocale == MMain.MySetts.locale1uId)
+                {
+                    notnowLocale = MMain.MySetts.locale2uId;
+                }
+                else if (nowLocale == MMain.MySetts.locale2uId)
+                {
+                    notnowLocale = MMain.MySetts.locale1uId;
+                }
+                PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
+                Debug.WriteLine(notnowLocale);
             }
         }
         public static string MakeAnother(int vkCode, uint uId)
@@ -250,7 +264,11 @@ namespace Mahou
             MMain.c_word.Add(Yu);
         }
         #endregion
-        #region DLLs
+        #region DLL imports
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+        public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
+        [DllImport("user32.dll")]
+        public static extern short MapVirtualKey(int wCode, int wMapType);
         [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         private static extern int ToUnicodeEx(
             uint wVirtKey,

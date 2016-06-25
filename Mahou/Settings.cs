@@ -85,5 +85,13 @@ namespace Mahou
             get { return (int)this["HKCSKey"]; }
             set { this["HKCSKey"] = (int)value; }
         }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
+        [DefaultSettingValue("true")] // Scroll Key
+        public bool SwitchLayoutByCaps
+        {
+            get { return (bool)this["SwitchLayoutByCaps"]; }
+            set { this["SwitchLayoutByCaps"] = (bool)value; }
+        }
     }
 }
