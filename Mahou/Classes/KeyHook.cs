@@ -114,6 +114,7 @@ namespace Mahou
             System.Threading.Thread.Sleep(5);
             KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Insert, true, true) }, false);
             System.Threading.Thread.Sleep(5);
+            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Insert, false, true) }, false);
             KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, false, true) }, false);
             System.Threading.Thread.Sleep(20);
             string clipst = "";
