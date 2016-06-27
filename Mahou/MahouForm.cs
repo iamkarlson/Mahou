@@ -125,7 +125,12 @@ namespace Mahou
         }
         private void MahouForm_Activated(object sender, EventArgs e)
         {
+            MMain.StopHook();
             RefreshLocales();
+        }
+        private void MahouForm_Deactivate(object sender, EventArgs e)
+        {
+            MMain.StartHook();
         }
         private void tbCLHK_KeyDown(object sender, KeyEventArgs e)// Catch hotkey for Convert Last action
         {
@@ -329,12 +334,10 @@ namespace Mahou
         {
             if (this.Visible != false)
             {
-                MMain.StartHook();
                 this.Visible = false;
             }
             else
             {
-                MMain.StopHook();
                 this.TopMost = true;
                 this.Visible = true;
                 System.Threading.Thread.Sleep(5);

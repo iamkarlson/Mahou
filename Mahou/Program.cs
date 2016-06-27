@@ -66,14 +66,15 @@ namespace Mahou
             if (!CheckHook()) { return; }
             _mouse_hookID = MouseHook.SetHook(_mouse_proc);
             _hookID = KeyHook.SetHook(_proc);
-            _hookID = IntPtr.Zero;
             System.Diagnostics.Debug.WriteLine("Hooks started!");
         }
         public static void StopHook()
         {
-            if (!CheckHook()) { return; }
+            if (CheckHook()) { return; }
             KeyHook.UnhookWindowsHookEx(_hookID);
             MouseHook.UnhookWindowsHookEx(_mouse_hookID);
+            _hookID = IntPtr.Zero;
+            _mouse_hookID = IntPtr.Zero;
             System.Diagnostics.Debug.WriteLine("Hooks stopped!");
         }
         public static bool CheckHook()

@@ -13,7 +13,6 @@ namespace Mahou
 {
     class KeyHook
     {
-        public static IntPtr _hookID = IntPtr.Zero;
         public const int WH_KEYBOARD_LL = 13;
         public const int WM_KEYDOWN = 0x0100;
         public const int WM_KEYUP = 0x0101;
@@ -110,7 +109,7 @@ namespace Mahou
                     }
                 }
             }
-            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+            return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
         }
         #region Functions/Struct
         public static void ConvertSelection()

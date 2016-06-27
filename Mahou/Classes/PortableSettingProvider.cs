@@ -242,6 +242,7 @@ namespace Mahou
                     if (MachineNode == null)
                     {
                         MachineNode = SettingsXML.CreateElement(Environment.MachineName);
+                        
                         SettingsXML.SelectSingleNode(SETTINGSROOT).AppendChild(MachineNode);
                     }
 

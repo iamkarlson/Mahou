@@ -296,6 +296,7 @@
             this.Name = "MahouForm";
             this.Text = "Mahou";
             this.Activated += new System.EventHandler(this.MahouForm_Activated);
+            this.Deactivate += new System.EventHandler(this.MahouForm_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MahouForm_FormClosing);
             this.Load += new System.EventHandler(this.MahouForm_Load);
             this.VisibleChanged += new System.EventHandler(this.MahouForm_VisibleChanged);

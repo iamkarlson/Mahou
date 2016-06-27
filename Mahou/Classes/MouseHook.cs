@@ -6,8 +6,6 @@ namespace Mahou
 {
     class MouseHook
     {
-        public static IntPtr _hookID = IntPtr.Zero;
-
         public static IntPtr SetHook(LowLevelMouseProc proc)
         {
             using (Process curProcess = Process.GetCurrentProcess())
@@ -51,7 +49,7 @@ namespace Mahou
                 }
             }
 
-            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+            return CallNextHookEx(MMain._mouse_hookID, nCode, wParam, lParam);
         }
 
         public const int WH_MOUSE_LL = 14;
