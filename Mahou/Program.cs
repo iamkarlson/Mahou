@@ -40,29 +40,45 @@ namespace Mahou
                     PostMessage((IntPtr)0xffff, ao, 0, 0);
                     return;
                 }
-            if (locales.Length < 2)
-            {
-            Locales.IfLessThan2();
-            }
-            else
-            {
-                _mouse_hookID = MouseHook.SetHook(_mouse_proc);
-                _hookID = KeyHook.SetHook(_proc);
-                //for first run, add your locale 1 & locale 2 to settings
-                if (MySetts.locale1Lang == "" && MySetts.locale2Lang == "")
+                if (locales.Length < 2)
                 {
-                    MySetts.locale1uId = locales[0].uId;
-                    MySetts.locale2uId = locales[1].uId;
-                    MySetts.locale1Lang = locales[0].Lang;
-                    MySetts.locale2Lang = locales[1].Lang;
+                    Locales.IfLessThan2();
                 }
-                MySetts.Save();
-                Application.Run();
-                KeyHook.UnhookWindowsHookEx(_hookID);
-                MouseHook.UnhookWindowsHookEx(_mouse_hookID);
+                else
+                {
+                    StartHook();
+                    //for first run, add your locale 1 & locale 2 to settings
+                    if (MySetts.locale1Lang == "" && MySetts.locale2Lang == "")
+                    {
+                        MySetts.locale1uId = locales[0].uId;
+                        MySetts.locale2uId = locales[1].uId;
+                        MySetts.locale1Lang = locales[0].Lang;
+                        MySetts.locale2Lang = locales[1].Lang;
+                    }
+                    MySetts.Save();
+                    Application.Run();
+                    StopHook();
+                }
             }
         }
-    }
-
+        public static void StartHook()
+        {
+            if (!CheckHook()) { return; }
+            _mouse_hookID = MouseHook.SetHook(_mouse_proc);
+            _hookID = KeyHook.SetHook(_proc);
+            _hookID = IntPtr.Zero;
+            System.Diagnostics.Debug.WriteLine("Hooks started!");
+        }
+        public static void StopHook()
+        {
+            if (!CheckHook()) { return; }
+            KeyHook.UnhookWindowsHookEx(_hookID);
+            MouseHook.UnhookWindowsHookEx(_mouse_hookID);
+            System.Diagnostics.Debug.WriteLine("Hooks stopped!");
+        }
+        public static bool CheckHook()
+        {
+            return _hookID == IntPtr.Zero;
+        }
     }
 }

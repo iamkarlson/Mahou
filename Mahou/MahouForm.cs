@@ -49,6 +49,7 @@ namespace Mahou
             shift = inpt.Contains("Shift") ? true : false;
             alt = inpt.Contains("Alt") ? true : false;
             ctrl = inpt.Contains("Control") ? true : false;
+            System.Threading.Thread.Sleep(5);
         }
         public static string Remake(Keys k) //Make readable some special keys
         {
@@ -115,7 +116,7 @@ namespace Mahou
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
-                this.Visible = false;
+                ToggleVisibility();
             }
         }
         private void MahouForm_VisibleChanged(object sender, EventArgs e)
@@ -131,12 +132,24 @@ namespace Mahou
             tbCLHK.Text = OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " + Remake(e.KeyCode)).Replace("None + ", ""));
             tempCLMods = e.Modifiers.ToString().Replace(",", " +").Replace("None", "");
             tempCLKey = (int)e.KeyCode;
+            if (tempCLMods == "")
+            {
+                tempCLMods = "None";
+            }
+            Debug.WriteLine("{" + e.Modifiers + "}+(" + e.KeyCode + ")");
+            Debug.WriteLine("+{" + tempCLMods + "}+(" + tempCLKey + ")+"); 
         }
         private void tbCSHK_KeyDown(object sender, KeyEventArgs e)// Catch hotkey for Convert Selection action
         {
             tbCSHK.Text = OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " + Remake(e.KeyCode)).Replace("None + ", ""));
             tempCSMods = e.Modifiers.ToString().Replace(",", " +").Replace("None", "");
             tempCSKey = (int)e.KeyCode;
+            if (tempCSMods == "")
+            {
+                tempCSMods = "None";
+            }
+            Debug.WriteLine("{" + e.Modifiers + "}+(" + e.KeyCode + ")");
+            Debug.WriteLine("-{" + tempCSMods + "}+(" + tempCSKey + ")-"); 
         }
         private void cbAutorun_CheckedChanged(object sender, EventArgs e)
         {
@@ -177,82 +190,16 @@ namespace Mahou
         }
         private void btnApply_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(tempCLMods))
-            {
-                MMain.MySetts.HKCLMods = tempCLMods;
-            }
-            if (tempCLKey != 0)
-            {
-                MMain.MySetts.HKCLKey = tempCLKey;
-            }
-            if (!string.IsNullOrEmpty(tempCSMods))
-            {
-                MMain.MySetts.HKCSMods = tempCSMods;
-            }
-            if (tempCSKey != 0)
-            {
-                MMain.MySetts.HKCSKey = tempCSKey;
-            }
-            MMain.MySetts.Save();
-            if (HKCLReg)
-            {
-                HKConvertLast.Unregister();
-            }
-            CheckModifiers(MMain.MySetts.HKCLMods);
-            HKConvertLast = new HotkeyHandler((alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000), (Keys)MMain.MySetts.HKCLKey, this);
-            HKConvertLast.Register();
-            HKCLReg = true;
-            if (HKCSReg)
-            {
-                HKConvertSelection.Unregister();
-            }
-            CheckModifiers(MMain.MySetts.HKCSMods);
-            HKConvertLast = new HotkeyHandler((alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000), (Keys)MMain.MySetts.HKCSKey, this);
-            HKConvertLast.Register();
-            HKCLReg = true;
-            RefreshIconVisibility();
+            Apply();
         }
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Visible = false;
+            Apply();
+            ToggleVisibility();
         }
         private void btnOK_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(tempCLMods))
-            {
-                MMain.MySetts.HKCLMods = tempCLMods;
-            }
-            if (tempCLKey != 0)
-            {
-                MMain.MySetts.HKCLKey = tempCLKey;
-            }
-            if (!string.IsNullOrEmpty(tempCSMods))
-            {
-                MMain.MySetts.HKCSMods = tempCSMods;
-            }
-            if (tempCSKey != 0)
-            {
-                MMain.MySetts.HKCSKey = tempCSKey;
-            }
-            MMain.MySetts.Save();
-            if (HKCLReg)
-            {
-                HKConvertLast.Unregister();
-            }
-            CheckModifiers(MMain.MySetts.HKCLMods);
-            HKConvertLast = new HotkeyHandler((alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000), (Keys)MMain.MySetts.HKCLKey, this);
-            HKConvertLast.Register();
-            HKCLReg = true;
-            if (HKCSReg)
-            {
-                HKConvertSelection.Unregister();
-            }
-            CheckModifiers(MMain.MySetts.HKCSMods);
-            HKConvertLast = new HotkeyHandler((alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000), (Keys)MMain.MySetts.HKCSKey, this);
-            HKConvertLast.Register();
-            HKCLReg = true;
-            RefreshIconVisibility();
-            this.Visible = false;
+            ToggleVisibility();
         }
         private void btnHelp_Click(object sender, EventArgs e)
         {
@@ -310,16 +257,20 @@ namespace Mahou
                     KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
                     KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
                     KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                    //String below prevents queue converting
+                    HKConvertLast.Unregister(); //Stops hotkey ability
                     KeyHook.ConvertLast();
                 }
                 CheckModifiers(MMain.MySetts.HKCSMods);
-                if ((Keys)(((int)m.LParam >> 16) & 0xFFFF) == (Keys)MMain.MySetts.HKCSKey && ((int)m.LParam & 0xFFFF) == (alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000) && !KeyHook.self)
+                if ((Keys)(((int)m.LParam >> 16) & 0xFFFF) == (Keys)MMain.MySetts.HKCSKey && ((int)m.LParam & 0xFFFF) == (alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000))
                 {
                     Debug.WriteLine("Hotkey CS Pressed");
                     //same as above comment
                     KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
                     KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
                     KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                    //Prevents queue converting
+                    HKConvertSelection.Unregister(); //Stops hotkey ability
                     KeyHook.ConvertSelection();
                 }
                 if ((Keys)(((int)m.LParam >> 16) & 0xFFFF) == Keys.Insert && ((int)m.LParam & 0xFFFF) == Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT)
@@ -337,15 +288,53 @@ namespace Mahou
             }
             base.WndProc(ref m);
         }
-
+        private void Apply()
+        {
+            if (!string.IsNullOrEmpty(tempCLMods))
+            {
+                MMain.MySetts.HKCLMods = tempCLMods;
+            }
+            if (tempCLKey != 0)
+            {
+                MMain.MySetts.HKCLKey = tempCLKey;
+            }
+            if (!string.IsNullOrEmpty(tempCSMods))
+            {
+                MMain.MySetts.HKCSMods = tempCSMods;
+            }
+            if (tempCSKey != 0)
+            {
+                MMain.MySetts.HKCSKey = tempCSKey;
+            }
+            MMain.MySetts.Save();
+            if (HKCLReg)
+            {
+                HKConvertLast.Unregister();
+            }
+            CheckModifiers(MMain.MySetts.HKCLMods);
+            HKConvertLast = new HotkeyHandler((alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000), (Keys)MMain.MySetts.HKCLKey, this);
+            HKConvertLast.Register();
+            HKCLReg = true;
+            if (HKCSReg)
+            {
+                HKConvertSelection.Unregister();
+            }
+            CheckModifiers(MMain.MySetts.HKCSMods);
+            HKConvertLast = new HotkeyHandler((alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000), (Keys)MMain.MySetts.HKCSKey, this);
+            HKConvertLast.Register();
+            HKCLReg = true;
+            RefreshIconVisibility();
+        }
         public void ToggleVisibility()
         {
             if (this.Visible != false)
             {
+                MMain.StartHook();
                 this.Visible = false;
             }
             else
             {
+                MMain.StopHook();
                 this.TopMost = true;
                 this.Visible = true;
                 System.Threading.Thread.Sleep(5);
@@ -419,11 +408,11 @@ namespace Mahou
         #region TOOLTIPS!!!
         private void cbCapsLayoutSwitch_MouseHover(object sender, EventArgs e)
         {
-            HelpTT.Show("Pressing CapsLock will toggle between selected, layouts in settings",cbCapsLayoutSwitch);
+            HelpTT.Show("Pressing CapsLock will toggle between selected, layouts in settings", cbCapsLayoutSwitch);
         }
         private void cbSpaceBreak_MouseHover(object sender, EventArgs e)
         {
-            HelpTT.Show("Pressing Space will clear last word, that is converted by Pause, otherwise it will convert ally typed text.",cbSpaceBreak);
+            HelpTT.Show("Pressing Space will clear last word, that is converted by Pause, otherwise it will convert ally typed text.", cbSpaceBreak);
         }
         #endregion
     }
