@@ -18,7 +18,7 @@ class UltimateUnicodeConverter
         }
         #region Variables
         //This is the symbols that can be writen just with Shift, for most locales these are fine, but...
-        Regex UpperSymbols = new Regex("[!@#$%^&*()_+|{}:\"<>?№;~]");
+        Regex UpperSymbols = new Regex("[!@#$%^&*()_+|{}:\"<>?№~]");
         //This is CaseChars(chars with attribute lower or upper case)
         List<CaseChar> CaseChars = new List<CaseChar>();
         //This is our return string
@@ -28,11 +28,12 @@ class UltimateUnicodeConverter
         foreach (char c in input.ToCharArray())
         {
             var upper = false;
+            var cc = c;
             //Checks if 'c' is Upper Case or Matches UpperSymbols Regex
-            if (char.IsUpper(c) || UpperSymbols.IsMatch(c.ToString()))
+            if (char.IsUpper(cc) || UpperSymbols.IsMatch(cc.ToString()))
             { upper = true; }
             //this scans char 'c' code and adds it to CaseChars list
-            CaseChars.Add(new CaseChar { chcode = VkKeyScanEx(c, (IntPtr)uID1), upper = upper });
+            CaseChars.Add(new CaseChar { chcode = VkKeyScanEx(cc, (IntPtr)uID1), upper = upper });
             Debug.WriteLine(c + " - " + VkKeyScanEx(c, (IntPtr)uID1) + ", Upper - " + upper);
         }
         #endregion

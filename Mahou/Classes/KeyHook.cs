@@ -49,7 +49,7 @@ namespace Mahou
             {
                 if (Key == Keys.CapsLock && MMain.MySetts.SwitchLayoutByCaps && !self)
                 {
-                    SwitchToAnotherLayout();
+                    ChangeLayout();
                     self = true;
                     //Code below removes CapsLock original action
                     keybd_event((int)Keys.CapsLock, (byte)MapVirtualKey((int)Keys.CapsLock, 0), 1, 0);
@@ -117,32 +117,41 @@ namespace Mahou
             Locales.IfLessThan2();
             self = true;
             string ClipStr = "";
-            for (int i = 3; i != 0; i--)
+            try
             {
-                Clipboard.Clear();
-                //Without Thread.Sleep() below - Clipboard.GetText() will crash,
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, true, true), KInputs.AddKey(Keys.Insert, true, true) }, false);
-                System.Threading.Thread.Sleep(10);
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.ControlKey, false, true), KInputs.AddKey(Keys.Insert, false, true) }, false);
-                Exception threadEx = null;
-                Thread staThread = new Thread(
-                    delegate()
-                    {
-                        try
+                for (int i = 6; i != 0; i--)
+                {
+                    if (!String.IsNullOrEmpty(ClipStr))
+                    { break; }
+                    Clipboard.Clear();
+                    //Without Thread.Sleep() below - Clipboard.GetText() will crash,
+                    keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0), 1, 0);
+                    keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1, 0);
+                    Thread.Sleep(10);
+                    keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0), 1 | 2, 0);
+                    keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1 | 2, 0);
+                    Exception threadEx = null;
+                    //If errored using thread, will not make cursor to freeze instead of just try/catch
+                    Thread staThread = new Thread(
+                        delegate()
                         {
-                            ClipStr = Clipboard.GetText();
-                        }
+                            try
+                            {
+                                ClipStr = Clipboard.GetText();
+                            }
 
-                        catch (Exception ex)
-                        {
-                            threadEx = ex;
-                            Debug.WriteLine(threadEx.Message);
-                        }
-                    });
-                staThread.SetApartmentState(ApartmentState.STA);
-                staThread.Start();
-                staThread.Join();
+                            catch (Exception ex)
+                            {
+                                threadEx = ex;
+                                Debug.WriteLine(threadEx.Message);
+                            }
+                        });
+                    staThread.SetApartmentState(ApartmentState.STA);
+                    staThread.Start();
+                    staThread.Join();
+                }
             }
+            catch { ConvertSelection(); }
             //This prevents from converting text that alredy exist in Clipboard
             //by pressing Scroll without selected text.
             if (!String.IsNullOrEmpty(ClipStr))
@@ -203,12 +212,13 @@ namespace Mahou
         }
         public static void ConvertLast()
         {
+            System.Threading.Thread.Sleep(50); //needed, for some apps
             Locales.IfLessThan2();
             YuKey[] YuKeys = MMain.c_word.ToArray();
             if (YuKeys.Length > 0)
             {
                 self = true;
-                SwitchToAnotherLayout();
+                ChangeLayout();
                 for (int e = YuKeys.Length; e != 0; e--)
                 {
                     KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
@@ -222,23 +232,35 @@ namespace Mahou
             }
             MahouForm.HKConvertLast.Register(); //Restores hotkey ability
         }
-        private static void SwitchToAnotherLayout()
+        private static void ChangeLayout()
         {
             var nowLocale = Locales.GetCurrentLocale();
             uint notnowLocale = 0;
             if (MMain.locales != null)
             {
-                if (nowLocale == MMain.MySetts.locale1uId)
-                {
-                    notnowLocale = MMain.MySetts.locale2uId;
-                }
-                else if (nowLocale == MMain.MySetts.locale2uId)
-                {
-                    notnowLocale = MMain.MySetts.locale1uId;
-                }
+                notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
                 PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
-                Debug.WriteLine(notnowLocale);
             }
+            Debug.WriteLine(Locales.GetCurrentLocale() + "==?" + notnowLocale);
+            //If PostMessage fails(didn't change locale), it will simulate locale change by pressing LeftALT+LeftSHIFT with keybd_event
+            if (Locales.GetCurrentLocale() != notnowLocale)
+            {
+                int i = 10;
+                //this way switches locale without WM_INPUTLANGCHANGEREQUEST
+                do
+                {
+                    keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1, 0);
+                    keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1, 0);
+                    Thread.Sleep(20); //Works perfect with this.
+                    keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
+                    keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0);
+                    Thread.Sleep(20);
+                    i--;
+                    //Locales.GetCurrentLocale() may be blocke by some metro apps, so
+                    //on metro apps may not work...
+                } while (Locales.GetCurrentLocale() != notnowLocale || i == 0);
+            }
+            Debug.WriteLine(Locales.GetCurrentLocale() + "==?" + notnowLocale);
         }
         public static string MakeAnother(int vkCode, uint uId)
         {

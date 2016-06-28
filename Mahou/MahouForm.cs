@@ -131,6 +131,7 @@ namespace Mahou
         private void MahouForm_Deactivate(object sender, EventArgs e)
         {
             MMain.StartHook();
+            RefreshLocales();
         }
         private void tbCLHK_KeyDown(object sender, KeyEventArgs e)// Catch hotkey for Convert Last action
         {

@@ -11,11 +11,9 @@ namespace Mahou
     {
         public static uint GetCurrentLocale()
         {
-            int lpdwProcessId;
-            var hWnd = GetForegroundWindow();
-            var procID = GetWindowThreadProcessId(hWnd, out lpdwProcessId);
-            var nowLocale = (uint)GetKeyboardLayout(procID) / 0xFFFF;
-            return nowLocale;
+            uint tid = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
+            IntPtr layout = GetKeyboardLayout(tid);
+            return (uint)(layout.ToInt32() & 0xFFFF);
         }
         public static Locale[] AllList()
         {
@@ -24,9 +22,11 @@ namespace Mahou
             foreach (InputLanguage lang in InputLanguage.InstalledInputLanguages)
             {
                 count++;
-                locs.Add(new Locale { 
+                locs.Add(new Locale
+                {
                     Lang = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(lang.Culture.NativeName.Split('(')[0].ToLower()),
-                    uId = (uint)lang.Culture.KeyboardLayoutId });
+                    uId = (uint)lang.Culture.KeyboardLayoutId
+                });
             }
             return locs.ToArray();
         }
@@ -70,8 +70,8 @@ namespace Mahou
         public static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern IntPtr GetKeyboardLayout(int WindowsThreadProcessID);
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern int GetWindowThreadProcessId(IntPtr handleWindow, out int lpdwProcessID);
+        [DllImport("user32.dll")]
+        static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr proccess);
         #endregion
     }
 
