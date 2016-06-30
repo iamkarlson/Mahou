@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 namespace Mahou
 {
@@ -42,18 +41,6 @@ namespace Mahou
                 }
             }
         }
-        /* Debug
-        public static void GetLanguages()
-        {
-            // Gets the list of installed languages.
-            var result = "";
-            foreach (System.Windows.Forms.InputLanguage lang in System.Windows.Forms.InputLanguage.InstalledInputLanguages)
-            {
-                result += (lang.Culture.NativeName).ToString() + "\n";
-            }
-            System.Windows.Forms.MessageBox.Show(result);
-        }
-         */
         public struct Locale
         {
             public string Lang { get; set; }
@@ -61,15 +48,9 @@ namespace Mahou
         }
         #region DLLs
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern uint GetKeyboardLayoutList(int size, [Out, MarshalAs(UnmanagedType.LPArray)] IntPtr[] hkls);
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr GetKeyboardLayout(uint WindowsThreadProcessID);
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern int GetLocaleInfo(uint Locale, int LCType, StringBuilder lpLCData, int cchData);
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr GetForegroundWindow();
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern IntPtr GetKeyboardLayout(int WindowsThreadProcessID);
         [DllImport("user32.dll")]
         static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr proccess);
         #endregion

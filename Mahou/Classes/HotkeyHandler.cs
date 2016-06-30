@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 namespace Mahou
 {
+    public static class Modifiers
+    {
+        public const int ALT = 0x0001;
+        public const int CTRL = 0x0002;
+        public const int SHIFT = 0x0004;
+        public const int WIN = 0x0008;
+        public const int WM_HOTKEY_MSG_ID = 0x0312;
+    }
     public class HotkeyHandler
     {
         [DllImport("user32.dll")]
@@ -24,12 +31,10 @@ namespace Mahou
         }
         public bool Register()
         {
-            System.Diagnostics.Debug.WriteLine("HotKey with id " + id + " registered."); 
             return RegisterHotKey(hWnd, id, modifier, key);
         }
         public bool Unregister()
         {
-            System.Diagnostics.Debug.WriteLine("HotKey with id " + id + " unregistered."); 
             return UnregisterHotKey(hWnd, id);
         }
         public override int GetHashCode()

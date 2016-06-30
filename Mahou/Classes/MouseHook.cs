@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Mahou
 {
@@ -15,43 +15,21 @@ namespace Mahou
                     GetModuleHandle(curModule.ModuleName), 0);
             }
         }
-
         public delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-
         public static IntPtr HookCallback(
             int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0)
             {
-                if (!KeyHook.shift)
+                if ((MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam) || MouseMessages.WM_RBUTTONDOWN == (MouseMessages)wParam)
                 {
-                    if (MouseMessages.WM_MBUTTONDOWN == (MouseMessages)wParam)
-                    {
-                        Debug.WriteLine(string.Join("", MMain.c_word));
-                    }
-                    if ((MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam) || MouseMessages.WM_RBUTTONDOWN == (MouseMessages)wParam)
-                    {
-                        Debug.WriteLine("Click!");
-                        MMain.c_word.Clear();
-                    }
+                    MMain.c_word.Clear();
                 }
-                else
-                {
-                    if (MouseMessages.WM_MBUTTONDOWN == (MouseMessages)wParam)
-                    {
-                        Debug.WriteLine(string.Join("", MMain.c_word));
-                    }
-                    if ((MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam) || MouseMessages.WM_RBUTTONDOWN == (MouseMessages)wParam)
-                    {
-                        Debug.WriteLine("Click with shift!!");
-                        MMain.c_word.Clear();
-                    }
-                }
+
             }
 
             return CallNextHookEx(MMain._mouse_hookID, nCode, wParam, lParam);
         }
-
         public const int WH_MOUSE_LL = 14;
         public enum MouseMessages
         {

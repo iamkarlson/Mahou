@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Text;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Reflection;
 using IWshRuntimeLibrary;
@@ -26,8 +22,6 @@ namespace Mahou
         public MahouForm()
         {
             InitializeComponent();
-            if (MMain.locales.Length == 2)
-            { MMain.MySetts.CycleMode = true; }
             icon = new TrayIcon(MMain.MySetts.IconVisibility);
             icon.Exit += exitToolStripMenuItem_Click;
             icon.ShowHide += showHideToolStripMenuItem_Click;
@@ -51,7 +45,6 @@ namespace Mahou
             tempCLKey = MMain.MySetts.HKCLKey;
             tempCSKey = MMain.MySetts.HKCSKey;
             RefreshControlsData();
-            Debug.WriteLine(lcnmid.IndexOf(MMain.MySetts.locale2Lang + "(" + MMain.MySetts.locale2uId + ")") + MMain.MySetts.locale2Lang + "(" + MMain.MySetts.locale2uId + ")");
         }
         private void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -67,7 +60,6 @@ namespace Mahou
         }
         private void MahouForm_Activated(object sender, EventArgs e)
         {
-            Debug.WriteLine("_____FROM_FOCUS_____");
             HKConvertSelection.Unregister();
             HKConvertLast.Unregister();
             MMain.StopHook();
@@ -81,7 +73,6 @@ namespace Mahou
             LocalesRefresh();
             HKConvertSelection.Register();
             HKConvertLast.Register();
-            Debug.WriteLine("_____END_FROM_FOCUS_____");
         }
         #endregion
         #region Textboxes
@@ -100,8 +91,6 @@ namespace Mahou
                     tempCLKey = (int)e.KeyCode;
                     break;
             }
-            Debug.WriteLine("{" + e.Modifiers + "}+(" + e.KeyCode + ")");
-            Debug.WriteLine("+{" + tempCLMods + "}+(" + tempCLKey + ")+");
         }
         private void tbCSHK_KeyDown(object sender, KeyEventArgs e)// Catch hotkey for Convert Selection action
         {
@@ -118,8 +107,6 @@ namespace Mahou
                     tempCSKey = (int)e.KeyCode;
                     break;
             }
-            Debug.WriteLine("{" + e.Modifiers + "}+(" + e.KeyCode + ")");
-            Debug.WriteLine("-{" + tempCSMods + "}+(" + tempCSKey + ")-");
         }
         #endregion
         #region Comboboxes
@@ -131,7 +118,6 @@ namespace Mahou
                 {
                     tempLoc1 = new Locales.Locale { Lang = lc.Lang, uId = lc.uId };
                 }
-                Debug.WriteLine("dummy");
             }
         }
         private void cbLangTwo_SelectedIndexChanged(object sender, EventArgs e)
@@ -142,7 +128,6 @@ namespace Mahou
                 {
                     tempLoc2 = new Locales.Locale { Lang = lc.Lang, uId = lc.uId };
                 }
-                Debug.WriteLine("dummy++");
             }
         }
         #endregion
@@ -188,7 +173,7 @@ namespace Mahou
         }
         private void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("https://github.com/BladeMight/Mahou");
+            System.Diagnostics.Process.Start("https://github.com/BladeMight/Mahou");
         }
         #endregion
         #region Tray Events
@@ -218,7 +203,6 @@ namespace Mahou
                     CheckModifiers(MMain.MySetts.HKCLMods);
                     if (Key == (Keys)MMain.MySetts.HKCLKey && Modifs == GetModifiers())
                     {
-                        Debug.WriteLine("Hotkey CL Pressed");
                         //These three below are needed to release all modifiers, so even if you will still hold any of it
                         //it will skip them and do as it must.
                         KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
@@ -231,7 +215,6 @@ namespace Mahou
                     CheckModifiers(MMain.MySetts.HKCSMods);
                     if (Key == (Keys)MMain.MySetts.HKCSKey && Modifs == GetModifiers())
                     {
-                        Debug.WriteLine("Hotkey CS Pressed");
                         //same as above comment
                         KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
                         KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
@@ -251,7 +234,7 @@ namespace Mahou
                     ExitProgram();
                 }
             }
-            if (m.Msg == Mahou.MMain.ao)
+            if (m.Msg == Mahou.MMain.ao) // ao = Already Opened
             {
                 ToggleVisibility();
             }
@@ -425,7 +408,6 @@ namespace Mahou
             {
                 cbLangOne.SelectedIndex = lcnmid.IndexOf(MMain.MySetts.locale1Lang + "(" + MMain.MySetts.locale1uId + ")");
                 cbLangTwo.SelectedIndex = lcnmid.IndexOf(MMain.MySetts.locale2Lang + "(" + MMain.MySetts.locale2uId + ")");
-                Debug.WriteLine("ETA");
             }
             catch
             {

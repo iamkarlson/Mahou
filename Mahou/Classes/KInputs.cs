@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 class KInputs
 {
     #region Native Win32
@@ -52,7 +51,6 @@ class KInputs
     }
 #pragma warning restore 649
     #endregion
-
     public static INPUT AddChar(char ch, bool down)
     {
         UInt16 scan = ch;

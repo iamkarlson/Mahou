@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using System.Windows.Forms;
+using System.Diagnostics;
 using System.Threading;
 using System.Runtime.InteropServices;
-using System.Globalization;
 namespace Mahou
 {
     class KeyHook
@@ -51,10 +45,8 @@ namespace Mahou
                 {
                     self = true;
                     //Code below removes CapsLock original action
-                        Debug.WriteLine("Removing Caps func!");
                         if (Control.IsKeyLocked(Keys.CapsLock))
                         {
-                            Debug.WriteLine("It was ON! Wow!");
                             KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
                             KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
                         }
@@ -138,20 +130,9 @@ namespace Mahou
                     keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1 | 2, 0);
                     Exception threadEx = null;
                     //If errored using thread, will not make all app to freeze, instead of just try/catch that actually will...
-                    Thread staThread = new Thread(
-                        delegate()
-                        {
-                            try
-                            {
-                                ClipStr = Clipboard.GetText();
-                            }
-
-                            catch (Exception ex)
-                            {
-                                threadEx = ex;
-                                Debug.WriteLine(threadEx.Message);
-                            }
-                        });
+                    Thread staThread = new Thread(delegate()
+                        {try{ClipStr = Clipboard.GetText();}
+                        catch (Exception ex){threadEx = ex;}});
                     staThread.SetApartmentState(ApartmentState.STA);
                     staThread.Start();
                     staThread.Join();
@@ -172,13 +153,10 @@ namespace Mahou
                         break;
                     }
                     result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
-                    Debug.WriteLine("1/2 =" + MMain.MySetts.locale2uId + "/" + MMain.MySetts.locale1uId);
                     //if errored first time try switching locales
                     if (result == "ERROR")
                     {
                         result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId, true);
-                        Debug.WriteLine("1/2 = " + MMain.MySetts.locale1uId + "/" + MMain.MySetts.locale2uId);
-                        Debug.WriteLine(result);
                         //if errored again throw exception
                         if (result == "ERROR")
                         {
@@ -192,23 +170,13 @@ namespace Mahou
                         break;
                     }
                 } while (result == "ERROR");
-                Debug.WriteLine("+" + result + "+");
                 //Fix for multiline duplications
-                result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
-                Debug.WriteLine("-" + result + "-");
-                /* This method is with using clipboard, it is faster than below, but not works sometimes... and newlines are eaten with this method :{
-                 * Using SetDataObject() that sets result to clipboard 5 times will 100% will work instead of SetText()
-                Clipboard.SetDataObject(result, true, 5, 1);
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Insert, true, true) }, true);
-                System.Threading.Thread.Sleep(20);
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Insert, false, true) }, true);
-                 */
-                //Stable method, slower than above, more workable.
+                result = System.Text.RegularExpressions.Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
+                //Inputs converted text
                 KInputs.MakeInput(KInputs.AddString(result, true), false);
                 //reselects text
                 for (int i = result.Length; i != 0; i--)
                 {
-                    Debug.WriteLine(self.ToString());
                     KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true, true) }, true);
                 }
                 Clipboard.Clear();
@@ -245,7 +213,6 @@ namespace Mahou
             if (!MMain.MySetts.CycleMode)
             {
                 int tryes = 0;
-                Debug.WriteLine("-------------");
                 //Cycles while layout not changed
                 while (Locales.GetCurrentLocale() == nowLocale)
                 {
@@ -272,16 +239,13 @@ namespace Mahou
                         refocus.Join();
                         //<-
                         notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
-                        Debug.WriteLine(Locales.GetCurrentLocale() + "==?" + notnowLocale);
                         PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
-                        Debug.WriteLine(Locales.GetCurrentLocale() + "==?" + notnowLocale);
                         break;
                     }
-                        PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
-                        Debug.WriteLine(tryes + "."+Locales.GetCurrentLocale() + "==?" + notnowLocale);
-                        tryes++;
+                    PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
+                    Thread.Sleep(5);//Give some time to switch layout
+                    tryes++;
                 }
-                Debug.WriteLine("-------------");
             }
             else
             {
@@ -298,7 +262,7 @@ namespace Mahou
         }
         public static string MakeAnother(int vkCode, uint uId)
         {
-            StringBuilder sb = new StringBuilder(10);
+            System.Text.StringBuilder sb = new System.Text.StringBuilder(10);
             var lpkst = new byte[256];
             if (shift)
             {
@@ -327,15 +291,8 @@ namespace Mahou
         [DllImport("user32.dll")]
         public static extern short MapVirtualKey(int wCode, int wMapType);
         [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        private static extern int ToUnicodeEx(
-            uint wVirtKey,
-            uint wScanCode,
-            byte[] lpKeyState,
-            StringBuilder pwszBuff,
-            int cchBuff,
-            uint wFlags,
-            IntPtr dwhkl);
-
+        private static extern int ToUnicodeEx(uint wVirtKey,uint wScanCode,
+            byte[] lpKeyState, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr SetWindowsHookEx(int idHook,
            LowLevelProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -348,7 +305,7 @@ namespace Mahou
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern bool PostMessage(IntPtr hhwnd, uint msg, uint wparam, uint lparam);
+        public static extern bool PostMessage(IntPtr hhwnd, uint msg, uint wparam, uint lparam);
         #endregion
     }
 

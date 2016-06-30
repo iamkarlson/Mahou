@@ -34,7 +34,6 @@ class UltimateUnicodeConverter
             { upper = true; }
             //this scans char 'c' code and adds it to CaseChars list
             CaseChars.Add(new CaseChar { chcode = VkKeyScanEx(cc, (IntPtr)uID1), upper = upper });
-            Debug.WriteLine(c + " - " + VkKeyScanEx(c, (IntPtr)uID1) + ", Upper - " + upper);
         }
         #endregion
         #region Check for errors
@@ -43,7 +42,6 @@ class UltimateUnicodeConverter
         foreach (CaseChar cc in CaseChars)
         {
             ercher.Add(cc.chcode);
-            Debug.WriteLine(cc.chcode);
         }
         //If input cant be converted in any of selected locales to any of them
         if (Mahou.KeyHook.bothnotmatch)
@@ -52,13 +50,11 @@ class UltimateUnicodeConverter
         }
         //Check if all of them are not recongized by SECOND parse(because of firstall variable)
         var countofminus = ercher.Count(m1 => m1 == -1);
-        Debug.WriteLine(countofminus);
         if (countofminus == ercher.Count && countofminus > 0 && !firstcall) //because of two locales we should use !firstcall
         {
             //this will stop even foreach class in KeyHook class(it is in Try/Catch, so this will stop it immediately)
             throw Mahou.KeyHook.notINany;
         }
-        checking(ercher);
         if (ercher.Contains(-1) && !Mahou.KeyHook.bothnotmatch && firstcall)
         {
             StringBuilder inputfixed = new StringBuilder(input);
@@ -70,12 +66,10 @@ class UltimateUnicodeConverter
             //Replaces all unrecongnized chars by current locale(uID1), by another(uID2)
             for (int i = 0; i != indexes.Count; i++)
             {
-                Debug.WriteLine(chars[i] + "/" + indexes[i]);
                 inputfixed.Remove(indexes[i], 1);
                 string remaked = UltimateUnicodeConverter.InAnother(chars[i].ToString(), uID2, uID1, false);
                 inputfixed.Insert(indexes[i], remaked);
             }
-            Debug.WriteLine(chars.Count + "\\" + indexes.Count);
             return inputfixed.ToString();
         }
         #endregion
@@ -91,24 +85,11 @@ class UltimateUnicodeConverter
             }
             //"Convert magick✩" is the string below
             var ant = ToUnicodeEx((uint)sh.chcode, (uint)sh.chcode, byt, s, s.Capacity, 0, (IntPtr)uID2);
-            Debug.WriteLine(sh.chcode + " & " + sh.upper + " in " + uID2 + " = " + s);
             if (sh.chcode != -1)
                 result += s;
         }
         #endregion
-        Debug.WriteLine("Input - {0},\nLocale 1 - {1},\nShort was - {2},\nLocale 2 -  {3},\nBecome - {4}",
-            input, uID1, string.Join("|", ercher), uID2, result);
         return result;
-    }
-    //Debug purpose
-    public static void checking(List<short> ercher)
-    {
-        string check = "";
-        foreach (short sh in ercher)
-        {
-            check += sh + "|";
-        }
-        Debug.WriteLine(check + ercher.Capacity + "/" + ercher.Count);
     }
     //Case Char struct
     public struct CaseChar

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
@@ -9,8 +8,6 @@ namespace Mahou
     class MMain
     {
         #region DLLs
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern bool PostMessage(IntPtr hhwnd, uint msg, uint wparam, uint lparam);
         [DllImport("user32.dll")]
         public static extern uint RegisterWindowMessage(string message);
         #endregion
@@ -33,11 +30,9 @@ namespace Mahou
         {
             using (var mutex = new Mutex(false, "Global\\" + appGUid))
             {
-                //This is for debugging, if you want use it first uncoment it in Locales class
-                //  Locales.GetLanguages();
                 if (!mutex.WaitOne(0, false))
                 {
-                    PostMessage((IntPtr)0xffff, ao, 0, 0);
+                    KeyHook.PostMessage((IntPtr)0xffff, ao, 0, 0);
                     return;
                 }
                 if (locales.Length < 2)
@@ -66,7 +61,7 @@ namespace Mahou
             if (!CheckHook()) { return; }
             _mouse_hookID = MouseHook.SetHook(_mouse_proc);
             _hookID = KeyHook.SetHook(_proc);
-            System.Diagnostics.Debug.WriteLine("Hooks started!");
+            Thread.Sleep(10); //Give some time for it to apply
         }
         public static void StopHook()
         {
@@ -75,7 +70,7 @@ namespace Mahou
             MouseHook.UnhookWindowsHookEx(_mouse_hookID);
             _hookID = IntPtr.Zero;
             _mouse_hookID = IntPtr.Zero;
-            System.Diagnostics.Debug.WriteLine("Hooks stopped!");
+            Thread.Sleep(10); //Give some time for it to apply
         }
         public static bool CheckHook()
         {
