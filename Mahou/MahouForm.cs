@@ -19,15 +19,13 @@ namespace Mahou
         static string tempCLMods = "None", tempCSMods = "None"; // Temporary modifiers
         static int tempCLKey = 0, tempCSKey = 0; // Temporary keys 
         static bool tempcbCapsS, tempcbSpaceB, tempcbTrayI, tempCycleM, tempAutoR; //Temporary checkboxes value
+        static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
+                              tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         TrayIcon icon;
         List<string> lcnmid = new List<string>();
         public MahouForm()
         {
             InitializeComponent();
-            foreach (Locales.Locale lc in MMain.locales)
-            {
-                lcnmid.Add(lc.Lang + "(" + lc.uId + ")");
-            }
             if (MMain.locales.Length == 2)
             { MMain.MySetts.CycleMode = true; }
             icon = new TrayIcon(MMain.MySetts.IconVisibility);
@@ -131,9 +129,9 @@ namespace Mahou
             {
                 if (cbLangOne.Text == lc.Lang + "(" + lc.uId + ")")
                 {
-                    MMain.MySetts.locale1Lang = lc.Lang;
-                    MMain.MySetts.locale1uId = lc.uId;
+                    tempLoc1 = new Locales.Locale { Lang = lc.Lang, uId = lc.uId };
                 }
+                Debug.WriteLine("dummy");
             }
         }
         private void cbLangTwo_SelectedIndexChanged(object sender, EventArgs e)
@@ -142,9 +140,9 @@ namespace Mahou
             {
                 if (cbLangTwo.Text == lc.Lang + "(" + lc.uId + ")")
                 {
-                    MMain.MySetts.locale2Lang = lc.Lang;
-                    MMain.MySetts.locale2uId = lc.uId;
+                    tempLoc2 = new Locales.Locale { Lang = lc.Lang, uId = lc.uId };
                 }
+                Debug.WriteLine("dummy++");
             }
         }
         #endregion
@@ -210,35 +208,40 @@ namespace Mahou
         #region Functions & WndProc
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == Modifiers.WM_HOTKEY_MSG_ID && !stopHK)
+            if (m.Msg == Modifiers.WM_HOTKEY_MSG_ID)
             {
                 Keys Key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
                 int Modifs = (int)m.LParam & 0xFFFF;
-                CheckModifiers(MMain.MySetts.HKCLMods);
-                if (Key == (Keys)MMain.MySetts.HKCLKey && Modifs == GetModifiers())
+                //This stops hotkeys when main window is visible
+                if (!stopHK)
                 {
-                    Debug.WriteLine("Hotkey CL Pressed");
-                    //These three below are needed to release all modifiers, so even if you will still hold any of it
-                    //it will skip them and do as it must.
-                    KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
-                    KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
-                    KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
-                    //String below prevents queue converting
-                    HKConvertLast.Unregister(); //Stops hotkey ability
-                    KeyHook.ConvertLast();
+                    CheckModifiers(MMain.MySetts.HKCLMods);
+                    if (Key == (Keys)MMain.MySetts.HKCLKey && Modifs == GetModifiers())
+                    {
+                        Debug.WriteLine("Hotkey CL Pressed");
+                        //These three below are needed to release all modifiers, so even if you will still hold any of it
+                        //it will skip them and do as it must.
+                        KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
+                        KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
+                        KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                        //String below prevents queue converting
+                        HKConvertLast.Unregister(); //Stops hotkey ability
+                        KeyHook.ConvertLast();
+                    }
+                    CheckModifiers(MMain.MySetts.HKCSMods);
+                    if (Key == (Keys)MMain.MySetts.HKCSKey && Modifs == GetModifiers())
+                    {
+                        Debug.WriteLine("Hotkey CS Pressed");
+                        //same as above comment
+                        KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
+                        KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
+                        KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                        //Prevents queue converting
+                        HKConvertSelection.Unregister(); //Stops hotkey ability
+                        KeyHook.ConvertSelection();
+                    }
                 }
-                CheckModifiers(MMain.MySetts.HKCSMods);
-                if (Key == (Keys)MMain.MySetts.HKCSKey && Modifs == GetModifiers())
-                {
-                    Debug.WriteLine("Hotkey CS Pressed");
-                    //same as above comment
-                    KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
-                    KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
-                    KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
-                    //Prevents queue converting
-                    HKConvertSelection.Unregister(); //Stops hotkey ability
-                    KeyHook.ConvertSelection();
-                }
+                //these are global, so they don't need to be stoped when window is visible.
                 if (Key == Keys.Insert && Modifs == Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT)
                 {
                     ToggleVisibility();
@@ -347,6 +350,16 @@ namespace Mahou
             MMain.MySetts.CycleMode = tempCycleM;
             MMain.MySetts.IconVisibility = tempcbTrayI;
             MMain.MySetts.SpaceBreak = tempcbSpaceB;
+            if (tempLoc1.Lang != "dummy" || tempLoc1.uId != 0)
+            {
+                MMain.MySetts.locale1Lang = tempLoc1.Lang;
+                MMain.MySetts.locale1uId = tempLoc1.uId;
+            }
+            if (tempLoc2.Lang != "dummy" || tempLoc2.uId != 0)
+            {
+                MMain.MySetts.locale2Lang = tempLoc2.Lang;
+                MMain.MySetts.locale2uId = tempLoc2.uId;
+            }
             if (!hkclnotready)
             {
                 if (HKCLReg)
@@ -428,10 +441,12 @@ namespace Mahou
             MMain.locales = Locales.AllList();
             cbLangOne.Items.Clear();
             cbLangTwo.Items.Clear();
+            lcnmid.Clear();
             foreach (Locales.Locale lc in MMain.locales)
             {
                 cbLangOne.Items.Add(lc.Lang + "(" + lc.uId + ")");
                 cbLangTwo.Items.Add(lc.Lang + "(" + lc.uId + ")");
+                lcnmid.Add(lc.Lang + "(" + lc.uId + ")");
             }
         }
         private void RefreshIconVisibility()
@@ -499,7 +514,7 @@ namespace Mahou
         }
         private void tbCSHK_MouseHover(object sender, EventArgs e)
         {
-            HelpTT.ToolTipTitle = tbCLHK.Text;
+            HelpTT.ToolTipTitle = tbCSHK.Text;
             HelpTT.Show("This is current hotkey for Convert Selection action.\nPress any key to assign it, or key with modifiers(ALT,CTRL,SHIFT).", tbCSHK);
         }
         private void GitHubLink_MouseHover(object sender, EventArgs e)

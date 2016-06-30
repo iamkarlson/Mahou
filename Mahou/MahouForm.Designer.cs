@@ -123,6 +123,7 @@
             this.cbLangOne.Name = "cbLangOne";
             this.cbLangOne.Size = new System.Drawing.Size(102, 21);
             this.cbLangOne.TabIndex = 5;
+            this.cbLangOne.SelectedIndexChanged += new System.EventHandler(this.cbLangOne_SelectedIndexChanged);
             // 
             // cbLangTwo
             // 
@@ -132,6 +133,7 @@
             this.cbLangTwo.Name = "cbLangTwo";
             this.cbLangTwo.Size = new System.Drawing.Size(102, 21);
             this.cbLangTwo.TabIndex = 6;
+            this.cbLangTwo.SelectedIndexChanged += new System.EventHandler(this.cbLangTwo_SelectedIndexChanged);
             // 
             // label1
             // 

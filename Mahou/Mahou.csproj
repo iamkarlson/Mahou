@@ -32,7 +32,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Mahou.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Mahou.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -146,9 +146,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Mahou.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
