@@ -93,5 +93,13 @@ namespace Mahou
             get { return (bool)this["SwitchLayoutByCaps"]; }
             set { this["SwitchLayoutByCaps"] = (bool)value; }
         }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
+        [DefaultSettingValue("false")]
+        public bool CycleMode //Cycle mode for convert last, caps switch
+        {
+            get { return (bool)this["CycleMode"]; }
+            set { this["CycleMode"] = (bool)value; }
+        }
     }
 }

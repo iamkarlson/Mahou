@@ -24,10 +24,12 @@ namespace Mahou
         }
         public bool Register()
         {
+            System.Diagnostics.Debug.WriteLine("HotKey with id " + id + " registered."); 
             return RegisterHotKey(hWnd, id, modifier, key);
         }
         public bool Unregister()
         {
+            System.Diagnostics.Debug.WriteLine("HotKey with id " + id + " unregistered."); 
             return UnregisterHotKey(hWnd, id);
         }
         public override int GetHashCode()

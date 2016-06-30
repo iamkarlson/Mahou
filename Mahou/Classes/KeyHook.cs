@@ -47,15 +47,21 @@ namespace Mahou
             }
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
             {
-                if (Key == Keys.CapsLock && MMain.MySetts.SwitchLayoutByCaps && !self)
+                if (Key == Keys.CapsLock && !self && MMain.MySetts.SwitchLayoutByCaps)
                 {
-                    ChangeLayout();
                     self = true;
                     //Code below removes CapsLock original action
-                    keybd_event((int)Keys.CapsLock, (byte)MapVirtualKey((int)Keys.CapsLock, 0), 1, 0);
-                    keybd_event((int)Keys.CapsLock, (byte)MapVirtualKey((int)Keys.CapsLock, 0), 1 | 2, 0);
+                        Debug.WriteLine("Removing Caps func!");
+                        if (Control.IsKeyLocked(Keys.CapsLock))
+                        {
+                            Debug.WriteLine("It was ON! Wow!");
+                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
+                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
+                        }
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
+                        ChangeLayout();
                     self = false;
-                    return (IntPtr)0;
                 }
                 if (Key == Keys.Space && afterConversion)
                 {
@@ -131,7 +137,7 @@ namespace Mahou
                     keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0), 1 | 2, 0);
                     keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1 | 2, 0);
                     Exception threadEx = null;
-                    //If errored using thread, will not make cursor to freeze instead of just try/catch
+                    //If errored using thread, will not make all app to freeze, instead of just try/catch that actually will...
                     Thread staThread = new Thread(
                         delegate()
                         {
@@ -235,32 +241,60 @@ namespace Mahou
         private static void ChangeLayout()
         {
             var nowLocale = Locales.GetCurrentLocale();
-            uint notnowLocale = 0;
-            if (MMain.locales != null)
+            uint notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
+            if (!MMain.MySetts.CycleMode)
             {
-                notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
-                PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
-            }
-            Debug.WriteLine(Locales.GetCurrentLocale() + "==?" + notnowLocale);
-            //If PostMessage fails(didn't change locale), it will simulate locale change by pressing LeftALT+LeftSHIFT with keybd_event
-            if (Locales.GetCurrentLocale() != notnowLocale)
-            {
-                int i = 10;
-                //this way switches locale without WM_INPUTLANGCHANGEREQUEST
-                do
+                int tryes = 0;
+                Debug.WriteLine("-------------");
+                //Cycles while layout not changed
+                while (Locales.GetCurrentLocale() == nowLocale)
                 {
-                    keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1, 0);
-                    keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1, 0);
-                    Thread.Sleep(20); //Works perfect with this.
-                    keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
-                    keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0);
-                    Thread.Sleep(20);
-                    i--;
-                    //Locales.GetCurrentLocale() may be blocke by some metro apps, so
-                    //on metro apps may not work...
-                } while (Locales.GetCurrentLocale() != notnowLocale || i == 0);
+                    //fix for metro apps
+                    if (tryes == 5)
+                    {
+                        //if all 5 times GetCurrentLocale() == nowLocale,
+                        //then it is must be metro app, in which GetCurrentLocale() will not return properly id,
+                        //the only way to fix it is to re-focus app.
+                        //->  Re-focus
+                        Thread refocus = new Thread((delegate() //Using thread is better, instead of main program hang on error, this thread just will be stopped.
+                            {
+                        IntPtr lastwindow = Locales.GetForegroundWindow();
+                        Form f = new Form();
+                        f.ShowInTaskbar = false;
+                        f.Opacity = 0;
+                        f.Show();
+                        SetForegroundWindow(f.Handle);
+                        Thread.Sleep(500); //Without at least 0.5 sec it will cause issue, such as convert not from 1-st time...
+                        f.Hide();
+                        SetForegroundWindow(lastwindow);
+                            }));
+                        refocus.Start();
+                        refocus.Join();
+                        //<-
+                        notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
+                        Debug.WriteLine(Locales.GetCurrentLocale() + "==?" + notnowLocale);
+                        PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
+                        Debug.WriteLine(Locales.GetCurrentLocale() + "==?" + notnowLocale);
+                        break;
+                    }
+                        PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
+                        Debug.WriteLine(tryes + "."+Locales.GetCurrentLocale() + "==?" + notnowLocale);
+                        tryes++;
+                }
+                Debug.WriteLine("-------------");
             }
-            Debug.WriteLine(Locales.GetCurrentLocale() + "==?" + notnowLocale);
+            else
+            {
+                CycleSwitch();
+            }
+        }
+        private static void CycleSwitch()
+        {
+            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1, 0);
+            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1, 0);
+            Thread.Sleep(10); //Works perfect with this.
+            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
+            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0);
         }
         public static string MakeAnother(int vkCode, uint uId)
         {
@@ -285,6 +319,9 @@ namespace Mahou
         }
         #endregion
         #region DLL imports
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
         public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
         [DllImport("user32.dll")]
