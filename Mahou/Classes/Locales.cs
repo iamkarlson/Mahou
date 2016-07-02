@@ -48,12 +48,11 @@ namespace Mahou
         }
         #region DLLs
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr GetKeyboardLayout(uint WindowsThreadProcessID);
+        static extern IntPtr GetKeyboardLayout(uint WindowsThreadProcessID);
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll")]
         static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr proccess);
         #endregion
     }
-
 }

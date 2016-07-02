@@ -44,7 +44,7 @@ class UltimateUnicodeConverter
             ercher.Add(cc.chcode);
         }
         //If input cant be converted in any of selected locales to any of them
-        if (Mahou.KeyHook.bothnotmatch)
+        if (Mahou.KMHook.bothnotmatch)
         {
             return "ERROR";
         }
@@ -53,9 +53,9 @@ class UltimateUnicodeConverter
         if (countofminus == ercher.Count && countofminus > 0 && !firstcall) //because of two locales we should use !firstcall
         {
             //this will stop even foreach class in KeyHook class(it is in Try/Catch, so this will stop it immediately)
-            throw Mahou.KeyHook.notINany;
+            throw Mahou.KMHook.notINany;
         }
-        if (ercher.Contains(-1) && !Mahou.KeyHook.bothnotmatch && firstcall)
+        if (ercher.Contains(-1) && !Mahou.KMHook.bothnotmatch && firstcall)
         {
             StringBuilder inputfixed = new StringBuilder(input);
             //This gets all indexes of an -1 chars in input,
@@ -91,8 +91,7 @@ class UltimateUnicodeConverter
         #endregion
         return result;
     }
-    //Case Char struct
-    public struct CaseChar
+    public struct CaseChar //Case Char struct
     {
         public short chcode;
         public bool upper;

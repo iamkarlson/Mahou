@@ -51,6 +51,7 @@ class KInputs
     }
 #pragma warning restore 649
     #endregion
+    #region Add Inputs & Make Input
     public static INPUT AddChar(char ch, bool down)
     {
         UInt16 scan = ch;
@@ -131,13 +132,14 @@ class KInputs
         {
             SendInput(1, new INPUT[] { INPT }, Marshal.SizeOf(typeof(INPUT)));
             //Send UP for last input
-            //because of repeations of chars (aaaaa, 00100000 etc.) without below, conversion won't work properly
+            //without below, input will skip repeats(aaaaa => a, 00100000 => 010 etc.) 
             INPUT sendlastUP = new INPUT { Type = INPT.Type, Data = INPT.Data };
             sendlastUP.Data.Keyboard.Flags = (KEYEVENTF_UNICODE | KEYEVENTF_KEYUP);
             SendInput(1, new INPUT[] {sendlastUP}, Marshal.SizeOf(typeof(INPUT)));
         }
         SendInput(1, new INPUT[] { AddKey(Keys.ShiftKey, false, true) }, Marshal.SizeOf(typeof(INPUT)));
     }
+    #endregion
     #region DLL
     [DllImport("user32.dll", SetLastError = true)]
     static extern UInt32 SendInput(UInt32 numberOfInputs, INPUT[] inputs, Int32 sizeOfInputStructure);

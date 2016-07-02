@@ -286,10 +286,10 @@
             // HelpTT
             // 
             this.HelpTT.AutomaticDelay = 0;
-            this.HelpTT.AutoPopDelay = 10000;
+            this.HelpTT.AutoPopDelay = 0;
             this.HelpTT.BackColor = System.Drawing.SystemColors.Highlight;
             this.HelpTT.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.HelpTT.InitialDelay = 400;
+            this.HelpTT.InitialDelay = 0;
             this.HelpTT.ReshowDelay = 1;
             this.HelpTT.ShowAlways = true;
             // 

@@ -1,58 +1,80 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Threading;
 using System.Runtime.InteropServices;
 namespace Mahou
 {
-    class KeyHook
+    class KMHook //Keyboard & Mouse Hook
     {
-        public const int WH_KEYBOARD_LL = 13;
-        public const int WM_KEYDOWN = 0x0100;
-        public const int WM_KEYUP = 0x0101;
+        #region Variables
+        public enum KMMessages //Keyboard & Mouse Messages
+        {
+            WM_LBUTTONDOWN = 0x0201,
+            WM_LBUTTONUP = 0x0202,
+            WM_MOUSEMOVE = 0x0200,
+            WM_MOUSEWHEEL = 0x020A,
+            WM_RBUTTONDOWN = 0x0204,
+            WM_RBUTTONUP = 0x0205,
+            WM_MBUTTONDOWN = 0x0207,
+            WM_MBUTTONUP = 0x0208,
+            WH_KEYBOARD_LL = 13,
+            WH_MOUSE_LL = 14,
+            WM_KEYDOWN = 0x0100,
+            WM_KEYUP = 0x0101
+        }
         public static bool shift = false, self = false, afterConversion = false,
-                           other = false, bothnotmatch = false, printable = false;
+                           other = false,
+                           bothnotmatch = false, printable = false;
         public static Exception notINany = new Exception("Selected text is not in any of selected layouts(locales/languages) in settings\nor contains characters from other than selected layouts(locales/languages).");
-
+        public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
+        #endregion
+        #region Keyboard & Mouse hooks events
         public static IntPtr SetHook(LowLevelProc proc)
         {
             using (Process currProcess = Process.GetCurrentProcess())
             using (ProcessModule currModule = currProcess.MainModule)
             {
-                return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
+                return SetWindowsHookEx((int)KMMessages.WH_KEYBOARD_LL, proc,
                     GetModuleHandle(currModule.ModuleName), 0);
             }
         }
-        public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
+        public static IntPtr SetMouseHook(LowLevelProc proc)
+        {
+            using (Process curProcess = Process.GetCurrentProcess())
+            using (ProcessModule curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx((int)KMMessages.WH_MOUSE_LL, proc,
+                    GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
         public static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             int vkCode = Marshal.ReadInt32(lParam);
             Keys Key = (Keys)vkCode; //"Key" will further be used instead of "(Keys)vkCode"
             if (Key == Keys.LShiftKey || Key == Keys.RShiftKey ||
                 Key == Keys.Shift || Key == Keys.ShiftKey)//Checks if any shift is down
-            {
-                shift = (wParam == (IntPtr)WM_KEYDOWN) ? true : false;
-            }
-            if (Key == Keys.RControlKey || Key == Keys.LControlKey ||
+            {shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false;}
+            if (Key == Keys.RControlKey || Key == Keys.LControlKey||
+                Key == Keys.ControlKey || Key == Keys.Control ||
                 Key == Keys.RMenu || Key == Keys.LMenu ||
-                Key == Keys.RWin || Key == Keys.LWin)//Checks if any other modifiers is down
-            {
-                other = (wParam == (IntPtr)WM_KEYDOWN) ? true : false;
-            }
-            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+                Key == Keys.RWin || Key == Keys.LWin)//Checks if other modifiers is down
+            {other = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false;}
+            if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
                 if (Key == Keys.CapsLock && !self && MMain.MySetts.SwitchLayoutByCaps)
                 {
                     self = true;
                     //Code below removes CapsLock original action
-                        if (Control.IsKeyLocked(Keys.CapsLock))
-                        {
-                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
-                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
-                        }
+                    if (Control.IsKeyLocked(Keys.CapsLock))
+                    {
                         KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
                         KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
-                        ChangeLayout();
+                    }
+                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
+                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
+                    ChangeLayout();
                     self = false;
                 }
                 if (Key == Keys.Space && afterConversion)
@@ -69,7 +91,8 @@ namespace Mahou
                 }
                 if (Key == Keys.Enter || Key == Keys.Home || Key == Keys.End ||
                     Key == Keys.Tab || Key == Keys.PageDown || Key == Keys.PageUp ||
-                    Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up)//Pressing any of these Keys will empty current word
+                    Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up ||//Pressing any of these Keys will empty current word
+                    other && Key == Keys.Back)//Any modifier + Back will clear word too
                 {
                     MMain.c_word.Clear();
                 }
@@ -81,7 +104,8 @@ namespace Mahou
                     }
                     else
                     {
-                        WriteEveryWhere(" ", new YuKey() { yukey = Keys.Space, upper = false });
+                        MMain.c_word.Add(new YuKey() { yukey = Keys.Space, upper = false });
+                        //WriteEveryWhere(" ", new YuKey() { yukey = Keys.Space, upper = false });
                     }
                 }
                 if (
@@ -94,21 +118,33 @@ namespace Mahou
                 else { printable = false; }
                 if (printable && !self && !other)
                 {
-                    uint Cyulocale = Locales.GetCurrentLocale();
+                    //uint Cyulocale = Locales.GetCurrentLocale();
                     if (!shift)
                     {
-                        WriteEveryWhere((MakeAnother(vkCode, Cyulocale)),
-                            new YuKey() { yukey = Key, upper = false });
+                        MMain.c_word.Add(new YuKey() { yukey = Key, upper = false });
+                        //WriteEveryWhere((MakeAnother(vkCode, Cyulocale)),new YuKey() { yukey = Key, upper = false });
                     }
                     else
                     {
-                        WriteEveryWhere((MakeAnother(vkCode, Cyulocale)).ToUpper(),
-                            new YuKey() { yukey = Key, upper = true });
+                        MMain.c_word.Add(new YuKey() { yukey = Key, upper = true });
+                        //WriteEveryWhere((MakeAnother(vkCode, Cyulocale)).ToUpper(),new YuKey() { yukey = Key, upper = true });
                     }
                 }
             }
             return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
         }
+        public static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0)
+            {
+                if ((KMMessages.WM_LBUTTONDOWN == (KMMessages)wParam) || KMMessages.WM_RBUTTONDOWN == (KMMessages)wParam)
+                {
+                    MMain.c_word.Clear();
+                }
+            }
+            return CallNextHookEx(MMain._mouse_hookID, nCode, wParam, lParam);
+        }
+        #endregion
         #region Functions/Struct
         public static void ConvertSelection()
         {
@@ -131,8 +167,11 @@ namespace Mahou
                     Exception threadEx = null;
                     //If errored using thread, will not make all app to freeze, instead of just try/catch that actually will...
                     Thread staThread = new Thread(delegate()
-                        {try{ClipStr = Clipboard.GetText();}
-                        catch (Exception ex){threadEx = ex;}});
+                    {
+                        try { ClipStr = Clipboard.GetText(); }
+                        catch (Exception ex) { threadEx = ex; }
+                    });
+                    staThread.Name = "GetText";
                     staThread.SetApartmentState(ApartmentState.STA);
                     staThread.Start();
                     staThread.Join();
@@ -186,7 +225,6 @@ namespace Mahou
         }
         public static void ConvertLast()
         {
-            System.Threading.Thread.Sleep(50); //needed, for some apps
             Locales.IfLessThan2();
             YuKey[] YuKeys = MMain.c_word.ToArray();
             if (YuKeys.Length > 0)
@@ -216,29 +254,37 @@ namespace Mahou
                 //Cycles while layout not changed
                 while (Locales.GetCurrentLocale() == nowLocale)
                 {
-                    //fix for metro apps
                     if (tryes == 5)
                     {
-                        //if all 5 times GetCurrentLocale() == nowLocale,
-                        //then it is must be metro app, in which GetCurrentLocale() will not return properly id,
-                        //the only way to fix it is to re-focus app.
+                        //Checking now because of * & **                                                         ↓
+                        notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
+                        //Some apps blocking PostMessage() so lets try CycleSwtich(),
+                        //Applyes for Foobar2000, maybe something else... except metro apps *                    ↓
+                        while (Locales.GetCurrentLocale() != notnowLocale)
+                        {
+                            CycleSwitch();
+                            Thread.Sleep(5);
+                            tryes++;
+                            //if 3 CycleSwitch()'es not worked
+                            if (tryes == 8) { break; }
+                        }
+                        //Check if abowe worked                       
+                        if (Locales.GetCurrentLocale() == notnowLocale) { break; }
+                        //Another fix for metro apps(if 3 or more languages)
+                        //if all 5 times GetCurrentLocale() == nowLocale & 3 CycleSwitch()'es failed,
+                        //then it is must be metro app, in which GetCurrentLocale() will not return properly id, *
+                        //the only way to fix it is to re-focus app.                                             **
                         //->  Re-focus
-                        Thread refocus = new Thread((delegate() //Using thread is better, instead of main program hang on error, this thread just will be stopped.
-                            {
                         IntPtr lastwindow = Locales.GetForegroundWindow();
                         Form f = new Form();
                         f.ShowInTaskbar = false;
                         f.Opacity = 0;
                         f.Show();
                         SetForegroundWindow(f.Handle);
-                        Thread.Sleep(500); //Without at least 0.5 sec it will cause issue, such as convert not from 1-st time...
+                        Thread.Sleep(500); //Without at ~0.5 sec it will cause issue, such as convert not from 1-st time...
                         f.Hide();
                         SetForegroundWindow(lastwindow);
-                            }));
-                        refocus.Start();
-                        refocus.Join();
                         //<-
-                        notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
                         PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
                         break;
                     }
@@ -259,7 +305,14 @@ namespace Mahou
             Thread.Sleep(10); //Works perfect with this.
             keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
             keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0);
+            Thread.Sleep(10);
         }
+        public struct YuKey // YuKey is struct of key and it state(upper/lower)
+        {
+            public Keys yukey;
+            public bool upper;
+        }
+        /* Debug, uncomment if needed
         public static string MakeAnother(int vkCode, uint uId)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder(10);
@@ -271,16 +324,11 @@ namespace Mahou
             int rc = ToUnicodeEx((uint)vkCode, (uint)vkCode, lpkst, sb, sb.Capacity, 0, (IntPtr)uId);
             return sb.ToString();
         }
-        public struct YuKey // YuKey is struct of key and it state(upper/lower)
-        {
-            public Keys yukey;
-            public bool upper;
-        }
         public static void WriteEveryWhere(string vc, YuKey Yu) //as name says
         {
-            Console.WriteLine(vc);
+            //Console.WriteLine(vc);
             MMain.c_word.Add(Yu);
-        }
+        }*/
         #endregion
         #region DLL imports
         [DllImport("user32.dll")]
@@ -291,7 +339,7 @@ namespace Mahou
         [DllImport("user32.dll")]
         public static extern short MapVirtualKey(int wCode, int wMapType);
         [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        private static extern int ToUnicodeEx(uint wVirtKey,uint wScanCode,
+        private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode,
             byte[] lpKeyState, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr SetWindowsHookEx(int idHook,
@@ -308,5 +356,4 @@ namespace Mahou
         public static extern bool PostMessage(IntPtr hhwnd, uint msg, uint wparam, uint lparam);
         #endregion
     }
-
 }

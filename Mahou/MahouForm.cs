@@ -9,9 +9,10 @@ namespace Mahou
 {
     public partial class MahouForm : Form
     {
+        #region Variables
         public static HotkeyHandler Mainhk, ExitHk, HKConvertLast, HKConvertSelection; // Hotkeys
         static bool HKCLReg = false, HKCSReg = false; // These to prevent re-registering of same HotKey
-        bool shift = false, alt = false, ctrl = false, stopHK = false;
+        bool shift = false, alt = false, ctrl = false;
         static string tempCLMods = "None", tempCSMods = "None"; // Temporary modifiers
         static int tempCLKey = 0, tempCSKey = 0; // Temporary keys 
         static bool tempcbCapsS, tempcbSpaceB, tempcbTrayI, tempCycleM, tempAutoR; //Temporary checkboxes value
@@ -19,6 +20,7 @@ namespace Mahou
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         TrayIcon icon;
         List<string> lcnmid = new List<string>();
+        #endregion 
         public MahouForm()
         {
             InitializeComponent();
@@ -53,6 +55,18 @@ namespace Mahou
                 e.Cancel = true;
                 ToggleVisibility();
             }
+            //restore temps
+            tempAutoR = System.IO.File.Exists(System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Startup),
+                "Mahou.lnk")) ? true : false;
+            tempcbCapsS = MMain.MySetts.SwitchLayoutByCaps;
+            tempcbSpaceB = MMain.MySetts.SpaceBreak;
+            tempCycleM = MMain.MySetts.CycleMode;
+            tempcbTrayI = MMain.MySetts.IconVisibility;
+            tempCLKey = tempCSKey = 0;
+            tempCLMods = tempCSMods = "None";
+            tempLoc1 = tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 };
+
         }
         private void MahouForm_VisibleChanged(object sender, EventArgs e)
         {
@@ -63,13 +77,11 @@ namespace Mahou
             HKConvertSelection.Unregister();
             HKConvertLast.Unregister();
             MMain.StopHook();
-            stopHK = true;
             LocalesRefresh();
         }
         private void MahouForm_Deactivate(object sender, EventArgs e)
         {
             MMain.StartHook();
-            stopHK = false;
             LocalesRefresh();
             HKConvertSelection.Register();
             HKConvertLast.Register();
@@ -198,30 +210,30 @@ namespace Mahou
                 Keys Key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
                 int Modifs = (int)m.LParam & 0xFFFF;
                 //This stops hotkeys when main window is visible
-                if (!stopHK)
+                if (!this.Focused)
                 {
                     CheckModifiers(MMain.MySetts.HKCLMods);
                     if (Key == (Keys)MMain.MySetts.HKCLKey && Modifs == GetModifiers())
                     {
                         //These three below are needed to release all modifiers, so even if you will still hold any of it
                         //it will skip them and do as it must.
-                        KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
-                        KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
-                        KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                        KMHook.keybd_event((int)Keys.Menu, (byte)KMHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
+                        KMHook.keybd_event((int)Keys.ShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
+                        KMHook.keybd_event((int)Keys.ControlKey, (byte)KMHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
                         //String below prevents queue converting
                         HKConvertLast.Unregister(); //Stops hotkey ability
-                        KeyHook.ConvertLast();
+                        KMHook.ConvertLast();
                     }
                     CheckModifiers(MMain.MySetts.HKCSMods);
                     if (Key == (Keys)MMain.MySetts.HKCSKey && Modifs == GetModifiers())
                     {
                         //same as above comment
-                        KeyHook.keybd_event((int)Keys.Menu, (byte)KeyHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
-                        KeyHook.keybd_event((int)Keys.ShiftKey, (byte)KeyHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
-                        KeyHook.keybd_event((int)Keys.ControlKey, (byte)KeyHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                        KMHook.keybd_event((int)Keys.Menu, (byte)KMHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
+                        KMHook.keybd_event((int)Keys.ShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
+                        KMHook.keybd_event((int)Keys.ControlKey, (byte)KMHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
                         //Prevents queue converting
                         HKConvertSelection.Unregister(); //Stops hotkey ability
-                        KeyHook.ConvertSelection();
+                        KMHook.ConvertSelection();
                     }
                 }
                 //these are global, so they don't need to be stoped when window is visible.
@@ -308,7 +320,8 @@ namespace Mahou
             else
             {
                 hkclnotready = true;
-                MessageBox.Show("You have pressed just modifiers for Convert Last hotkey!!","Warning!",MessageBoxButtons.OK,MessageBoxIcon.Exclamation); }
+                MessageBox.Show("You have pressed just modifiers for Convert Last hotkey!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
             if (!string.IsNullOrEmpty(tempCSMods) && tempCSKey != 0)
             {
                 MMain.MySetts.HKCSMods = tempCSMods;
@@ -320,7 +333,8 @@ namespace Mahou
             else
             {
                 hkcsnotready = true;
-                MessageBox.Show("You have pressed just modifiers for Convert Selection hotkey!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); }
+                MessageBox.Show("You have pressed just modifiers for Convert Selection hotkey!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
             if (tempAutoR)
             {
                 CreateShortcut();

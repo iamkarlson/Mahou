@@ -16,23 +16,23 @@ namespace Mahou
         public static uint ao = RegisterWindowMessage("AlderyOpenedMahou!");
         #endregion
         #region All Main variables, arrays etc.
-        public static List<KeyHook.YuKey> c_word = new List<KeyHook.YuKey>();
+        public static List<KMHook.YuKey> c_word = new List<KMHook.YuKey>();
         public static IntPtr _hookID = IntPtr.Zero;
         public static IntPtr _mouse_hookID = IntPtr.Zero;
-        public static KeyHook.LowLevelProc _proc = KeyHook.HookCallback;
-        public static MouseHook.LowLevelMouseProc _mouse_proc = MouseHook.HookCallback;
+        public static KMHook.LowLevelProc _proc = KMHook.HookCallback;
+        public static KMHook.LowLevelProc _mouse_proc = KMHook.MouseHookCallback;
         public static Locales.Locale[] locales = Locales.AllList();
         public static Settings MySetts = new Settings();
         public static MahouForm mahou = new MahouForm();
         #endregion
-        [STAThread]
+        [STAThread] //DO NOT REMOVE THIS
         public static void Main()
         {
             using (var mutex = new Mutex(false, "Global\\" + appGUid))
             {
                 if (!mutex.WaitOne(0, false))
                 {
-                    KeyHook.PostMessage((IntPtr)0xffff, ao, 0, 0);
+                    KMHook.PostMessage((IntPtr)0xffff, ao, 0, 0);
                     return;
                 }
                 if (locales.Length < 2)
@@ -56,18 +56,19 @@ namespace Mahou
                 }
             }
         }
+        #region Actions with hooks
         public static void StartHook()
         {
             if (!CheckHook()) { return; }
-            _mouse_hookID = MouseHook.SetHook(_mouse_proc);
-            _hookID = KeyHook.SetHook(_proc);
+            _mouse_hookID = KMHook.SetMouseHook(_mouse_proc);
+            _hookID = KMHook.SetHook(_proc);
             Thread.Sleep(10); //Give some time for it to apply
         }
         public static void StopHook()
         {
             if (CheckHook()) { return; }
-            KeyHook.UnhookWindowsHookEx(_hookID);
-            MouseHook.UnhookWindowsHookEx(_mouse_hookID);
+            KMHook.UnhookWindowsHookEx(_hookID);
+            KMHook.UnhookWindowsHookEx(_mouse_hookID);
             _hookID = IntPtr.Zero;
             _mouse_hookID = IntPtr.Zero;
             Thread.Sleep(10); //Give some time for it to apply
@@ -76,5 +77,6 @@ namespace Mahou
         {
             return _hookID == IntPtr.Zero;
         }
+        #endregion
     }
 }

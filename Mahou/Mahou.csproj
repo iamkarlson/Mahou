@@ -87,7 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\HotkeyHandler.cs" />
-    <Compile Include="Classes\KeyHook.cs" />
+    <Compile Include="Classes\KMHook.cs" />
     <Compile Include="Classes\KInputs.cs" />
     <Compile Include="Classes\Locales.cs" />
     <Compile Include="Classes\PortableSettingProvider.cs" />
@@ -100,7 +100,6 @@
     <Compile Include="MahouForm.Designer.cs">
       <DependentUpon>MahouForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\MouseHook.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MahouForm.resx">
