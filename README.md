@@ -14,6 +14,17 @@ Even selected text switches just between **selected** layouts.
 ###### What it can't do:
 1. Can't recongnize text that not in selected in settings locales
 
+###### By version features:
+**1.0.0.4**<br/>
+- Added ability to change hotkeys for "Convert Last" & "Convert Selection".
+
+**1.0.0.7**<br/>
+- Feature *CapsSwitch* - possible to toggle layouts by CapsLock.
+
+**1.0.2.9**<br/>
+- It is possible to switch to cycle mode, that switches to next layout.This also applyes to *CapsSwitch*
+
+
 ### Hotkeys
 - "Pause/Break" - Convert Last Input.
 - "Scroll" - Convert selected text.
