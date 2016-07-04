@@ -300,9 +300,11 @@ namespace Mahou
         }
         private static void CycleSwitch()
         {
+            //Without Sleeps below won't work.
             keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1, 0);
+            Thread.Sleep(10);
             keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1, 0);
-            Thread.Sleep(10); //Works perfect with this.
+            Thread.Sleep(10);
             keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
             keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0);
             Thread.Sleep(10);

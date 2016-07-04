@@ -24,7 +24,6 @@ Even selected text switches just between **selected** layouts.
 **1.0.2.9**<br/>
 - It is possible to switch to cycle mode, that switches to next layout.This also applyes to *CapsSwitch*
 
-
 ### Hotkeys
 - "Pause/Break" - Convert Last Input.
 - "Scroll" - Convert selected text.
