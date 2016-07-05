@@ -146,6 +146,11 @@ namespace Mahou
         }
         #endregion
         #region Functions/Struct
+        public static async Task ActCall(Action a)
+        {
+            await Task.Run(a);
+            MahouForm.HKConvertLast.Register(); //Restores CL hotkey ability
+        }
         public static void ConvertSelection()
         {
             Locales.IfLessThan2();
@@ -153,22 +158,29 @@ namespace Mahou
             string ClipStr = "";
             try
             {
-                for (int i = 6; i != 0; i--)
+                for (int i = 1; i != 5; i++)
                 {
                     if (!String.IsNullOrEmpty(ClipStr))
                     { break; }
+                    //This prevents from converting text that alredy exist in Clipboard
+                    //by pressing Scroll without selected text.
                     Clipboard.Clear();
                     //Without Thread.Sleep() below - Clipboard.GetText() will crash,
                     keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0), 1, 0);
+                    Thread.Sleep(10);
                     keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1, 0);
                     Thread.Sleep(10);
                     keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0), 1 | 2, 0);
                     keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1 | 2, 0);
+                    Thread.Sleep(10);
                     Exception threadEx = null;
                     //If errored using thread, will not make all app to freeze, instead of just try/catch that actually will...
                     Thread staThread = new Thread(delegate()
                     {
-                        try { ClipStr = Clipboard.GetText(); }
+                        try
+                        {
+                            Console.WriteLine(i); ClipStr = Clipboard.GetText();
+                        }
                         catch (Exception ex) { threadEx = ex; }
                     });
                     staThread.Name = "GetText";
@@ -177,51 +189,52 @@ namespace Mahou
                     staThread.Join();
                 }
             }
-            catch { ConvertSelection(); }
-            //This prevents from converting text that alredy exist in Clipboard
-            //by pressing Scroll without selected text.
-            if (!String.IsNullOrEmpty(ClipStr))
+            catch { ActCall(() => ConvertSelection()); }
+            finally
             {
-                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
-                var result = "";
-                do
+                if (!String.IsNullOrEmpty(ClipStr))
                 {
-                    if (MMain.MySetts.locale1uId == MMain.MySetts.locale2uId)
+                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
+                    var result = "";
+                    do
                     {
-                        result = ClipStr;
-                        break;
-                    }
-                    result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
-                    //if errored first time try switching locales
-                    if (result == "ERROR")
-                    {
-                        result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId, true);
-                        //if errored again throw exception
+                        if (MMain.MySetts.locale1uId == MMain.MySetts.locale2uId)
+                        {
+                            result = ClipStr;
+                            break;
+                        }
+                        result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
+                        //if errored first time try switching locales
                         if (result == "ERROR")
                         {
-                            bothnotmatch = true;
-                            throw notINany;
+                            result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId, true);
+                            //if errored again throw exception
+                            if (result == "ERROR")
+                            {
+                                bothnotmatch = true;
+                                throw notINany;
+                            }
+                            bothnotmatch = false;
                         }
-                        bothnotmatch = false;
-                    }
-                    if (result != "ERROR")
+                        if (result != "ERROR")
+                        {
+                            break;
+                        }
+                    } while (result == "ERROR");
+                    //Fix for multiline duplications
+                    result = System.Text.RegularExpressions.Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
+                    //Inputs converted text
+                    KInputs.MakeInput(KInputs.AddString(result, true), false);
+                    //reselects text
+                    for (int i = result.Length; i != 0; i--)
                     {
-                        break;
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true, true) }, true);
                     }
-                } while (result == "ERROR");
-                //Fix for multiline duplications
-                result = System.Text.RegularExpressions.Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
-                //Inputs converted text
-                KInputs.MakeInput(KInputs.AddString(result, true), false);
-                //reselects text
-                for (int i = result.Length; i != 0; i--)
-                {
-                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true, true) }, true);
+                    Clipboard.Clear();
                 }
-                Clipboard.Clear();
+                self = false;
+                MahouForm.HKConvertSelection.Register(); //Restores CS hotkey ability
             }
-            self = false;
-            MahouForm.HKConvertSelection.Register(); //Restores hotkey ability
         }
         public static void ConvertLast()
         {
@@ -242,7 +255,6 @@ namespace Mahou
                 self = false;
                 afterConversion = true;
             }
-            MahouForm.HKConvertLast.Register(); //Restores hotkey ability
         }
         private static void ChangeLayout()
         {

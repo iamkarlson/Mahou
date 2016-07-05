@@ -222,7 +222,8 @@ namespace Mahou
                         KMHook.keybd_event((int)Keys.ControlKey, (byte)KMHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
                         //String below prevents queue converting
                         HKConvertLast.Unregister(); //Stops hotkey ability
-                        KMHook.ConvertLast();
+                        KMHook.ActCall(() => KMHook.ConvertLast()); //Asynchronously call Convert Last,
+                        //this will not work for Convert Selection, ThreadStateException will be catched. 
                     }
                     CheckModifiers(MMain.MySetts.HKCSMods);
                     if (Key == (Keys)MMain.MySetts.HKCSKey && Modifs == GetModifiers())
@@ -409,6 +410,7 @@ namespace Mahou
         private void RefreshControlsData()
         {
             LocalesRefresh();
+            RefreshIconVisibility();
             cbCapsLayoutSwitch.Checked = MMain.MySetts.SwitchLayoutByCaps;
             cbSpaceBreak.Checked = MMain.MySetts.SpaceBreak;
             TrayIconCheckBox.Checked = MMain.MySetts.IconVisibility;
