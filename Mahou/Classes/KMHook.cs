@@ -55,12 +55,12 @@ namespace Mahou
             Keys Key = (Keys)vkCode; //"Key" will further be used instead of "(Keys)vkCode"
             if (Key == Keys.LShiftKey || Key == Keys.RShiftKey ||
                 Key == Keys.Shift || Key == Keys.ShiftKey)//Checks if any shift is down
-            {shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false;}
-            if (Key == Keys.RControlKey || Key == Keys.LControlKey||
+            { shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
+            if (Key == Keys.RControlKey || Key == Keys.LControlKey ||
                 Key == Keys.ControlKey || Key == Keys.Control ||
                 Key == Keys.RMenu || Key == Keys.LMenu ||
                 Key == Keys.RWin || Key == Keys.LWin)//Checks if other modifiers is down
-            {other = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false;}
+            { other = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
             if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
                 if (Key == Keys.CapsLock && !self && MMain.MySetts.SwitchLayoutByCaps)
@@ -189,7 +189,7 @@ namespace Mahou
                     staThread.Join();
                 }
             }
-            catch { ActCall(() => ConvertSelection()); }
+            catch { ConvertSelection(); }
             finally
             {
                 if (!String.IsNullOrEmpty(ClipStr))
@@ -266,22 +266,28 @@ namespace Mahou
                 //Cycles while layout not changed
                 while (Locales.GetCurrentLocale() == nowLocale)
                 {
+                    PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
+                    Thread.Sleep(5);//Give some time to switch layout
+                    tryes++;
                     if (tryes == 5)
                     {
                         //Checking now because of * & **                                                         ↓
                         notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
                         //Some apps blocking PostMessage() so lets try CycleSwtich(),
                         //Applyes for Foobar2000, maybe something else... except metro apps *                    ↓
-                        while (Locales.GetCurrentLocale() != notnowLocale)
+                        do 
                         {
                             CycleSwitch();
                             Thread.Sleep(5);
+                            //Check if abowe worked                       
+                            if (Locales.GetCurrentLocale() == notnowLocale) { break; }
                             tryes++;
-                            //if 3 CycleSwitch()'es not worked
-                            if (tryes == 8) { break; }
-                        }
-                        //Check if abowe worked                       
-                        if (Locales.GetCurrentLocale() == notnowLocale) { break; }
+                            //For return to last layout ***
+                            if (tryes == 5 + MMain.locales.Length)
+                            {
+                                break;
+                            }
+                        }while(Locales.GetCurrentLocale() == nowLocale);
                         //Another fix for metro apps(if 3 or more languages)
                         //if all 5 times GetCurrentLocale() == nowLocale & 3 CycleSwitch()'es failed,
                         //then it is must be metro app, in which GetCurrentLocale() will not return properly id, *
@@ -290,19 +296,22 @@ namespace Mahou
                         IntPtr lastwindow = Locales.GetForegroundWindow();
                         Form f = new Form();
                         f.ShowInTaskbar = false;
+                        f.TopMost = true;
                         f.Opacity = 0;
                         f.Show();
                         SetForegroundWindow(f.Handle);
-                        Thread.Sleep(500); //Without at ~0.5 sec it will cause issue, such as convert not from 1-st time...
+                        //Thanks to ***                ↑
+                        //Works perfect :)
+                        //Time has been reduced to 0.1 sec seperately
+                        Thread.Sleep(50);
                         f.Hide();
                         SetForegroundWindow(lastwindow);
-                        //<-
+                        Thread.Sleep(50);
+                        //<-                                              
+                        notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
                         PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
                         break;
                     }
-                    PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
-                    Thread.Sleep(5);//Give some time to switch layout
-                    tryes++;
                 }
             }
             else
