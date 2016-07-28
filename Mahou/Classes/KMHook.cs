@@ -6,10 +6,10 @@ using System.Threading;
 using System.Runtime.InteropServices;
 namespace Mahou
 {
-    class KMHook //Keyboard & Mouse Hook
+    class KMHook // Keyboard & Mouse Hook
     {
         #region Variables
-        public enum KMMessages //Keyboard & Mouse Messages
+        public enum KMMessages // Keyboard & Mouse Messages
         {
             WM_LBUTTONDOWN = 0x0201,
             WM_LBUTTONUP = 0x0202,
@@ -52,21 +52,21 @@ namespace Mahou
         public static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             int vkCode = Marshal.ReadInt32(lParam);
-            Keys Key = (Keys)vkCode; //"Key" will further be used instead of "(Keys)vkCode"
+            Keys Key = (Keys)vkCode; // "Key" will further be used instead of "(Keys)vkCode"
             if (Key == Keys.LShiftKey || Key == Keys.RShiftKey ||
-                Key == Keys.Shift || Key == Keys.ShiftKey)//Checks if any shift is down
+                Key == Keys.Shift || Key == Keys.ShiftKey) // Checks if any shift is down
             { shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
             if (Key == Keys.RControlKey || Key == Keys.LControlKey ||
                 Key == Keys.ControlKey || Key == Keys.Control ||
                 Key == Keys.RMenu || Key == Keys.LMenu ||
-                Key == Keys.RWin || Key == Keys.LWin)//Checks if other modifiers is down
+                Key == Keys.RWin || Key == Keys.LWin) // Checks if other modifiers is down
             { other = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
             if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
                 if (Key == Keys.CapsLock && !self && MMain.MySetts.SwitchLayoutByCaps)
                 {
                     self = true;
-                    //Code below removes CapsLock original action
+                    //Code below removes CapsLock original action, but if hold will not work...
                     if (Control.IsKeyLocked(Keys.CapsLock))
                     {
                         KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
@@ -77,36 +77,32 @@ namespace Mahou
                     ChangeLayout();
                     self = false;
                 }
-                if (Key == Keys.Space && afterConversion && MMain.MySetts.SpaceBreak)
+                if (Key == Keys.Space && afterConversion && !self) // && MMain.MySetts.SpaceBreak
                 {
                     MMain.c_word.Clear();
                     afterConversion = false;
                 }
-                if (Key == Keys.Back && !self)// Removes last item from current word when user press Backspace
+                if (Key == Keys.Back && !self) //Removes last item from current word when user press Backspace
                 {
                     if (MMain.c_word.Count != 0)
                     {
                         MMain.c_word.RemoveAt(MMain.c_word.Count - 1);
+                        MMain.c_line.RemoveAt(MMain.c_line.Count - 1);
                     }
                 }
                 if (Key == Keys.Enter || Key == Keys.Home || Key == Keys.End ||
                     Key == Keys.Tab || Key == Keys.PageDown || Key == Keys.PageUp ||
-                    Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up ||//Pressing any of these Keys will empty current word
-                    other && Key == Keys.Back)//Any modifier + Back will clear word too
+                    Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up || //Pressing any of these Keys will empty current word
+                    (other && Key == Keys.Back)) //Any modifier + Back will clear word too
                 {
                     MMain.c_word.Clear();
+                    MMain.c_line.Clear();
                 }
                 if (Key == Keys.Space && !self)
                 {
-                    if (MMain.MySetts.SpaceBreak)
-                    {
-                        MMain.c_word.Clear();
-                    }
-                    else
-                    {
-                        MMain.c_word.Add(new YuKey() { yukey = Keys.Space, upper = false });
-                        //WriteEveryWhere(" ", new YuKey() { yukey = Keys.Space, upper = false });
-                    }
+                    MMain.c_word.Clear();
+                    MMain.c_line.Add(new YuKey() { yukey = Keys.Space, upper = false });
+                    // WriteEveryWhere(" ", new YuKey() { yukey = Keys.Space, upper = false });
                 }
                 if (
                     (Key >= Keys.D0 && Key <= Keys.Z) ||
@@ -122,11 +118,13 @@ namespace Mahou
                     if (!shift)
                     {
                         MMain.c_word.Add(new YuKey() { yukey = Key, upper = false });
+                        MMain.c_line.Add(new YuKey() { yukey = Key, upper = false });
                         //WriteEveryWhere((MakeAnother(vkCode, Cyulocale)),new YuKey() { yukey = Key, upper = false });
                     }
                     else
                     {
                         MMain.c_word.Add(new YuKey() { yukey = Key, upper = true });
+                        MMain.c_line.Add(new YuKey() { yukey = Key, upper = true });
                         //WriteEveryWhere((MakeAnother(vkCode, Cyulocale)).ToUpper(),new YuKey() { yukey = Key, upper = true });
                     }
                 }
@@ -140,16 +138,20 @@ namespace Mahou
                 if ((KMMessages.WM_LBUTTONDOWN == (KMMessages)wParam) || KMMessages.WM_RBUTTONDOWN == (KMMessages)wParam)
                 {
                     MMain.c_word.Clear();
+                    MMain.c_line.Clear();
                 }
             }
             return CallNextHookEx(MMain._mouse_hookID, nCode, wParam, lParam);
         }
         #endregion
         #region Functions/Struct
-        public static async Task ActCall(Action a)
+        public static async Task ActCall(Action a, bool word)
         {
             await Task.Run(a);
-            MahouForm.HKConvertLast.Register(); //Restores CL hotkey ability
+            if (word)
+                MahouForm.HKCLast.Register(); //Restores CL hotkey ability
+            else
+                MahouForm.HKCLine.Register(); //Resorest CLine hotkey ability
         }
         public static void ConvertSelection()
         {
@@ -233,13 +235,13 @@ namespace Mahou
                     Clipboard.Clear();
                 }
                 self = false;
-                MahouForm.HKConvertSelection.Register(); //Restores CS hotkey ability
+                MahouForm.HKCSelection.Register(); //Restores CS hotkey ability
             }
         }
-        public static void ConvertLast()
+        public static void ConvertLast(System.Collections.Generic.List<YuKey> c_)
         {
             Locales.IfLessThan2();
-            YuKey[] YuKeys = MMain.c_word.ToArray();
+            YuKey[] YuKeys = c_.ToArray();
             if (YuKeys.Length > 0)
             {
                 self = true;

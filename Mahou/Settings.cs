@@ -13,6 +13,8 @@ namespace Mahou
             get { return (bool)this["IconVisibility"]; }
             set { this["IconVisibility"] = (bool)value; }
         }
+        /* Starting with v1.0.4.0 this is no more usable,
+         * there is new ability "Convert Line"
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
         [DefaultSettingValue("true")]
@@ -20,7 +22,7 @@ namespace Mahou
         {
             get { return (bool)this["SpaceBreak"]; }
             set { this["SpaceBreak"] = (bool)value; }
-        }
+        }*/
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
         public uint locale1uId
@@ -83,7 +85,23 @@ namespace Mahou
         }
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
-        [DefaultSettingValue("true")] // Scroll Key
+        [DefaultSettingValue("Shift")]
+        public string HKCLineMods // Hot Key Convert Line Modifiers
+        {
+            get { return (string)this["HKCLineMods"]; }
+            set { this["HKCLineMods"] = (string)value; }
+        }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
+        [DefaultSettingValue("19")] //Pause Key
+        public int HKCLineKey // Hot Key Convert Line Key
+        {
+            get { return (int)this["HKCLineKey"]; }
+            set { this["HKCLineKey"] = (int)value; }
+        }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
+        [DefaultSettingValue("true")]
         public bool SwitchLayoutByCaps
         {
             get { return (bool)this["SwitchLayoutByCaps"]; }

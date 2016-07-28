@@ -10,11 +10,11 @@ namespace Mahou
     public partial class MahouForm : Form
     {
         #region Variables
-        public static HotkeyHandler Mainhk, ExitHk, HKConvertLast, HKConvertSelection; // Hotkeys
-        static bool HKCLReg = false, HKCSReg = false; // These to prevent re-registering of same HotKey
+        public static HotkeyHandler Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine; // Hotkeys, HKC => HotKey Convert
+        static bool HKCLReg = false, HKCSReg = false, HKCLineReg = false; // These to prevent re-registering of same HotKey
         bool shift = false, alt = false, ctrl = false;
-        static string tempCLMods = "None", tempCSMods = "None"; // Temporary modifiers
-        static int tempCLKey = 0, tempCSKey = 0; // Temporary keys 
+        static string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None"; // Temporary modifiers
+        static int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0; // Temporary keys 
         static bool tempcbCapsS, tempcbSpaceB, tempcbTrayI, tempCycleM, tempAutoR; //Temporary checkboxes value
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
@@ -31,21 +31,21 @@ namespace Mahou
             Mainhk.Register();
             ExitHk = new HotkeyHandler(Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT, Keys.F12, this);
             ExitHk.Register();
-            CheckModifiers(MMain.MySetts.HKCLMods);
-            HKConvertLast = new HotkeyHandler(GetModifiers(), (Keys)MMain.MySetts.HKCLKey, this);
-            HKConvertLast.Register();
+            HKCLast = new HotkeyHandler(CheckNGetModifiers(MMain.MySetts.HKCLMods), (Keys)MMain.MySetts.HKCLKey, this);
+            HKCLast.Register();
             HKCLReg = true;
-            CheckModifiers(MMain.MySetts.HKCSMods);
-            HKConvertSelection = new HotkeyHandler(GetModifiers(), (Keys)MMain.MySetts.HKCSKey, this);
-            HKConvertSelection.Register();
+            HKCSelection = new HotkeyHandler(CheckNGetModifiers(MMain.MySetts.HKCSMods), (Keys)MMain.MySetts.HKCSKey, this);
+            HKCSelection.Register();
             HKCSReg = true;
+            HKCLine = new HotkeyHandler(CheckNGetModifiers(MMain.MySetts.HKCLineMods), (Keys)MMain.MySetts.HKCLineKey, this);
+            HKCLine.Register();
+            HKCLineReg = true;
         }
         #region Form Events
         private void MahouForm_Load(object sender, EventArgs e)
         {
             this.Text += " " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            tempCLKey = MMain.MySetts.HKCLKey;
-            tempCSKey = MMain.MySetts.HKCSKey;
+            tempRestore();
             RefreshControlsData();
         }
         private void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -60,11 +60,10 @@ namespace Mahou
                 Environment.GetFolderPath(Environment.SpecialFolder.Startup),
                 "Mahou.lnk")) ? true : false;
             tempcbCapsS = MMain.MySetts.SwitchLayoutByCaps;
-            tempcbSpaceB = MMain.MySetts.SpaceBreak;
+            //tempcbSpaceB = MMain.MySetts.SpaceBreak;
             tempCycleM = MMain.MySetts.CycleMode;
             tempcbTrayI = MMain.MySetts.IconVisibility;
-            tempCLKey = tempCSKey = 0;
-            tempCLMods = tempCSMods = "None";
+            tempRestore();
             tempLoc1 = tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 };
 
         }
@@ -74,8 +73,9 @@ namespace Mahou
         }
         private void MahouForm_Activated(object sender, EventArgs e)
         {
-            HKConvertSelection.Unregister();
-            HKConvertLast.Unregister();
+            HKCSelection.Unregister();
+            HKCLast.Unregister();
+            HKCLine.Unregister();
             MMain.StopHook();
             LocalesRefresh();
         }
@@ -83,8 +83,9 @@ namespace Mahou
         {
             MMain.StartHook();
             LocalesRefresh();
-            HKConvertSelection.Register();
-            HKConvertLast.Register();
+            HKCLine.Register();
+            HKCSelection.Register();
+            HKCLast.Register();
         }
         #endregion
         #region Textboxes
@@ -101,6 +102,22 @@ namespace Mahou
                     break;
                 default:
                     tempCLKey = (int)e.KeyCode;
+                    break;
+            }
+        }
+        private void tbCLineHK_KeyDown(object sender, KeyEventArgs e) // Catch hotkey for Convert Line action
+        {
+            tbCLineHK.Text = OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " + Remake(e.KeyCode)).Replace("None + ", ""));
+            tempCLineMods = e.Modifiers.ToString().Replace(",", " +");
+            switch ((int)e.KeyCode)
+            {
+                case 16:
+                case 17:
+                case 18:
+                    tempCLineKey = 0;
+                    break;
+                default:
+                    tempCLineKey = (int)e.KeyCode;
                     break;
             }
         }
@@ -207,33 +224,35 @@ namespace Mahou
         {
             if (m.Msg == Modifiers.WM_HOTKEY_MSG_ID)
             {
+                Console.WriteLine(CheckNGetModifiers(MMain.MySetts.HKCLMods) + "\n" + (Keys)MMain.MySetts.HKCLKey);
+                Console.WriteLine(CheckNGetModifiers(MMain.MySetts.HKCSMods) + "\n" + (Keys)MMain.MySetts.HKCSKey);
+                Console.WriteLine(CheckNGetModifiers(MMain.MySetts.HKCLineMods) + "\n" + (Keys)MMain.MySetts.HKCLineKey);
                 Keys Key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
                 int Modifs = (int)m.LParam & 0xFFFF;
                 //This stops hotkeys when main window is visible
                 if (!this.Focused)
                 {
-                    CheckModifiers(MMain.MySetts.HKCLMods);
-                    if (Key == (Keys)MMain.MySetts.HKCLKey && Modifs == GetModifiers())
+                    if (Key == (Keys)MMain.MySetts.HKCLKey && Modifs == CheckNGetModifiers(MMain.MySetts.HKCLMods))
                     {
-                        //These three below are needed to release all modifiers, so even if you will still hold any of it
-                        //it will skip them and do as it must.
-                        KMHook.keybd_event((int)Keys.Menu, (byte)KMHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
-                        KMHook.keybd_event((int)Keys.ShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
-                        KMHook.keybd_event((int)Keys.ControlKey, (byte)KMHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                        SendModsUp();
                         //String below prevents queue converting
-                        HKConvertLast.Unregister(); //Stops hotkey ability
-                        KMHook.ActCall(() => KMHook.ConvertLast()); //Asynchronously call Convert Last,
+                        HKCLast.Unregister(); //Stops hotkey ability
+                        KMHook.ActCall(() => KMHook.ConvertLast(MMain.c_word), true); //Asynchronously call Convert Last word,
                         //this will not work for Convert Selection, ThreadStateException will be catched. 
                     }
-                    CheckModifiers(MMain.MySetts.HKCSMods);
-                    if (Key == (Keys)MMain.MySetts.HKCSKey && Modifs == GetModifiers())
+                    if (Key == (Keys)MMain.MySetts.HKCLineKey && Modifs == CheckNGetModifiers(MMain.MySetts.HKCLineMods))
                     {
-                        //same as above comment
-                        KMHook.keybd_event((int)Keys.Menu, (byte)KMHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
-                        KMHook.keybd_event((int)Keys.ShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
-                        KMHook.keybd_event((int)Keys.ControlKey, (byte)KMHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+                        SendModsUp();
+                        //String below prevents queue converting
+                        HKCLine.Unregister(); //Stops hotkey ability
+                        KMHook.ActCall(() => KMHook.ConvertLast(MMain.c_line), false); //Asynchronously call Convert Line,
+                        //this will not work for Convert Selection, ThreadStateException will be catched. 
+                    }
+                    if (Key == (Keys)MMain.MySetts.HKCSKey && Modifs == CheckNGetModifiers(MMain.MySetts.HKCSMods))
+                    {
+                        SendModsUp();
                         //Prevents queue converting
-                        HKConvertSelection.Unregister(); //Stops hotkey ability
+                        HKCSelection.Unregister(); //Stops hotkey ability
                         KMHook.ConvertSelection();
                     }
                 }
@@ -253,16 +272,21 @@ namespace Mahou
             }
             base.WndProc(ref m);
         }
-        public void CheckModifiers(string inpt)
+        public void SendModsUp()
+        {
+            //These three below are needed to release all modifiers, so even if you will still hold any of it
+            //it will skip them and do as it must.
+            KMHook.keybd_event((int)Keys.Menu, (byte)KMHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
+            KMHook.keybd_event((int)Keys.ShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
+            KMHook.keybd_event((int)Keys.ControlKey, (byte)KMHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+        }
+        public int CheckNGetModifiers(string inpt)
         {
             if (String.IsNullOrEmpty(inpt)) { inpt = "None"; } // inpt can be empty because of replaces so we switch it to "None" to avoid null reference exception.
             shift = inpt.Contains("Shift") ? true : false;
             alt = inpt.Contains("Alt") ? true : false;
             ctrl = inpt.Contains("Control") ? true : false;
             System.Threading.Thread.Sleep(5);
-        }
-        public int GetModifiers()
-        {
             return (alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000);
         }
         public static string Remake(Keys k) //Make readable some special keys
@@ -289,6 +313,16 @@ namespace Mahou
             }
             return k.ToString();
         }
+        public static void tempRestore()
+        {
+            // Restores temp's for key's/modifier's
+            tempCLKey = MMain.MySetts.HKCLKey;
+            tempCSKey = MMain.MySetts.HKCSKey;
+            tempCLineKey = MMain.MySetts.HKCLineKey;
+            tempCLMods = MMain.MySetts.HKCLMods;
+            tempCSMods = MMain.MySetts.HKCSMods;
+            tempCLineMods = MMain.MySetts.HKCLineMods;
+        }
         public static string OemReadable(string inpt)//Make readable Oem Keys
         {
             return inpt.Replace("Oemtilde", "`")
@@ -309,7 +343,16 @@ namespace Mahou
         }
         private void Apply()
         {
-            bool hkcsnotready = false, hkclnotready = false;
+            bool hkcsnotready = false, hkclnotready = false, hkclinenotready = false;
+            if (tempCLKey != 0 && tempCLineKey != 0)
+            {
+                if (tempCLineKey == tempCLKey && tempCLMods == tempCLineMods)
+                {
+                    MessageBox.Show("You have assigned same hotkeys for Convert Last & Convert Line, that is impossible!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    hkclinenotready = true;
+                    hkclnotready = true;
+                }
+            }
             if (!string.IsNullOrEmpty(tempCLMods) && tempCLKey != 0)
             {
                 MMain.MySetts.HKCLMods = tempCLMods;
@@ -336,6 +379,19 @@ namespace Mahou
                 hkcsnotready = true;
                 MessageBox.Show("You have pressed just modifiers for Convert Selection hotkey!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+            if (!string.IsNullOrEmpty(tempCLineMods) && tempCLineKey != 0)
+            {
+                MMain.MySetts.HKCLineMods = tempCLineMods;
+            }
+            if (tempCLineKey != 0)
+            {
+                MMain.MySetts.HKCLineKey = tempCLineKey;
+            }
+            else
+            {
+                hkclinenotready = true;
+                MessageBox.Show("You have pressed just modifiers for Convert Line hotkey!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
             if (tempAutoR)
             {
                 CreateShortcut();
@@ -347,7 +403,7 @@ namespace Mahou
             MMain.MySetts.SwitchLayoutByCaps = tempcbCapsS;
             MMain.MySetts.CycleMode = tempCycleM;
             MMain.MySetts.IconVisibility = tempcbTrayI;
-            MMain.MySetts.SpaceBreak = tempcbSpaceB;
+            //MMain.MySetts.SpaceBreak = tempcbSpaceB;
             if (tempLoc1.Lang != "dummy" || tempLoc1.uId != 0)
             {
                 MMain.MySetts.locale1Lang = tempLoc1.Lang;
@@ -362,25 +418,34 @@ namespace Mahou
             {
                 if (HKCLReg)
                 {
-                    HKConvertLast.Unregister();
+                    HKCLast.Unregister();
                     HKCLReg = false;
                 }
-                CheckModifiers(MMain.MySetts.HKCLMods);
-                HKConvertLast = new HotkeyHandler(GetModifiers(), (Keys)MMain.MySetts.HKCLKey, this);
-                HKConvertLast.Register();
+                HKCLast = new HotkeyHandler(CheckNGetModifiers(MMain.MySetts.HKCLMods), (Keys)MMain.MySetts.HKCLKey, this);
+                HKCLast.Register();
                 HKCLReg = true;
             }
             if (!hkcsnotready)
             {
                 if (HKCSReg)
                 {
-                    HKConvertSelection.Unregister();
+                    HKCSelection.Unregister();
                     HKCSReg = false;
                 }
-                CheckModifiers(MMain.MySetts.HKCSMods);
-                HKConvertSelection = new HotkeyHandler(GetModifiers(), (Keys)MMain.MySetts.HKCSKey, this);
-                HKConvertSelection.Register();
+                HKCSelection = new HotkeyHandler(CheckNGetModifiers(MMain.MySetts.HKCSMods), (Keys)MMain.MySetts.HKCSKey, this);
+                HKCSelection.Register();
                 HKCSReg = true;
+            }
+            if (!hkclinenotready)
+            {
+                if (HKCLineReg)
+                {
+                    HKCLine.Unregister();
+                    HKCLineReg = false;
+                }
+                HKCLine = new HotkeyHandler(CheckNGetModifiers(MMain.MySetts.HKCLineMods), (Keys)MMain.MySetts.HKCLineKey, this);
+                HKCLine.Register();
+                HKCLineReg = true;
             }
             MMain.MySetts.Save();
             RefreshControlsData();
@@ -412,11 +477,12 @@ namespace Mahou
             LocalesRefresh();
             RefreshIconVisibility();
             cbCapsLayoutSwitch.Checked = MMain.MySetts.SwitchLayoutByCaps;
-            cbSpaceBreak.Checked = MMain.MySetts.SpaceBreak;
+            //cbSpaceBreak.Checked = MMain.MySetts.SpaceBreak;
             TrayIconCheckBox.Checked = MMain.MySetts.IconVisibility;
             cbCycleMode.Checked = MMain.MySetts.CycleMode;
             tbCLHK.Text = OemReadable((MMain.MySetts.HKCLMods.Replace(",", " +") + " + " + (Keys)MMain.MySetts.HKCLKey).Replace("None + ", ""));
             tbCSHK.Text = OemReadable((MMain.MySetts.HKCSMods.Replace(",", " +") + " + " + (Keys)MMain.MySetts.HKCSKey).Replace("None + ", ""));
+            tbCLineHK.Text = OemReadable((MMain.MySetts.HKCLineMods.Replace(",", " +") + " + " + (Keys)MMain.MySetts.HKCLineKey).Replace("None + ", ""));
             cbAutorun.Checked = System.IO.File.Exists(System.IO.Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Startup),
                 "Mahou.lnk")) ? true : false;
