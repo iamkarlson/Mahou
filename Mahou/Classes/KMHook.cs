@@ -77,7 +77,7 @@ namespace Mahou
                     ChangeLayout();
                     self = false;
                 }
-                if (Key == Keys.Space && afterConversion)
+                if (Key == Keys.Space && afterConversion && MMain.MySetts.SpaceBreak)
                 {
                     MMain.c_word.Clear();
                     afterConversion = false;
@@ -271,6 +271,7 @@ namespace Mahou
                     tryes++;
                     if (tryes == 5)
                     {
+                        Console.WriteLine(Locales.GetCurrentLocale());
                         //Checking now because of * & **                                                         ↓
                         notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
                         //Some apps blocking PostMessage() so lets try CycleSwtich(),
@@ -278,9 +279,10 @@ namespace Mahou
                         do 
                         {
                             CycleSwitch();
-                            Thread.Sleep(5);
+                            Console.WriteLine(Locales.GetCurrentLocale());
+                            Console.WriteLine(notnowLocale);
                             //Check if abowe worked                       
-                            if (Locales.GetCurrentLocale() == notnowLocale) { break; }
+                            if (Locales.GetCurrentLocale() == notnowLocale) { goto skip; }
                             tryes++;
                             //For return to last layout ***
                             if (tryes == 5 + MMain.locales.Length)
@@ -311,6 +313,8 @@ namespace Mahou
                         notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
                         PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
                         break;
+                    skip:
+                        Thread.Sleep(5);
                     }
                 }
             }
