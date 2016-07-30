@@ -20,6 +20,7 @@ namespace Mahou
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         TrayIcon icon;
         List<string> lcnmid = new List<string>();
+        static Form update = new Update();
         #endregion 
         public MahouForm()
         {
@@ -592,5 +593,10 @@ namespace Mahou
             HelpTT.Show("Toggles visibility of icon in a tray.\nIf it is hidden, to show configs window hit CTRL+ALT+SHIFT+INSERT or just run Mahou.exe again.", TrayIconCheckBox);
         }
         #endregion
+
+        private void btnUpd_Click(object sender, EventArgs e)
+        {
+            update.ShowDialog();
+        }
     }
 }

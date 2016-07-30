@@ -52,6 +52,7 @@
             this.cbCapsLayoutSwitch = new System.Windows.Forms.CheckBox();
             this.HelpTT = new System.Windows.Forms.ToolTip(this.components);
             this.cbCycleMode = new System.Windows.Forms.CheckBox();
+            this.btnUpd = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -202,6 +203,7 @@
             // btnHelp
             // 
             this.btnHelp.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnHelp.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.btnHelp.Location = new System.Drawing.Point(249, 222);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(75, 23);
@@ -239,9 +241,10 @@
             // 
             this.cbSpaceBreak.AutoSize = true;
             this.cbSpaceBreak.Enabled = false;
+            this.cbSpaceBreak.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbSpaceBreak.Location = new System.Drawing.Point(201, 157);
             this.cbSpaceBreak.Name = "cbSpaceBreak";
-            this.cbSpaceBreak.Size = new System.Drawing.Size(117, 17);
+            this.cbSpaceBreak.Size = new System.Drawing.Size(124, 17);
             this.cbSpaceBreak.TabIndex = 18;
             this.cbSpaceBreak.Text = "Space begins word";
             this.cbSpaceBreak.UseVisualStyleBackColor = true;
@@ -254,6 +257,7 @@
             this.groupBox1.Controls.Add(this.lbl2lng);
             this.groupBox1.Controls.Add(this.cbLangOne);
             this.groupBox1.Controls.Add(this.cbLangTwo);
+            this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox1.Location = new System.Drawing.Point(6, 132);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(189, 82);
@@ -269,6 +273,7 @@
             this.groupBox2.Controls.Add(this.tbCLineHK);
             this.groupBox2.Controls.Add(this.tbCLHK);
             this.groupBox2.Controls.Add(this.tbCSHK);
+            this.groupBox2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox2.Location = new System.Drawing.Point(6, 31);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(318, 93);
@@ -302,9 +307,10 @@
             // cbCapsLayoutSwitch
             // 
             this.cbCapsLayoutSwitch.AutoSize = true;
+            this.cbCapsLayoutSwitch.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbCapsLayoutSwitch.Location = new System.Drawing.Point(201, 137);
             this.cbCapsLayoutSwitch.Name = "cbCapsLayoutSwitch";
-            this.cbCapsLayoutSwitch.Size = new System.Drawing.Size(125, 17);
+            this.cbCapsLayoutSwitch.Size = new System.Drawing.Size(133, 17);
             this.cbCapsLayoutSwitch.TabIndex = 21;
             this.cbCapsLayoutSwitch.Text = "Caps switches layout";
             this.cbCapsLayoutSwitch.UseVisualStyleBackColor = true;
@@ -324,20 +330,32 @@
             // cbCycleMode
             // 
             this.cbCycleMode.AutoSize = true;
+            this.cbCycleMode.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbCycleMode.Location = new System.Drawing.Point(201, 197);
             this.cbCycleMode.Name = "cbCycleMode";
-            this.cbCycleMode.Size = new System.Drawing.Size(116, 17);
+            this.cbCycleMode.Size = new System.Drawing.Size(120, 17);
             this.cbCycleMode.TabIndex = 22;
             this.cbCycleMode.Text = "Enable cycle mode";
             this.cbCycleMode.UseVisualStyleBackColor = true;
             this.cbCycleMode.CheckedChanged += new System.EventHandler(this.cbCycleMode_CheckedChanged);
             this.cbCycleMode.MouseHover += new System.EventHandler(this.cbCycleMode_MouseHover);
             // 
+            // btnUpd
+            // 
+            this.btnUpd.Location = new System.Drawing.Point(265, 10);
+            this.btnUpd.Name = "btnUpd";
+            this.btnUpd.Size = new System.Drawing.Size(59, 23);
+            this.btnUpd.TabIndex = 23;
+            this.btnUpd.Text = "Update";
+            this.btnUpd.UseVisualStyleBackColor = true;
+            this.btnUpd.Click += new System.EventHandler(this.btnUpd_Click);
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(330, 251);
+            this.Controls.Add(this.btnUpd);
             this.Controls.Add(this.cbCycleMode);
             this.Controls.Add(this.cbCapsLayoutSwitch);
             this.Controls.Add(this.groupBox2);
@@ -396,5 +414,6 @@
         private System.Windows.Forms.CheckBox cbCycleMode;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbCLineHK;
+        private System.Windows.Forms.Button btnUpd;
     }
 }
