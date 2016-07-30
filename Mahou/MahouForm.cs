@@ -205,6 +205,10 @@ namespace Mahou
         {
             System.Diagnostics.Process.Start("https://github.com/BladeMight/Mahou");
         }
+        private void btnUpd_Click(object sender, EventArgs e)
+        {
+            update.ShowDialog();
+        }
         #endregion
         #region Tray Events
         private void mhouIcon_DoubleClick(object sender, EventArgs e)
@@ -592,11 +596,16 @@ namespace Mahou
             HelpTT.ToolTipTitle = TrayIconCheckBox.Text;
             HelpTT.Show("Toggles visibility of icon in a tray.\nIf it is hidden, to show configs window hit CTRL+ALT+SHIFT+INSERT or just run Mahou.exe again.", TrayIconCheckBox);
         }
-        #endregion
-
-        private void btnUpd_Click(object sender, EventArgs e)
+        private void btnUpd_MouseHover(object sender, EventArgs e)
         {
-            update.ShowDialog();
+            HelpTT.ToolTipTitle = btnUpd.Text;
+            HelpTT.Show("Check for updates, and download if needed.", btnUpd);
         }
+        private void tbCLineHK_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = tbCLineHK.Text;
+            HelpTT.Show("This is current hotkey for Convert Line action.\nPress any key to assign it, or key with modifiers(ALT,CTRL,SHIFT)", tbCLineHK);
+        }
+        #endregion
     }
 }

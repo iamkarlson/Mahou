@@ -303,6 +303,7 @@
             this.tbCLineHK.TabIndex = 14;
             this.tbCLineHK.Text = "Control + Pause";
             this.tbCLineHK.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbCLineHK_KeyDown);
+            this.tbCLineHK.MouseHover += new System.EventHandler(this.tbCLineHK_MouseHover);
             // 
             // cbCapsLayoutSwitch
             // 
@@ -342,13 +343,14 @@
             // 
             // btnUpd
             // 
-            this.btnUpd.Location = new System.Drawing.Point(265, 10);
+            this.btnUpd.Location = new System.Drawing.Point(265, 7);
             this.btnUpd.Name = "btnUpd";
-            this.btnUpd.Size = new System.Drawing.Size(59, 23);
+            this.btnUpd.Size = new System.Drawing.Size(59, 24);
             this.btnUpd.TabIndex = 23;
             this.btnUpd.Text = "Update";
             this.btnUpd.UseVisualStyleBackColor = true;
             this.btnUpd.Click += new System.EventHandler(this.btnUpd_Click);
+            this.btnUpd.MouseHover += new System.EventHandler(this.btnUpd_MouseHover);
             // 
             // MahouForm
             // 

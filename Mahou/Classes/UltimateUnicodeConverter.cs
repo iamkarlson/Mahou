@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Linq;
 
 class UltimateUnicodeConverter
@@ -43,39 +42,16 @@ class UltimateUnicodeConverter
         {
             ercher.Add(cc.chcode);
         }
-        //If input cant be converted in any of selected locales to any of them
-        if (Mahou.KMHook.bothnotmatch)
-        {
-            return "ERROR";
-        }
-        //Check if all of them are not recongized by SECOND parse(because of firstall variable)
-        var countofminus = ercher.Count(m1 => m1 == -1);
-        if (countofminus == ercher.Count && countofminus > 0 && !firstcall) //because of two locales we should use !firstcall
-        {
-            //this will stop even foreach class in KeyHook class(it is in Try/Catch, so this will stop it immediately)
-            throw Mahou.KMHook.notINany;
-        }
-        if (ercher.Contains(-1) && !Mahou.KMHook.bothnotmatch && firstcall)
-        {
-            StringBuilder inputfixed = new StringBuilder(input);
-            //This gets all indexes of an -1 chars in input,
-            var indexes = Enumerable.Range(0, ercher.Count).Where(i => ercher[i] == -1).ToList();
-            //gets all chars by indexes from input,
-            var chars = indexes.Select(index => input[index]).ToList();
-            //these(above) save me a lot of time, thank you LINQ!
-            //Replaces all unrecongnized chars by current locale(uID1), by another(uID2)
-            for (int i = 0; i != indexes.Count; i++)
-            {
-                inputfixed.Remove(indexes[i], 1);
-                string remaked = UltimateUnicodeConverter.InAnother(chars[i].ToString(), uID2, uID1, false);
-                inputfixed.Insert(indexes[i], remaked);
-            }
-            return inputfixed.ToString();
-        }
+        /*THERE WAS ERROR CHECKER CODE...
+          DUE TO NEW TECHNOLOGY IS NOT USED ANYMORE*/
         #endregion
         #region Add another locale's char to result
         foreach (CaseChar sh in CaseChars.ToArray())
         {
+            if (sh.chcode == -1)
+            {
+                result += '♥'; //Pretty :3
+            }
             byte[] byt = new byte[256];
             //it needs just 1 but,anyway let it be 10, i think that's better
             StringBuilder s = new StringBuilder(10);
@@ -87,6 +63,15 @@ class UltimateUnicodeConverter
             var ant = ToUnicodeEx((uint)sh.chcode, (uint)sh.chcode, byt, s, s.Capacity, 0, (IntPtr)uID2);
             if (sh.chcode != -1)
                 result += s;
+        }
+        // Restores not recongized chars
+        StringBuilder inputfixed = new StringBuilder(result);
+        var indexes = Enumerable.Range(0, ercher.Count).Where(i => ercher[i] == -1).ToList();
+        for (int i = 0; i != indexes.Count; i++)
+        {
+            inputfixed.Remove(indexes[i], 1);
+            inputfixed.Insert(indexes[i], input[indexes[i]].ToString());
+            result = inputfixed.ToString();
         }
         #endregion
         return result;

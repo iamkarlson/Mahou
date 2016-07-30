@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.InteropServices;
 namespace Mahou
@@ -22,7 +23,8 @@ namespace Mahou
             WH_KEYBOARD_LL = 13,
             WH_MOUSE_LL = 14,
             WM_KEYDOWN = 0x0100,
-            WM_KEYUP = 0x0101
+            WM_KEYUP = 0x0101,
+            WM_SYSKEYDOWN = 0x0104
         }
         public static bool shift = false, self = false, afterConversion = false,
                            other = false,
@@ -31,6 +33,7 @@ namespace Mahou
         public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
         #region Keyboard & Mouse hooks events
+        static List<Keys> numpads = new List<Keys>();
         public static IntPtr SetHook(LowLevelProc proc)
         {
             using (Process currProcess = Process.GetCurrentProcess())
@@ -56,6 +59,7 @@ namespace Mahou
             if (Key == Keys.LShiftKey || Key == Keys.RShiftKey ||
                 Key == Keys.Shift || Key == Keys.ShiftKey) // Checks if any shift is down
             { shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
+
             if (Key == Keys.RControlKey || Key == Keys.LControlKey ||
                 Key == Keys.ControlKey || Key == Keys.Control ||
                 Key == Keys.RMenu || Key == Keys.LMenu ||
@@ -87,6 +91,9 @@ namespace Mahou
                     if (MMain.c_word.Count != 0)
                     {
                         MMain.c_word.RemoveAt(MMain.c_word.Count - 1);
+                    }
+                    if (MMain.c_line.Count != 0)
+                    {
                         MMain.c_line.RemoveAt(MMain.c_line.Count - 1);
                     }
                 }
@@ -129,6 +136,12 @@ namespace Mahou
                     }
                 }
             }
+            /*TODO need to be improved
+            Console.WriteLine(altnum);
+            if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_SYSKEYDOWN && (Key >= Keys.NumPad0 && Key <= Keys.NumPad9))
+            {
+                altnum = true;
+            }*/
             return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
         }
         public static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
@@ -165,7 +178,7 @@ namespace Mahou
                     if (!String.IsNullOrEmpty(ClipStr))
                     { break; }
                     //This prevents from converting text that alredy exist in Clipboard
-                    //by pressing Scroll without selected text.
+                    //by pressing "Convert Selection hotkey" without selected text.
                     Clipboard.Clear();
                     //Without Thread.Sleep() below - Clipboard.GetText() will crash,
                     keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0), 1, 0);
@@ -191,40 +204,21 @@ namespace Mahou
                     staThread.Join();
                 }
             }
-            catch { ConvertSelection(); }
+            catch (Exception e) { Console.WriteLine(e.Message); ConvertSelection(); }
             finally
             {
                 if (!String.IsNullOrEmpty(ClipStr))
                 {
                     KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
                     var result = "";
-                    do
+                    result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
+                    //if same first time try switching locales
+                    if (result == ClipStr)
                     {
-                        if (MMain.MySetts.locale1uId == MMain.MySetts.locale2uId)
-                        {
-                            result = ClipStr;
-                            break;
-                        }
-                        result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
-                        //if errored first time try switching locales
-                        if (result == "ERROR")
-                        {
-                            result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId, true);
-                            //if errored again throw exception
-                            if (result == "ERROR")
-                            {
-                                bothnotmatch = true;
-                                throw notINany;
-                            }
-                            bothnotmatch = false;
-                        }
-                        if (result != "ERROR")
-                        {
-                            break;
-                        }
-                    } while (result == "ERROR");
+                        result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId, true);
+                    }
                     //Fix for multiline duplications
-                    result = System.Text.RegularExpressions.Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
+                    result = System.Text.RegularExpressions.Regex.Replace(result, "\r\n", "\n");
                     //Inputs converted text
                     KInputs.MakeInput(KInputs.AddString(result, true), false);
                     //reselects text
@@ -278,7 +272,7 @@ namespace Mahou
                         notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
                         //Some apps blocking PostMessage() so lets try CycleSwtich(),
                         //Applyes for Foobar2000, maybe something else... except metro apps *                    ↓
-                        do 
+                        do
                         {
                             CycleSwitch();
                             Console.WriteLine(Locales.GetCurrentLocale());
@@ -291,7 +285,7 @@ namespace Mahou
                             {
                                 break;
                             }
-                        }while(Locales.GetCurrentLocale() == nowLocale);
+                        } while (Locales.GetCurrentLocale() == nowLocale);
                         //Another fix for metro apps(if 3 or more languages)
                         //if all 5 times GetCurrentLocale() == nowLocale & 3 CycleSwitch()'es failed,
                         //then it is must be metro app, in which GetCurrentLocale() will not return properly id, *
