@@ -73,7 +73,6 @@
             // btnApply
             // 
             this.btnApply.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.btnApply.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnApply.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.btnApply.Location = new System.Drawing.Point(6, 222);
             this.btnApply.Name = "btnApply";
@@ -343,6 +342,7 @@
             // 
             // btnUpd
             // 
+            this.btnUpd.FlatAppearance.BorderColor = System.Drawing.SystemColors.MenuText;
             this.btnUpd.Location = new System.Drawing.Point(265, 7);
             this.btnUpd.Name = "btnUpd";
             this.btnUpd.Size = new System.Drawing.Size(59, 24);
@@ -371,6 +371,7 @@
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.btnOK);
             this.DoubleBuffered = true;
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::Mahou.Properties.Resources.Mahou;
             this.MaximizeBox = false;

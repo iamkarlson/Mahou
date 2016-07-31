@@ -29,6 +29,7 @@ namespace Mahou
         [STAThread] //DO NOT REMOVE THIS
         public static void Main()
         {
+            Application.EnableVisualStyles(); // Huh i did not noticed that it was missing... '~'
             using (var mutex = new Mutex(false, "Global\\" + appGUid))
             {
                 if (!mutex.WaitOne(0, false))
