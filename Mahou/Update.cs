@@ -41,10 +41,12 @@ namespace Mahou
             if (e.ProgressPercentage == 100)
             {
                 int MahouPID = Process.GetCurrentProcess().Id;
+                //Downloaded archive 
+                var arch = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
                 MahouForm.icon.Hide();
                 //Batch script to run powershell script
                 var batPSStart =
-    @"@ECHO OFF
+@"@ECHO OFF
 SET ThisScriptsDirectory=%~dp0
 SET PowerShellScriptPath=%ThisScriptsDirectory%Update.ps1
 PowerShell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command ""& '%PowerShellScriptPath%'""
@@ -55,12 +57,13 @@ DEL PSStart.cmd";
                 //delete old,
                 //unzip downloaded one, and start it.
                 var psMahouUpdate =
-    @"taskkill /PID " + MahouPID + @" /f
-del "".\Mahou.exe""
+@"TASKKILL /PID " + MahouPID + @" /F
+DEL "".\Mahou.exe""
 Add-Type -A System.IO.Compression.FileSystem
-[IO.Compression.ZipFile]::ExtractToDirectory(""" + Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value + @""", '.\')
+[IO.Compression.ZipFile]::ExtractToDirectory(""" + arch + @""", '.\')
 start Mahou.exe _!_updated_!_
-del "".\Update.ps1""";
+DEL "+arch+@"
+DEL "".\Update.ps1""";
                 //Save PS script
                 File.WriteAllText("Update.ps1", psMahouUpdate);
                 ProcessStartInfo PSStart = new ProcessStartInfo();
