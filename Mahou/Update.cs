@@ -15,30 +15,35 @@ namespace Mahou
     public partial class Update : Form
     {
         static string[] UpdInfo;
+        static bool updating = false, was = false;
         public Update()
         {
             InitializeComponent();
         }
         private void btDMahou_Click(object sender, EventArgs e)
         {
-            try
+            if (!updating)
             {
-                using (WebClient wc = new WebClient())
+                try
                 {
-                    wc.DownloadProgressChanged += wc_DownloadProgressChanged;
-                    wc.DownloadFileAsync(new System.Uri(UpdInfo[3]),
+                    using (WebClient wc = new WebClient())
+                    {
                         // Gets filename from url
-                        Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value);
+                        var fn = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
+                        wc.DownloadProgressChanged += wc_DownloadProgressChanged;
+                        wc.DownloadFileAsync(new System.Uri(UpdInfo[3]),fn);
+                        btDMahou.Text = "Downloading " + fn;
+                    }
                 }
+                catch { }
             }
-            catch { }
         }
 
         void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             pbStatus.Value = e.ProgressPercentage;
             //Below in "if" is AUTO-UPDATE feature ;)
-            if (e.ProgressPercentage == 100)
+            if (e.ProgressPercentage == 100 && !was)
             {
                 int MahouPID = Process.GetCurrentProcess().Id;
                 //Downloaded archive 
@@ -72,6 +77,7 @@ DEL "".\Update.ps1""";
                 PSStart.WindowStyle = ProcessWindowStyle.Hidden;
                 //Start updating(unzipping)
                 Process.Start(PSStart);
+                was = true;
             }
         }
 
