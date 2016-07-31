@@ -18,7 +18,7 @@ namespace Mahou
         static bool tempcbCapsS, tempcbSpaceB, tempcbTrayI, tempCycleM, tempAutoR; //Temporary checkboxes value
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
-        TrayIcon icon;
+        public static TrayIcon icon;
         List<string> lcnmid = new List<string>();
         static Form update = new Update();
         #endregion 

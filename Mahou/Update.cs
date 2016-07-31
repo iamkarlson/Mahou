@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 namespace Mahou
@@ -14,7 +15,6 @@ namespace Mahou
     public partial class Update : Form
     {
         static string[] UpdInfo;
-        static bool onceshow = false;
         public Update()
         {
             InitializeComponent();
@@ -28,7 +28,7 @@ namespace Mahou
                     wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                     wc.DownloadFileAsync(new System.Uri(UpdInfo[3]),
                         // Gets filename from url
-                    Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value);
+                        Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value);
                 }
             }
             catch { }
@@ -37,13 +37,38 @@ namespace Mahou
         void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             pbStatus.Value = e.ProgressPercentage;
-            if (e.ProgressPercentage == 100 && !onceshow)
+            //Below in "if" is AUTO-UPDATE feature ;)
+            if (e.ProgressPercentage == 100)
             {
-                MessageBox.Show("Mahou " + UpdInfo[2] +
-                                " downloaded to running Mahou directory, please update manually.","Update Info",
-                                  MessageBoxButtons.OK,MessageBoxIcon.Information);
-                pbStatus.Value = 0;
-                onceshow = false;
+                int MahouPID = Process.GetCurrentProcess().Id;
+                MahouForm.icon.Hide();
+                //Batch script to run powershell script
+                var batPSStart =
+    @"@ECHO OFF
+SET ThisScriptsDirectory=%~dp0
+SET PowerShellScriptPath=%ThisScriptsDirectory%Update.ps1
+PowerShell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command ""& '%PowerShellScriptPath%'""
+DEL PSStart.cmd";
+                //Save Batch script
+                File.WriteAllText("PSStart.cmd", batPSStart);
+                //Powershell script to shutdown running Mahou,
+                //delete old,
+                //unzip downloaded one, and start it.
+                var psMahouUpdate =
+    @"taskkill /PID " + MahouPID + @" /f
+del "".\Mahou.exe""
+Add-Type -A System.IO.Compression.FileSystem
+[IO.Compression.ZipFile]::ExtractToDirectory(""" + Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value + @""", '.\')
+start Mahou.exe _!_updated_!_
+del "".\Update.ps1""";
+                //Save PS script
+                File.WriteAllText("Update.ps1", psMahouUpdate);
+                ProcessStartInfo PSStart = new ProcessStartInfo();
+                PSStart.FileName = "PSStart.cmd";
+                //Make PSStart hidden
+                PSStart.WindowStyle = ProcessWindowStyle.Hidden;
+                //Start updating(unzipping)
+                Process.Start(PSStart);
             }
         }
 
@@ -80,7 +105,7 @@ namespace Mahou
                         var Link = "https://github.com" + Regex.Match(data,
                             "<ul class=\"release-downloads\">\n.*<li>\n.+href=\"(/.*\\.\\w{3})").Groups[1].Value;
                         Info.Add(Title);
-                        Info.Add(Regex.Replace(Description,"\n","\r\n")); // Regex needed to properly display new lines.
+                        Info.Add(Regex.Replace(Description, "\n", "\r\n")); // Regex needed to properly display new lines.
                         Info.Add(Version);
                         Info.Add(Link);
                     }
@@ -116,6 +141,7 @@ namespace Mahou
                     btnCheck.Text = "I think you need to update...";
                     tmr.Start();
                     SetUInfo();
+                    btDMahou.Text = "Update Mahou to " + UpdInfo[2];
                     btDMahou.Enabled = true;
                     pbStatus.Enabled = true;
                 }
@@ -135,7 +161,8 @@ namespace Mahou
         }
         public float flVersion(string ver) // converts "Mahou version type" to float
         {
-            return float.Parse(ver[1] + "." + ver.Substring(3).Replace(".", ""), CultureInfo.InvariantCulture);
+            var justdigs = Regex.Replace(ver, "\\D", "");
+            return float.Parse(justdigs[0] + "."+justdigs.Substring(1) , CultureInfo.InvariantCulture);
         }
     }
 }

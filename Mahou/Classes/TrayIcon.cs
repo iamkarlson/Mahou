@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Mahou
 {
-    class TrayIcon
+    public class TrayIcon
     {
         public event EventHandler<EventArgs> Exit;
         public event EventHandler<EventArgs> ShowHide;

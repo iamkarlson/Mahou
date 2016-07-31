@@ -27,8 +27,17 @@ namespace Mahou
         public static MahouForm mahou = new MahouForm();
         #endregion
         [STAThread] //DO NOT REMOVE THIS
-        public static void Main()
+        public static void Main(string[] args)
         {
+            try
+            {
+                if (args[0] == "_!_updated_!_")
+                {
+                    mahou.ToggleVisibility();
+                    MessageBox.Show("Mahou successfully updated!", "Update complete!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch { }
             Application.EnableVisualStyles(); // Huh i did not noticed that it was missing... '~'
             using (var mutex = new Mutex(false, "Global\\" + appGUid))
             {

@@ -93,7 +93,7 @@
             this.btDMahou.Name = "btDMahou";
             this.btDMahou.Size = new System.Drawing.Size(260, 23);
             this.btDMahou.TabIndex = 4;
-            this.btDMahou.Text = "Download Mahou";
+            this.btDMahou.Text = "Update Mahou";
             this.btDMahou.UseVisualStyleBackColor = true;
             this.btDMahou.Click += new System.EventHandler(this.btDMahou_Click);
             // 
