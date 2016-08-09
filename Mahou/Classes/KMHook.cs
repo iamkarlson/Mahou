@@ -26,9 +26,10 @@ namespace Mahou
             WM_KEYUP = 0x0101,
             WM_SYSKEYDOWN = 0x0104
         }
-        public static bool shift = false, self = false, afterConversion = false,
-                           other = false,
-                           bothnotmatch = false, printable = false;
+        public static bool self = false, afterConversion = false, printable = false,
+                           win = false, alt = false, ctrl = false, shift = false,
+                           PressShiftAgain = false, PressCtrlAgain = false, PressAltAgain = false,
+                           bothnotmatch = false;
         public static Exception notINany = new Exception("Selected text is not in any of selected layouts(locales/languages) in settings\nor contains characters from other than selected layouts(locales/languages).");
         public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
@@ -56,15 +57,28 @@ namespace Mahou
         {
             int vkCode = Marshal.ReadInt32(lParam);
             Keys Key = (Keys)vkCode; // "Key" will further be used instead of "(Keys)vkCode"
-            if (Key == Keys.LShiftKey || Key == Keys.RShiftKey ||
-                Key == Keys.Shift || Key == Keys.ShiftKey) // Checks if any shift is down
-            { shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
 
-            if (Key == Keys.RControlKey || Key == Keys.LControlKey ||
-                Key == Keys.ControlKey || Key == Keys.Control ||
-                Key == Keys.RMenu || Key == Keys.LMenu ||
-                Key == Keys.RWin || Key == Keys.LWin) // Checks if other modifiers is down
-            { other = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
+            //Checks modifiers that are down
+            if (Key == Keys.LShiftKey || Key == Keys.RShiftKey)
+            { shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
+            if (Key == Keys.RControlKey || Key == Keys.LControlKey)
+            { ctrl = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
+            if (Key == Keys.RMenu || Key == Keys.LMenu)
+            { alt = (wParam == (IntPtr)KMMessages.WM_SYSKEYDOWN) ? true : false; }
+            if (Key == Keys.RWin || Key == Keys.LWin) // Checks if win is down
+            { win = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
+
+            // Releases
+            if (MahouForm.hotkeywithmodsfired)
+            {
+                MahouForm.hotkeywithmodsfired = false;
+                if (!shift)
+                { keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0); }
+                if (!alt)
+                { keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0); }
+                if (!ctrl)
+                { keybd_event((int)Keys.LControlKey, (byte)MapVirtualKey((int)Keys.LControlKey, 0), 1 | 2, 0); }
+            }
             if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
                 if (Key == Keys.CapsLock && !self && MMain.MySetts.SwitchLayoutByCaps)
@@ -100,7 +114,7 @@ namespace Mahou
                 if (Key == Keys.Enter || Key == Keys.Home || Key == Keys.End ||
                     Key == Keys.Tab || Key == Keys.PageDown || Key == Keys.PageUp ||
                     Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up || //Pressing any of these Keys will empty current word
-                    (other && Key == Keys.Back)) //Any modifier + Back will clear word too
+                    (win && Key == Keys.Back)) //Any modifier + Back will clear word too
                 {
                     MMain.c_word.Clear();
                     MMain.c_line.Clear();
@@ -119,7 +133,7 @@ namespace Mahou
                     printable = true;
                 }
                 else { printable = false; }
-                if (printable && !self && !other)
+                if (printable && !self && !win)
                 {
                     //uint Cyulocale = Locales.GetCurrentLocale();
                     if (!shift)
@@ -194,7 +208,7 @@ namespace Mahou
                     {
                         try
                         {
-                            Console.WriteLine(i); ClipStr = Clipboard.GetText();
+                            Console.WriteLine("Tryed " + i); ClipStr = Clipboard.GetText();
                         }
                         catch (Exception ex) { threadEx = ex; }
                     });
@@ -228,8 +242,36 @@ namespace Mahou
                     }
                     Clipboard.Clear();
                 }
+                RePress();
                 self = false;
                 MahouForm.HKCSelection.Register(); //Restores CS hotkey ability
+            }
+            Console.WriteLine(ClipStr);
+        }
+        public static void dbg(string s){Console.WriteLine(s);}
+        public static void RePress()
+        {
+            //Repress's modifiers by Press Again variables
+            if (PressShiftAgain)
+            {
+                dbg("Pressed again Shift");
+                keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1, 0);
+                Thread.Sleep(10);
+                PressShiftAgain = false;
+            }
+            if (PressAltAgain)
+            {
+                dbg("Pressed again Alt");
+                keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1, 0);
+                Thread.Sleep(10);
+                PressAltAgain = false;
+            }
+            if (PressCtrlAgain)
+            {
+                dbg("Pressed again CTRL");
+                keybd_event((int)Keys.LControlKey, (byte)MapVirtualKey((int)Keys.LControlKey, 0), 1, 0);
+                Thread.Sleep(10);
+                PressCtrlAgain = false;
             }
         }
         public static void ConvertLast(System.Collections.Generic.List<YuKey> c_)
@@ -248,6 +290,7 @@ namespace Mahou
                 {
                     KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true, false) }, yk.upper);
                 }
+                RePress();
                 self = false;
                 afterConversion = true;
             }

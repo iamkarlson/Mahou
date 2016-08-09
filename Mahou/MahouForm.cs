@@ -16,6 +16,7 @@ namespace Mahou
         static string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None"; // Temporary modifiers
         static int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0; // Temporary keys 
         static bool tempcbCapsS, tempcbSpaceB, tempcbTrayI, tempCycleM, tempAutoR; //Temporary checkboxes value
+        public static bool hotkeywithmodsfired = false;
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         public static TrayIcon icon;
@@ -229,9 +230,11 @@ namespace Mahou
         {
             if (m.Msg == Modifiers.WM_HOTKEY_MSG_ID)
             {
+                /*
                 Console.WriteLine(CheckNGetModifiers(MMain.MySetts.HKCLMods) + "\n" + (Keys)MMain.MySetts.HKCLKey);
                 Console.WriteLine(CheckNGetModifiers(MMain.MySetts.HKCSMods) + "\n" + (Keys)MMain.MySetts.HKCSKey);
                 Console.WriteLine(CheckNGetModifiers(MMain.MySetts.HKCLineMods) + "\n" + (Keys)MMain.MySetts.HKCLineKey);
+                 */
                 Keys Key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
                 int Modifs = (int)m.LParam & 0xFFFF;
                 //This stops hotkeys when main window is visible
@@ -239,26 +242,38 @@ namespace Mahou
                 {
                     if (Key == (Keys)MMain.MySetts.HKCLKey && Modifs == CheckNGetModifiers(MMain.MySetts.HKCLMods))
                     {
+                        if (HKHaveModifiers(MMain.MySetts.HKCLMods))
+                        { hotkeywithmodsfired = true; }                            
+                        RePressAfter(MMain.MySetts.HKCLMods);
                         SendModsUp();
                         //String below prevents queue converting
-                        HKCLast.Unregister(); //Stops hotkey ability
+                        //HKCLast.Unregister(); //Stops hotkey ability
                         KMHook.ActCall(() => KMHook.ConvertLast(MMain.c_word), true); //Asynchronously call Convert Last word,
-                        //this will not work for Convert Selection, ThreadStateException will be catched. 
+                        //this will not work for Convert Selection, ThreadStateException will be catched.
+                        hotkeywithmodsfired = false; 
                     }
                     if (Key == (Keys)MMain.MySetts.HKCLineKey && Modifs == CheckNGetModifiers(MMain.MySetts.HKCLineMods))
                     {
+                        if (HKHaveModifiers(MMain.MySetts.HKCLineMods))
+                        { hotkeywithmodsfired = true; }              
+                        RePressAfter(MMain.MySetts.HKCLineMods);
                         SendModsUp();
                         //String below prevents queue converting
                         HKCLine.Unregister(); //Stops hotkey ability
                         KMHook.ActCall(() => KMHook.ConvertLast(MMain.c_line), false); //Asynchronously call Convert Line,
                         //this will not work for Convert Selection, ThreadStateException will be catched. 
+                        hotkeywithmodsfired = false;
                     }
                     if (Key == (Keys)MMain.MySetts.HKCSKey && Modifs == CheckNGetModifiers(MMain.MySetts.HKCSMods))
                     {
+                        if (HKHaveModifiers(MMain.MySetts.HKCSMods))
+                        { hotkeywithmodsfired = true; }              
+                        RePressAfter(MMain.MySetts.HKCSMods);
                         SendModsUp();
                         //Prevents queue converting
                         HKCSelection.Unregister(); //Stops hotkey ability
                         KMHook.ConvertSelection();
+                        hotkeywithmodsfired = false;
                     }
                 }
                 //these are global, so they don't need to be stoped when window is visible.
@@ -277,13 +292,44 @@ namespace Mahou
             }
             base.WndProc(ref m);
         }
+        public bool HKHaveModifiers(string mods)
+        {
+            if (mods.Contains("Alt") ||
+                mods.Contains("Shift") ||
+                mods.Contains("Control"))
+                return true;
+            else
+                return false;
+        }
+        private void RePressAfter(string where)
+        {
+            // Sets Press Again variables for modifiers
+            if (KMHook.shift && where.Contains("Shift"))
+                KMHook.PressShiftAgain = true;
+            else
+                KMHook.PressShiftAgain = false;
+            if (KMHook.alt && where.Contains("Alt"))
+                KMHook.PressAltAgain = true;
+            else
+                KMHook.PressAltAgain = false;
+            if (KMHook.ctrl && where.Contains("Control"))
+                KMHook.PressCtrlAgain = true;
+            else
+                KMHook.PressCtrlAgain = false;
+            Console.WriteLine(where);
+            Console.WriteLine(KMHook.alt.ToString() + KMHook.shift.ToString() + KMHook.ctrl.ToString());
+            Console.WriteLine(KMHook.PressCtrlAgain.ToString() + KMHook.PressAltAgain.ToString() + KMHook.PressShiftAgain.ToString());
+        }
         public void SendModsUp()
         {
             //These three below are needed to release all modifiers, so even if you will still hold any of it
             //it will skip them and do as it must.
-            KMHook.keybd_event((int)Keys.Menu, (byte)KMHook.MapVirtualKey((int)Keys.Menu, 0), 2, 0); // Alt Up
-            KMHook.keybd_event((int)Keys.ShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.ShiftKey, 0), 2, 0); // Shift Up
-            KMHook.keybd_event((int)Keys.ControlKey, (byte)KMHook.MapVirtualKey((int)Keys.ControlKey, 0), 2, 0); // Control Up
+            KMHook.keybd_event((int)Keys.RMenu, (byte)KMHook.MapVirtualKey((int)Keys.RMenu, 0), 2, 0); // Right Alt Up
+            KMHook.keybd_event((int)Keys.LMenu, (byte)KMHook.MapVirtualKey((int)Keys.LMenu, 0), 2, 0); // Left Alt Up
+            KMHook.keybd_event((int)Keys.RShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.RShiftKey, 0), 2, 0); // Right Shift Up
+            KMHook.keybd_event((int)Keys.LShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.LShiftKey, 0), 2, 0); // Left Shift Up
+            KMHook.keybd_event((int)Keys.RControlKey, (byte)KMHook.MapVirtualKey((int)Keys.RControlKey, 0), 2, 0); // Right Control Up
+            KMHook.keybd_event((int)Keys.LControlKey, (byte)KMHook.MapVirtualKey((int)Keys.LControlKey, 0), 2, 0); // Left Control Up
         }
         public int CheckNGetModifiers(string inpt)
         {
