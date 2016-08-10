@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Reflection;
 using IWshRuntimeLibrary;
-
+using System.Threading.Tasks;
 namespace Mahou
 {
     public partial class MahouForm : Form
@@ -250,9 +250,11 @@ namespace Mahou
                         else
                         {
                         if (HKHaveModifiers(MMain.MySetts.HKCLMods))
-                        { hotkeywithmodsfired = true; }
+                        {
+                            hotkeywithmodsfired = true;
+                            SendModsUp();
+                        }
                         RePressAfter(MMain.MySetts.HKCLMods);
-                        SendModsUp();
                         //String below prevents queue converting
                         //HKCLast.Unregister(); //Stops hotkey ability
                         var r = "";
@@ -261,9 +263,10 @@ namespace Mahou
                                     r+=i.yukey.ToString();
                                 }
                         Console.WriteLine(r);
-                        KMHook.ActCall(() => KMHook.ConvertLast(
-                            MMain.c_word, KMHook.altnum, KMHook.altnums_word), true); //Asynchronously call Convert Last word,
-                        //this will not work for Convert Selection, ThreadStateException will be catched
+                        Task t = new Task(new Action(() => KMHook.ConvertLast(
+                            MMain.c_word, KMHook.altnum, KMHook.altnums_word)));
+                        t.RunSynchronously();//Sync call Convert Last word
+                        MahouForm.HKCLast.Register(); //Restores CL hotkey ability
                         }
                     }
                     if (Key == (Keys)MMain.MySetts.HKCLineKey && Modifs == CheckNGetModifiers(MMain.MySetts.HKCLineMods))
@@ -272,14 +275,17 @@ namespace Mahou
                         else
                         {
                             if (HKHaveModifiers(MMain.MySetts.HKCLineMods))
-                            { hotkeywithmodsfired = true; }
+                            {
+                                hotkeywithmodsfired = true;
+                                SendModsUp();
+                            }
                             RePressAfter(MMain.MySetts.HKCLineMods);
-                            SendModsUp();
                             //String below prevents queue converting
                             HKCLine.Unregister(); //Stops hotkey ability
-                            KMHook.ActCall(() => KMHook.ConvertLast(
-                                MMain.c_line, KMHook.altnum, KMHook.altnums_line), false); //Asynchronously call Convert Line,
-                            //this will not work for Convert Selection, ThreadStateException will be catched. 
+                            Task t = new Task(new Action(() => KMHook.ConvertLast(
+                                MMain.c_line, KMHook.altnumline, KMHook.altnums_line)));
+                            t.RunSynchronously();//Sync call Convert Last word
+                            MahouForm.HKCLine.Register(); //Resorest CLine hotkey ability
                         }
                     }
                     if (Key == (Keys)MMain.MySetts.HKCSKey && Modifs == CheckNGetModifiers(MMain.MySetts.HKCSMods))
@@ -288,12 +294,15 @@ namespace Mahou
                         else
                         {
                             if (HKHaveModifiers(MMain.MySetts.HKCSMods))
-                            { hotkeywithmodsfired = true; }
+                            {
+                                hotkeywithmodsfired = true;
+                                SendModsUp();
+                            }
                             RePressAfter(MMain.MySetts.HKCSMods);
-                            SendModsUp();
                             //Prevents queue converting
                             HKCSelection.Unregister(); //Stops hotkey ability
-                            KMHook.ConvertSelection();
+                            Task t = new Task(new Action(() => KMHook.ConvertSelection()));
+                            t.RunSynchronously();//Sync call Convert Last word
                         }
                     }
                 }

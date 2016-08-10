@@ -30,6 +30,11 @@ Even selected text switches just between **selected** layouts, though if you lik
 **v1.0.4.0**<br/>
 - Added "Convert Line" feature.
 
+**v1.0.4.2**<br/>
+- Added "Update" feature.
+
+**v1.0.4.7**<br/>
+- Improved "Update" feature into "Auto Update".
 ### Hotkeys
 - "Pause/Break" - Convert last input.
 - "Shift + Pause/Break" - Convert last inputted line.

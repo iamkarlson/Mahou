@@ -196,14 +196,6 @@ namespace Mahou
         }
         #endregion
         #region Functions/Struct
-        public static async Task ActCall(Action a, bool word)
-        {
-            await Task.Run(a);
-            if (word)
-                MahouForm.HKCLast.Register(); //Restores CL hotkey ability
-            else
-                MahouForm.HKCLine.Register(); //Resorest CLine hotkey ability
-        }
         public static void ConvertSelection()
         {
             Locales.IfLessThan2();
@@ -365,8 +357,6 @@ namespace Mahou
                         do
                         {
                             CycleSwitch();
-                            Console.WriteLine(Locales.GetCurrentLocale());
-                            Console.WriteLine(notnowLocale);
                             //Check if abowe worked                       
                             if (Locales.GetCurrentLocale() == notnowLocale) { goto skip; }
                             tryes++;
@@ -412,12 +402,12 @@ namespace Mahou
         private static void CycleSwitch()
         {
             //Without Sleeps below won't work.
-            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1, 0);
+            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 , 0);
             Thread.Sleep(10);
-            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1, 0);
+            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 , 0);
             Thread.Sleep(10);
-            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 2, 0);
-            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 2, 0);
+            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
+            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 |2, 0);
             Thread.Sleep(10);
         }
         public struct YuKey // YuKey is struct of key and it state(upper/lower)
