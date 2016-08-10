@@ -13,16 +13,6 @@ namespace Mahou
             get { return (bool)this["IconVisibility"]; }
             set { this["IconVisibility"] = (bool)value; }
         }
-        /* Starting with v1.0.4.0 this is no more usable,
-         * there is new ability "Convert Line"
-        [SettingsProvider(typeof(PortableSettingsProvider))]
-        [UserScopedSetting()]
-        [DefaultSettingValue("true")]
-        public bool SpaceBreak
-        {
-            get { return (bool)this["SpaceBreak"]; }
-            set { this["SpaceBreak"] = (bool)value; }
-        }*/
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
         public uint locale1uId
@@ -53,8 +43,16 @@ namespace Mahou
         }
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
+        [DefaultSettingValue("true")]
+        public bool HKCLEnabled // Hotkey Convert Last enabled?
+        {
+            get { return (bool)this["HKCLEnabled"]; }
+            set { this["HKCLEnabled"] = (bool)value; }
+        }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
         [DefaultSettingValue("None")]
-        public string HKCLMods // Hot Key Convert Last Modifiers
+        public string HKCLMods // Hotkey Convert Last Modifiers
         {
             get { return (string)this["HKCLMods"]; }
             set { this["HKCLMods"] = (string)value; }
@@ -62,15 +60,23 @@ namespace Mahou
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
         [DefaultSettingValue("19")] //Pause Key
-        public int HKCLKey // Hot Key Convert Last Key
+        public int HKCLKey // Hotkey Convert Last Key
         {
             get { return (int)this["HKCLKey"]; }
             set { this["HKCLKey"] = (int)value; }
         }
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
+        [DefaultSettingValue("true")]
+        public bool HKCSEnabled // Hotkey Convert Selection enabled?
+        {
+            get { return (bool)this["HKCSEnabled"]; }
+            set { this["HKCSEnabled"] = (bool)value; }
+        }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
         [DefaultSettingValue("None")]
-        public string HKCSMods // Hot Key Convert Selection Modifiers
+        public string HKCSMods // Hotkey Convert Selection Modifiers
         {
             get { return (string)this["HKCSMods"]; }
             set { this["HKCSMods"] = (string)value; }
@@ -78,15 +84,23 @@ namespace Mahou
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
         [DefaultSettingValue("145")] // Scroll Key
-        public int HKCSKey // Hot Key Convert Selection Key
+        public int HKCSKey // Hotkey Convert Selection Key
         {
             get { return (int)this["HKCSKey"]; }
             set { this["HKCSKey"] = (int)value; }
         }
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
+        [DefaultSettingValue("true")]
+        public bool HKCLineEnabled // Hotkey Convert Line enabled?
+        {
+            get { return (bool)this["HKCLineEnabled"]; }
+            set { this["HKCLineEnabled"] = (bool)value; }
+        }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
         [DefaultSettingValue("Shift")]
-        public string HKCLineMods // Hot Key Convert Line Modifiers
+        public string HKCLineMods // Hotkey Convert Line Modifiers
         {
             get { return (string)this["HKCLineMods"]; }
             set { this["HKCLineMods"] = (string)value; }
@@ -94,18 +108,18 @@ namespace Mahou
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
         [DefaultSettingValue("19")] //Pause Key
-        public int HKCLineKey // Hot Key Convert Line Key
+        public int HKCLineKey // Hotkey Convert Line Key
         {
             get { return (int)this["HKCLineKey"]; }
             set { this["HKCLineKey"] = (int)value; }
         }
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
-        [DefaultSettingValue("true")]
-        public bool SwitchLayoutByCaps
+        [DefaultSettingValue("CapsLock")] // Default *only* key
+        public string OnlyKeyLayoutSwicth
         {
-            get { return (bool)this["SwitchLayoutByCaps"]; }
-            set { this["SwitchLayoutByCaps"] = (bool)value; }
+            get { return (string)this["OnlyKeyLayoutSwicth"]; }
+            set { this["OnlyKeyLayoutSwicth"] = (string)value; }
         }
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
@@ -114,6 +128,14 @@ namespace Mahou
         {
             get { return (bool)this["CycleMode"]; }
             set { this["CycleMode"] = (bool)value; }
+        }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
+        [DefaultSettingValue("false")]
+        public bool BlockCTRL //Block Ctrl when active
+        {
+            get { return (bool)this["BlockCTRL"]; }
+            set { this["BlockCTRL"] = (bool)value; }
         }
     }
 }

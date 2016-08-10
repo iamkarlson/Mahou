@@ -23,7 +23,7 @@ namespace Mahou
                 count++;
                 locs.Add(new Locale
                 {
-                    Lang = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(lang.Culture.NativeName.Split('(')[0].ToLower()),
+                    Lang = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(lang.Culture.NativeName.Split(' ')[0].ToLower()),
                     uId = (uint)lang.Culture.KeyboardLayoutId
                 });
             }

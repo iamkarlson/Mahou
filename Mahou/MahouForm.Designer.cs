@@ -36,23 +36,24 @@
             this.lbl2lng = new System.Windows.Forms.Label();
             this.cbLangOne = new System.Windows.Forms.ComboBox();
             this.cbLangTwo = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.tbCLHK = new System.Windows.Forms.TextBox();
             this.tbCSHK = new System.Windows.Forms.TextBox();
             this.TrayIconCheckBox = new System.Windows.Forms.CheckBox();
             this.btnHelp = new System.Windows.Forms.Button();
             this.GitHubLink = new System.Windows.Forms.LinkLabel();
             this.cbAutorun = new System.Windows.Forms.CheckBox();
-            this.cbSpaceBreak = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.cbCLineActive = new System.Windows.Forms.CheckBox();
+            this.cbCSActive = new System.Windows.Forms.CheckBox();
+            this.cbCLActive = new System.Windows.Forms.CheckBox();
             this.tbCLineHK = new System.Windows.Forms.TextBox();
-            this.cbCapsLayoutSwitch = new System.Windows.Forms.CheckBox();
             this.HelpTT = new System.Windows.Forms.ToolTip(this.components);
             this.cbCycleMode = new System.Windows.Forms.CheckBox();
             this.btnUpd = new System.Windows.Forms.Button();
+            this.cbSwitchLayoutKeys = new System.Windows.Forms.ComboBox();
+            this.cbBlockAC = new System.Windows.Forms.CheckBox();
+            this.lbswithlayout = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -100,7 +101,7 @@
             this.lbl1lng.AutoSize = true;
             this.lbl1lng.BackColor = System.Drawing.Color.Transparent;
             this.lbl1lng.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbl1lng.Location = new System.Drawing.Point(5, 24);
+            this.lbl1lng.Location = new System.Drawing.Point(6, 24);
             this.lbl1lng.Name = "lbl1lng";
             this.lbl1lng.Size = new System.Drawing.Size(70, 13);
             this.lbl1lng.TabIndex = 3;
@@ -111,7 +112,7 @@
             this.lbl2lng.AutoSize = true;
             this.lbl2lng.BackColor = System.Drawing.Color.Transparent;
             this.lbl2lng.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbl2lng.Location = new System.Drawing.Point(5, 54);
+            this.lbl2lng.Location = new System.Drawing.Point(6, 55);
             this.lbl2lng.Name = "lbl2lng";
             this.lbl2lng.Size = new System.Drawing.Size(70, 13);
             this.lbl2lng.TabIndex = 4;
@@ -119,9 +120,10 @@
             // 
             // cbLangOne
             // 
+            this.cbLangOne.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLangOne.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbLangOne.FormattingEnabled = true;
-            this.cbLangOne.Location = new System.Drawing.Point(81, 23);
+            this.cbLangOne.Location = new System.Drawing.Point(81, 21);
             this.cbLangOne.Name = "cbLangOne";
             this.cbLangOne.Size = new System.Drawing.Size(102, 21);
             this.cbLangOne.TabIndex = 5;
@@ -129,44 +131,23 @@
             // 
             // cbLangTwo
             // 
+            this.cbLangTwo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLangTwo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbLangTwo.FormattingEnabled = true;
-            this.cbLangTwo.Location = new System.Drawing.Point(81, 50);
+            this.cbLangTwo.Location = new System.Drawing.Point(81, 52);
             this.cbLangTwo.Name = "cbLangTwo";
             this.cbLangTwo.Size = new System.Drawing.Size(102, 21);
             this.cbLangTwo.TabIndex = 6;
             this.cbLangTwo.SelectedIndexChanged += new System.EventHandler(this.cbLangTwo_SelectedIndexChanged);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(6, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(105, 13);
-            this.label1.TabIndex = 9;
-            this.label1.Text = "Convert Last Word:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(6, 41);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 13);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Convert Selection:";
-            // 
             // tbCLHK
             // 
             this.tbCLHK.BackColor = System.Drawing.Color.White;
             this.tbCLHK.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.tbCLHK.Location = new System.Drawing.Point(112, 13);
+            this.tbCLHK.Location = new System.Drawing.Point(136, 12);
             this.tbCLHK.Name = "tbCLHK";
             this.tbCLHK.ReadOnly = true;
-            this.tbCLHK.Size = new System.Drawing.Size(201, 22);
+            this.tbCLHK.Size = new System.Drawing.Size(176, 22);
             this.tbCLHK.TabIndex = 11;
             this.tbCLHK.Text = "Pause";
             this.tbCLHK.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbCLHK_KeyDown);
@@ -176,10 +157,10 @@
             // 
             this.tbCSHK.BackColor = System.Drawing.Color.White;
             this.tbCSHK.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.tbCSHK.Location = new System.Drawing.Point(112, 38);
+            this.tbCSHK.Location = new System.Drawing.Point(136, 37);
             this.tbCSHK.Name = "tbCSHK";
             this.tbCSHK.ReadOnly = true;
-            this.tbCSHK.Size = new System.Drawing.Size(201, 22);
+            this.tbCSHK.Size = new System.Drawing.Size(176, 22);
             this.tbCSHK.TabIndex = 12;
             this.tbCSHK.Text = "Scroll";
             this.tbCSHK.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbCSHK_KeyDown);
@@ -190,7 +171,7 @@
             this.TrayIconCheckBox.AutoSize = true;
             this.TrayIconCheckBox.BackColor = System.Drawing.Color.Transparent;
             this.TrayIconCheckBox.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TrayIconCheckBox.Location = new System.Drawing.Point(201, 177);
+            this.TrayIconCheckBox.Location = new System.Drawing.Point(201, 180);
             this.TrayIconCheckBox.Name = "TrayIconCheckBox";
             this.TrayIconCheckBox.Size = new System.Drawing.Size(102, 17);
             this.TrayIconCheckBox.TabIndex = 14;
@@ -236,20 +217,6 @@
             this.cbAutorun.UseVisualStyleBackColor = true;
             this.cbAutorun.CheckedChanged += new System.EventHandler(this.cbAutorun_CheckedChanged);
             // 
-            // cbSpaceBreak
-            // 
-            this.cbSpaceBreak.AutoSize = true;
-            this.cbSpaceBreak.Enabled = false;
-            this.cbSpaceBreak.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.cbSpaceBreak.Location = new System.Drawing.Point(201, 157);
-            this.cbSpaceBreak.Name = "cbSpaceBreak";
-            this.cbSpaceBreak.Size = new System.Drawing.Size(124, 17);
-            this.cbSpaceBreak.TabIndex = 18;
-            this.cbSpaceBreak.Text = "Space begins word";
-            this.cbSpaceBreak.UseVisualStyleBackColor = true;
-            this.cbSpaceBreak.CheckedChanged += new System.EventHandler(this.cbSpaceBreak_CheckedChanged);
-            this.cbSpaceBreak.MouseHover += new System.EventHandler(this.cbSpaceBreak_MouseHover);
-            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.lbl1lng);
@@ -257,18 +224,18 @@
             this.groupBox1.Controls.Add(this.cbLangOne);
             this.groupBox1.Controls.Add(this.cbLangTwo);
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.groupBox1.Location = new System.Drawing.Point(6, 132);
+            this.groupBox1.Location = new System.Drawing.Point(6, 130);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(189, 82);
+            this.groupBox1.Size = new System.Drawing.Size(189, 86);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Switch between layouts";
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.cbCLineActive);
+            this.groupBox2.Controls.Add(this.cbCSActive);
+            this.groupBox2.Controls.Add(this.cbCLActive);
             this.groupBox2.Controls.Add(this.tbCLineHK);
             this.groupBox2.Controls.Add(this.tbCLHK);
             this.groupBox2.Controls.Add(this.tbCSHK);
@@ -280,42 +247,59 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "HotKeys";
             // 
-            // label3
+            // cbCLineActive
             // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(6, 66);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(74, 13);
-            this.label3.TabIndex = 13;
-            this.label3.Text = "Convert Line:";
+            this.cbCLineActive.AutoSize = true;
+            this.cbCLineActive.Checked = true;
+            this.cbCLineActive.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbCLineActive.Location = new System.Drawing.Point(6, 65);
+            this.cbCLineActive.Name = "cbCLineActive";
+            this.cbCLineActive.Size = new System.Drawing.Size(93, 17);
+            this.cbCLineActive.TabIndex = 17;
+            this.cbCLineActive.Text = "Convert Line:";
+            this.cbCLineActive.UseVisualStyleBackColor = true;
+            this.cbCLineActive.CheckedChanged += new System.EventHandler(this.cbCLineActive_CheckedChanged);
+            // 
+            // cbCSActive
+            // 
+            this.cbCSActive.AutoSize = true;
+            this.cbCSActive.Checked = true;
+            this.cbCSActive.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbCSActive.Cursor = System.Windows.Forms.Cursors.Default;
+            this.cbCSActive.Location = new System.Drawing.Point(6, 40);
+            this.cbCSActive.Name = "cbCSActive";
+            this.cbCSActive.Size = new System.Drawing.Size(119, 17);
+            this.cbCSActive.TabIndex = 16;
+            this.cbCSActive.Text = "Convert Selection:";
+            this.cbCSActive.UseVisualStyleBackColor = true;
+            this.cbCSActive.CheckedChanged += new System.EventHandler(this.cbCSActive_CheckedChanged);
+            // 
+            // cbCLActive
+            // 
+            this.cbCLActive.AutoSize = true;
+            this.cbCLActive.BackColor = System.Drawing.Color.Transparent;
+            this.cbCLActive.Checked = true;
+            this.cbCLActive.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbCLActive.Location = new System.Drawing.Point(6, 15);
+            this.cbCLActive.Name = "cbCLActive";
+            this.cbCLActive.Size = new System.Drawing.Size(124, 17);
+            this.cbCLActive.TabIndex = 15;
+            this.cbCLActive.Text = "Convert Last Word:";
+            this.cbCLActive.UseVisualStyleBackColor = false;
+            this.cbCLActive.CheckedChanged += new System.EventHandler(this.cbCLActive_CheckedChanged);
             // 
             // tbCLineHK
             // 
             this.tbCLineHK.BackColor = System.Drawing.Color.White;
             this.tbCLineHK.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.tbCLineHK.Location = new System.Drawing.Point(112, 63);
+            this.tbCLineHK.Location = new System.Drawing.Point(136, 62);
             this.tbCLineHK.Name = "tbCLineHK";
             this.tbCLineHK.ReadOnly = true;
-            this.tbCLineHK.Size = new System.Drawing.Size(201, 22);
+            this.tbCLineHK.Size = new System.Drawing.Size(176, 22);
             this.tbCLineHK.TabIndex = 14;
             this.tbCLineHK.Text = "Control + Pause";
             this.tbCLineHK.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbCLineHK_KeyDown);
             this.tbCLineHK.MouseHover += new System.EventHandler(this.tbCLineHK_MouseHover);
-            // 
-            // cbCapsLayoutSwitch
-            // 
-            this.cbCapsLayoutSwitch.AutoSize = true;
-            this.cbCapsLayoutSwitch.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.cbCapsLayoutSwitch.Location = new System.Drawing.Point(201, 137);
-            this.cbCapsLayoutSwitch.Name = "cbCapsLayoutSwitch";
-            this.cbCapsLayoutSwitch.Size = new System.Drawing.Size(133, 17);
-            this.cbCapsLayoutSwitch.TabIndex = 21;
-            this.cbCapsLayoutSwitch.Text = "Caps switches layout";
-            this.cbCapsLayoutSwitch.UseVisualStyleBackColor = true;
-            this.cbCapsLayoutSwitch.CheckedChanged += new System.EventHandler(this.cbCapsLayoutSwitch_CheckedChanged);
-            this.cbCapsLayoutSwitch.MouseHover += new System.EventHandler(this.cbCapsLayoutSwitch_MouseHover);
             // 
             // HelpTT
             // 
@@ -331,7 +315,7 @@
             // 
             this.cbCycleMode.AutoSize = true;
             this.cbCycleMode.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.cbCycleMode.Location = new System.Drawing.Point(201, 197);
+            this.cbCycleMode.Location = new System.Drawing.Point(201, 199);
             this.cbCycleMode.Name = "cbCycleMode";
             this.cbCycleMode.Size = new System.Drawing.Size(120, 17);
             this.cbCycleMode.TabIndex = 22;
@@ -352,17 +336,56 @@
             this.btnUpd.Click += new System.EventHandler(this.btnUpd_Click);
             this.btnUpd.MouseHover += new System.EventHandler(this.btnUpd_MouseHover);
             // 
+            // cbSwitchLayoutKeys
+            // 
+            this.cbSwitchLayoutKeys.DisplayMember = "0";
+            this.cbSwitchLayoutKeys.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbSwitchLayoutKeys.FormattingEnabled = true;
+            this.cbSwitchLayoutKeys.Items.AddRange(new object[] {
+            "CapsLock",
+            "Left Control",
+            "Right Control",
+            "None"});
+            this.cbSwitchLayoutKeys.Location = new System.Drawing.Point(201, 141);
+            this.cbSwitchLayoutKeys.Name = "cbSwitchLayoutKeys";
+            this.cbSwitchLayoutKeys.Size = new System.Drawing.Size(117, 21);
+            this.cbSwitchLayoutKeys.TabIndex = 24;
+            this.cbSwitchLayoutKeys.ValueMember = "0";
+            this.cbSwitchLayoutKeys.SelectedIndexChanged += new System.EventHandler(this.cbSwitchLayoutKeys_SelectedIndexChanged);
+            // 
+            // cbBlockAC
+            // 
+            this.cbBlockAC.Location = new System.Drawing.Point(201, 163);
+            this.cbBlockAC.Name = "cbBlockAC";
+            this.cbBlockAC.Size = new System.Drawing.Size(102, 17);
+            this.cbBlockAC.TabIndex = 0;
+            this.cbBlockAC.Text = "Block CTRL";
+            this.cbBlockAC.UseVisualStyleBackColor = true;
+            this.cbBlockAC.CheckedChanged += new System.EventHandler(this.cbBlockAC_CheckedChanged);
+            this.cbBlockAC.MouseHover += new System.EventHandler(this.cbBlockAC_MouseHover);
+            // 
+            // lbswithlayout
+            // 
+            this.lbswithlayout.AutoSize = true;
+            this.lbswithlayout.BackColor = System.Drawing.Color.Transparent;
+            this.lbswithlayout.Location = new System.Drawing.Point(204, 125);
+            this.lbswithlayout.Name = "lbswithlayout";
+            this.lbswithlayout.Size = new System.Drawing.Size(114, 13);
+            this.lbswithlayout.TabIndex = 25;
+            this.lbswithlayout.Text = "Switch layout by key:";
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(330, 251);
+            this.Controls.Add(this.cbBlockAC);
+            this.Controls.Add(this.cbSwitchLayoutKeys);
+            this.Controls.Add(this.lbswithlayout);
             this.Controls.Add(this.btnUpd);
             this.Controls.Add(this.cbCycleMode);
-            this.Controls.Add(this.cbCapsLayoutSwitch);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.cbSpaceBreak);
             this.Controls.Add(this.cbAutorun);
             this.Controls.Add(this.GitHubLink);
             this.Controls.Add(this.btnHelp);
@@ -401,22 +424,23 @@
         private System.Windows.Forms.Label lbl2lng;
         private System.Windows.Forms.ComboBox cbLangOne;
         private System.Windows.Forms.ComboBox cbLangTwo;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbCLHK;
         private System.Windows.Forms.TextBox tbCSHK;
         private System.Windows.Forms.CheckBox TrayIconCheckBox;
         private System.Windows.Forms.Button btnHelp;
         private System.Windows.Forms.LinkLabel GitHubLink;
         private System.Windows.Forms.CheckBox cbAutorun;
-        private System.Windows.Forms.CheckBox cbSpaceBreak;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox cbCapsLayoutSwitch;
         private System.Windows.Forms.ToolTip HelpTT;
         private System.Windows.Forms.CheckBox cbCycleMode;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbCLineHK;
         private System.Windows.Forms.Button btnUpd;
+        private System.Windows.Forms.CheckBox cbCLineActive;
+        private System.Windows.Forms.CheckBox cbCSActive;
+        private System.Windows.Forms.CheckBox cbCLActive;
+        private System.Windows.Forms.ComboBox cbSwitchLayoutKeys;
+        private System.Windows.Forms.CheckBox cbBlockAC;
+        private System.Windows.Forms.Label lbswithlayout;
     }
 }

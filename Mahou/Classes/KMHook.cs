@@ -29,7 +29,9 @@ namespace Mahou
         public static bool self = false, afterConversion = false, printable = false,
                            win = false, alt = false, ctrl = false, shift = false,
                            PressShiftAgain = false, PressCtrlAgain = false, PressAltAgain = false,
-                           bothnotmatch = false;
+                           awas = false, swas = false, cwas = false,
+                           bothnotmatch = false, altnum = false, altnumline = false;
+        public static int altnums_word = 0, altnums_line = 0;
         public static Exception notINany = new Exception("Selected text is not in any of selected layouts(locales/languages) in settings\nor contains characters from other than selected layouts(locales/languages).");
         public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
@@ -59,40 +61,59 @@ namespace Mahou
             Keys Key = (Keys)vkCode; // "Key" will further be used instead of "(Keys)vkCode"
 
             //Checks modifiers that are down
-            if (Key == Keys.LShiftKey || Key == Keys.RShiftKey)
+            if (Key == Keys.LShiftKey || Key == Keys.RShiftKey || Key == Keys.ShiftKey)
             { shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
-            if (Key == Keys.RControlKey || Key == Keys.LControlKey)
+            if (Key == Keys.RControlKey || Key == Keys.LControlKey || Key == Keys.ControlKey)
             { ctrl = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
-            if (Key == Keys.RMenu || Key == Keys.LMenu)
+            if (Key == Keys.RMenu || Key == Keys.LMenu || Key == Keys.Menu)
             { alt = (wParam == (IntPtr)KMMessages.WM_SYSKEYDOWN) ? true : false; }
             if (Key == Keys.RWin || Key == Keys.LWin) // Checks if win is down
             { win = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
-
             // Releases
-            if (MahouForm.hotkeywithmodsfired)
+            if (MahouForm.hotkeywithmodsfired && wParam == (IntPtr)KMMessages.WM_KEYUP && !self &&
+                (Key == Keys.LShiftKey || Key == Keys.LMenu || Key == Keys.LControlKey))
             {
                 MahouForm.hotkeywithmodsfired = false;
-                if (!shift)
-                { keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0); }
-                if (!alt)
-                { keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0); }
-                if (!ctrl)
-                { keybd_event((int)Keys.LControlKey, (byte)MapVirtualKey((int)Keys.LControlKey, 0), 1 | 2, 0); }
+                if (swas)
+                {
+                    swas = false;
+                    keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
+                }
+                if (awas)
+                {
+                    awas = false;
+                    keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0);
+                }
+                if (cwas)
+                {
+                    cwas = false;
+                    keybd_event((int)Keys.LControlKey, (byte)MapVirtualKey((int)Keys.LControlKey, 0), 1 | 2, 0);
+                }
+                Thread.Sleep(20);
             }
             if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
-                if (Key == Keys.CapsLock && !self && MMain.MySetts.SwitchLayoutByCaps)
+                if (!self && MMain.MySetts.OnlyKeyLayoutSwicth != "None")
                 {
+                    var s = MMain.MySetts.OnlyKeyLayoutSwicth;
                     self = true;
-                    //Code below removes CapsLock original action, but if hold will not work...
-                    if (Control.IsKeyLocked(Keys.CapsLock))
+                    if (s == "CapsLock" && Key == Keys.CapsLock)
                     {
+                        //Code below removes CapsLock original action, but if hold will not work...
+                        if (Control.IsKeyLocked(Keys.CapsLock))
+                        {
+                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
+                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
+                        }
                         KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
                         KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
+                        ChangeLayout();
                     }
-                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
-                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
-                    ChangeLayout();
+                    else if (s == "Right Control" && Key == Keys.RControlKey ||
+                             s == "Left Control" && Key == Keys.LControlKey)
+                    {
+                        ChangeLayout();
+                    }
                     self = false;
                 }
                 if (Key == Keys.Space && afterConversion && !self) // && MMain.MySetts.SpaceBreak
@@ -118,12 +139,17 @@ namespace Mahou
                 {
                     MMain.c_word.Clear();
                     MMain.c_line.Clear();
+                    //altnums_word = 0;
+                    //altnums_line = 0;
+                    //altnum = false;
+                    //altnumline = false;
                 }
                 if (Key == Keys.Space && !self)
                 {
+                    //altnum = false;
+                    //altnums_word = 0;
                     MMain.c_word.Clear();
                     MMain.c_line.Add(new YuKey() { yukey = Keys.Space, upper = false });
-                    // WriteEveryWhere(" ", new YuKey() { yukey = Keys.Space, upper = false });
                 }
                 if (
                     (Key >= Keys.D0 && Key <= Keys.Z) ||
@@ -135,27 +161,25 @@ namespace Mahou
                 else { printable = false; }
                 if (printable && !self && !win)
                 {
-                    //uint Cyulocale = Locales.GetCurrentLocale();
                     if (!shift)
                     {
                         MMain.c_word.Add(new YuKey() { yukey = Key, upper = false });
                         MMain.c_line.Add(new YuKey() { yukey = Key, upper = false });
-                        //WriteEveryWhere((MakeAnother(vkCode, Cyulocale)),new YuKey() { yukey = Key, upper = false });
                     }
                     else
                     {
                         MMain.c_word.Add(new YuKey() { yukey = Key, upper = true });
                         MMain.c_line.Add(new YuKey() { yukey = Key, upper = true });
-                        //WriteEveryWhere((MakeAnother(vkCode, Cyulocale)).ToUpper(),new YuKey() { yukey = Key, upper = true });
                     }
                 }
             }
-            /*TODO need to be improved
-            Console.WriteLine(altnum);
-            if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_SYSKEYDOWN && (Key >= Keys.NumPad0 && Key <= Keys.NumPad9))
+            if (alt && (Key >= Keys.NumPad0 && Key <= Keys.NumPad9))
             {
-                altnum = true;
-            }*/
+                //altnums_word += 1;
+                //altnums_line += 1;
+                //altnum = true;
+                //altnumline = true;
+            }
             return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
         }
         public static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
@@ -199,7 +223,7 @@ namespace Mahou
                     Thread.Sleep(10);
                     keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1, 0);
                     Thread.Sleep(10);
-                    keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0), 1 | 2, 0);
+                    keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0),1 | 2, 0);
                     keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1 | 2, 0);
                     Thread.Sleep(10);
                     Exception threadEx = null;
@@ -208,7 +232,7 @@ namespace Mahou
                     {
                         try
                         {
-                            Console.WriteLine("Tryed " + i); ClipStr = Clipboard.GetText();
+                            Console.WriteLine("Try #" + i); ClipStr = Clipboard.GetText();
                         }
                         catch (Exception ex) { threadEx = ex; }
                     });
@@ -246,53 +270,76 @@ namespace Mahou
                 self = false;
                 MahouForm.HKCSelection.Register(); //Restores CS hotkey ability
             }
-            Console.WriteLine(ClipStr);
         }
-        public static void dbg(string s){Console.WriteLine(s);}
         public static void RePress()
         {
             //Repress's modifiers by Press Again variables
             if (PressShiftAgain)
             {
-                dbg("Pressed again Shift");
+                swas = true;
                 keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1, 0);
                 Thread.Sleep(10);
                 PressShiftAgain = false;
             }
             if (PressAltAgain)
             {
-                dbg("Pressed again Alt");
+                awas = true;
                 keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1, 0);
                 Thread.Sleep(10);
                 PressAltAgain = false;
             }
             if (PressCtrlAgain)
             {
-                dbg("Pressed again CTRL");
+                cwas = true;
                 keybd_event((int)Keys.LControlKey, (byte)MapVirtualKey((int)Keys.LControlKey, 0), 1, 0);
                 Thread.Sleep(10);
                 PressCtrlAgain = false;
             }
         }
-        public static void ConvertLast(System.Collections.Generic.List<YuKey> c_)
+        public static void ConvertLast(System.Collections.Generic.List<YuKey> c_, bool altn, int altnc)
         {
             Locales.IfLessThan2();
             YuKey[] YuKeys = c_.ToArray();
-            if (YuKeys.Length > 0)
-            {
+            if (altn) // Fix if entered alt + numpad
+            {/*TODO Make it work with !self, if ever possible? :( :< :[
+                Console.WriteLine("I still working");
                 self = true;
-                ChangeLayout();
-                for (int e = YuKeys.Length; e != 0; e--)
+                Thread staThread = new Thread(delegate()
                 {
-                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
-                }
-                foreach (YuKey yk in YuKeys)
+                    for (int i = YuKeys.Length + altnc; i != 0; i--)
+                    {
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true, true) }, true);
+                    }
+                    ConvertSelection();
+                    for (int i = YuKeys.Length + altnc; i != 0; i--)
+                    {
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Right, true, true) }, true);
+                    }
+                });
+                staThread.Name = "FIX FOR ALTNUM";
+                staThread.SetApartmentState(ApartmentState.STA);
+                staThread.Start();
+                staThread.Join();
+              */
+            }
+            else
+            {
+                if (YuKeys.Length > 0)
                 {
-                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true, false) }, yk.upper);
+                    self = true;
+                    ChangeLayout();
+                    for (int e = YuKeys.Length; e != 0; e--)
+                    {
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
+                    }
+                    foreach (YuKey yk in YuKeys)
+                    {
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true, false) }, yk.upper);
+                    }
+                    RePress();
+                    self = false;
+                    afterConversion = true;
                 }
-                RePress();
-                self = false;
-                afterConversion = true;
             }
         }
         private static void ChangeLayout()
@@ -369,8 +416,8 @@ namespace Mahou
             Thread.Sleep(10);
             keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1, 0);
             Thread.Sleep(10);
-            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
-            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0);
+            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 2, 0);
+            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 2, 0);
             Thread.Sleep(10);
         }
         public struct YuKey // YuKey is struct of key and it state(upper/lower)
@@ -378,23 +425,6 @@ namespace Mahou
             public Keys yukey;
             public bool upper;
         }
-        /* Debug, uncomment if needed
-        public static string MakeAnother(int vkCode, uint uId)
-        {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder(10);
-            var lpkst = new byte[256];
-            if (shift)
-            {
-                lpkst[(int)Keys.ShiftKey] = 0xff;
-            }
-            int rc = ToUnicodeEx((uint)vkCode, (uint)vkCode, lpkst, sb, sb.Capacity, 0, (IntPtr)uId);
-            return sb.ToString();
-        }
-        public static void WriteEveryWhere(string vc, YuKey Yu) //as name says
-        {
-            //Console.WriteLine(vc);
-            MMain.c_word.Add(Yu);
-        }*/
         #endregion
         #region DLL imports
         [DllImport("user32.dll")]
