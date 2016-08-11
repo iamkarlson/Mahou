@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading;
+using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 namespace Mahou
 {
@@ -268,12 +269,13 @@ namespace Mahou
                     var result = "";
                     result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
                     //if same first time try switching locales
-                    if (result == ClipStr)
+                    //Without Regex.Replace below selected text that heve new line will stop converting
+                    if (Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n") == Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
                     {
                         result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId, true);
                     }
                     //Fix for multiline duplications
-                    result = System.Text.RegularExpressions.Regex.Replace(result, "\r\n", "\n");
+                    result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
                     //Inputs converted text
                     KInputs.MakeInput(KInputs.AddString(result, true), false);
                     //reselects text
