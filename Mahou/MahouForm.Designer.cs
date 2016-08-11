@@ -352,6 +352,7 @@
             this.cbSwitchLayoutKeys.TabIndex = 24;
             this.cbSwitchLayoutKeys.ValueMember = "0";
             this.cbSwitchLayoutKeys.SelectedIndexChanged += new System.EventHandler(this.cbSwitchLayoutKeys_SelectedIndexChanged);
+            this.cbSwitchLayoutKeys.MouseHover += new System.EventHandler(this.cbSwitchLayoutKeys_MouseHover);
             // 
             // cbBlockAC
             // 

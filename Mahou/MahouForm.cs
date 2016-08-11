@@ -353,12 +353,12 @@ namespace Mahou
             //These three below are needed to release all modifiers, so even if you will still hold any of it
             //it will skip them and do as it must.
             KMHook.self = true;
-            KMHook.keybd_event((int)Keys.RMenu, (byte)KMHook.MapVirtualKey((int)Keys.RMenu, 0), 2, 0); // Right Alt Up
-            KMHook.keybd_event((int)Keys.LMenu, (byte)KMHook.MapVirtualKey((int)Keys.LMenu, 0), 2, 0); // Left Alt Up
-            KMHook.keybd_event((int)Keys.RShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.RShiftKey, 0), 2, 0); // Right Shift Up
-            KMHook.keybd_event((int)Keys.LShiftKey, (byte)KMHook.MapVirtualKey((int)Keys.LShiftKey, 0), 2, 0); // Left Shift Up
-            KMHook.keybd_event((int)Keys.RControlKey, (byte)KMHook.MapVirtualKey((int)Keys.RControlKey, 0), 2, 0); // Right Control Up
-            KMHook.keybd_event((int)Keys.LControlKey, (byte)KMHook.MapVirtualKey((int)Keys.LControlKey, 0), 2, 0); // Left Control Up
+            KMHook.KeybdEvent(Keys.RMenu, 2); // Right Alt Up
+            KMHook.KeybdEvent(Keys.LMenu, 2); // Left Alt Up
+            KMHook.KeybdEvent(Keys.RShiftKey, 2);// Right Shift Up
+            KMHook.KeybdEvent(Keys.LShiftKey, 2); // Left Shift Up
+            KMHook.KeybdEvent(Keys.RControlKey, 2); // Right Control Up
+            KMHook.KeybdEvent(Keys.LControlKey, 2); // Left Control Up
             System.Threading.Thread.Sleep(20);
             KMHook.self = false;
         }
@@ -724,6 +724,12 @@ namespace Mahou
         {
             HelpTT.ToolTipTitle = cbBlockAC.Text;
             HelpTT.Show("Blocks hotkeys that use Control,\nwhen \"Switch layout by key\" is set to Left/Right Control.", cbBlockAC);
+        }
+        private void cbSwitchLayoutKeys_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = cbSwitchLayoutKeys.Text;
+            HelpTT.Show("Left Control supports only \"Cycle switch\", other works depending on \"Enable cycle mode\" checkbox.\nAs for CapsLock please don't hold it when is assigned.", cbSwitchLayoutKeys);
+        
         }
         #endregion
     }

@@ -51,28 +51,8 @@ class KInputs
     }
 #pragma warning restore 649
     #endregion
-    #region Add Inputs & Make Input
-    public static INPUT AddChar(char ch, bool down)
-    {
-        UInt16 scan = ch;
-        INPUT input = new INPUT
-        {
-            Type = INPUT_KEYBOARD,
-            Data =
-            {
-                Keyboard = new KEYBDINPUT
-                {
-                    Vk = 0,
-                    Flags = down ? KEYEVENTF_UNICODE : (KEYEVENTF_UNICODE | KEYEVENTF_KEYUP),
-                    Scan = ch,
-                    ExtraInfo = IntPtr.Zero,
-                    Time = 0
-                }
-            }
-        };
-        return input;
-    }
-    public static INPUT AddKey(Keys key, bool down, bool extended)
+    #region Add Inputs & Make Input & check
+    public static INPUT AddKey(Keys key, bool down)
     {
         UInt16 vk = (UInt16)key;
         INPUT input = new INPUT
@@ -83,7 +63,7 @@ class KInputs
                 Keyboard = new KEYBDINPUT
                 {
                     Vk = vk,
-                    Flags = extended ? (down ? (KEYEVENTF_EXTENDEDKEY) : (KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY)) : (down ? 0 : KEYEVENTF_KEYUP),
+                    Flags = IsExtended(key) ? (down ? (KEYEVENTF_EXTENDEDKEY) : (KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY)) : (down ? 0 : KEYEVENTF_KEYUP),
                     Scan = 0,
                     ExtraInfo = IntPtr.Zero,
                     Time = 0
@@ -91,6 +71,29 @@ class KInputs
             }
         };
         return input;
+    }
+    public static bool IsExtended(Keys key)
+    {
+        if (key == Keys.Menu ||
+            key == Keys.LMenu ||
+            key == Keys.RMenu ||
+            key == Keys.Control ||
+            key == Keys.RControlKey ||
+            key == Keys.Insert ||
+            key == Keys.Delete ||
+            key == Keys.Home ||
+            key == Keys.End ||
+            key == Keys.Prior ||
+            key == Keys.Next ||
+            key == Keys.Right ||
+            key == Keys.Up ||
+            key == Keys.Left ||
+            key == Keys.Down ||
+            key == Keys.NumLock ||
+            key == Keys.Cancel ||
+            key == Keys.Snapshot ||
+            key == Keys.Divide)
+        { return true; } else { return false; }
     }
     public static INPUT[] AddString(string str, bool down)
     {
@@ -126,7 +129,7 @@ class KInputs
     {
         if (shift)
         {
-            SendInput(1, new INPUT[] { AddKey(Keys.ShiftKey, true, true) }, Marshal.SizeOf(typeof(INPUT)));
+            SendInput(1, new INPUT[] { AddKey(Keys.ShiftKey, true) }, Marshal.SizeOf(typeof(INPUT)));
         }
         foreach (INPUT INPT in inputs)
         {
@@ -137,7 +140,7 @@ class KInputs
             sendlastUP.Data.Keyboard.Flags = (KEYEVENTF_UNICODE | KEYEVENTF_KEYUP);
             SendInput(1, new INPUT[] {sendlastUP}, Marshal.SizeOf(typeof(INPUT)));
         }
-        SendInput(1, new INPUT[] { AddKey(Keys.ShiftKey, false, true) }, Marshal.SizeOf(typeof(INPUT)));
+        SendInput(1, new INPUT[] { AddKey(Keys.ShiftKey, false) }, Marshal.SizeOf(typeof(INPUT)));
     }
     #endregion
     #region DLL

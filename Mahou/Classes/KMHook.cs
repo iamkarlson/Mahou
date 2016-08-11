@@ -59,8 +59,7 @@ namespace Mahou
         {
             int vkCode = Marshal.ReadInt32(lParam);
             Keys Key = (Keys)vkCode; // "Key" will further be used instead of "(Keys)vkCode"
-
-            //Checks modifiers that are down
+            #region Checks modifiers that are down
             if (Key == Keys.LShiftKey || Key == Keys.RShiftKey || Key == Keys.ShiftKey)
             { shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
             if (Key == Keys.RControlKey || Key == Keys.LControlKey || Key == Keys.ControlKey)
@@ -69,7 +68,8 @@ namespace Mahou
             { alt = (wParam == (IntPtr)KMMessages.WM_SYSKEYDOWN) ? true : false; }
             if (Key == Keys.RWin || Key == Keys.LWin) // Checks if win is down
             { win = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
-            // Releases
+            #endregion
+            #region Release Re-Pressed keys
             if (MahouForm.hotkeywithmodsfired && wParam == (IntPtr)KMMessages.WM_KEYUP && !self &&
                 (Key == Keys.LShiftKey || Key == Keys.LMenu || Key == Keys.LControlKey))
             {
@@ -77,45 +77,66 @@ namespace Mahou
                 if (swas)
                 {
                     swas = false;
-                    keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
+                    KeybdEvent(Keys.LShiftKey, 2);
                 }
                 if (awas)
                 {
                     awas = false;
-                    keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 | 2, 0);
+                    KeybdEvent(Keys.LMenu, 2);
                 }
                 if (cwas)
                 {
                     cwas = false;
-                    keybd_event((int)Keys.LControlKey, (byte)MapVirtualKey((int)Keys.LControlKey, 0), 1 | 2, 0);
+                    KeybdEvent(Keys.LControlKey, 2);
                 }
                 Thread.Sleep(20);
             }
+            #endregion
+            #region Switch only key
+            if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "CapsLock" && Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            {
+                self = true;
+                ChangeLayout();
+                self = false;
+            }
+            if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "CapsLock" && Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
+            {
+                self = true;  
+                if (Control.IsKeyLocked(Keys.CapsLock)) // Turn off if alraedy on
+                {
+                    KeybdEvent(Keys.CapsLock, 0);
+                    KeybdEvent(Keys.CapsLock, 2);
+                }
+                //Code below removes CapsLock original action, but if hold will not work and will stuck, press again to off.
+                KeybdEvent(Keys.CapsLock, 0);
+                KeybdEvent(Keys.CapsLock, 2);
+                self = false;
+            }
+            if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "Left Control" && Key == Keys.LControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            {
+                //The only working way for left control... o_0
+                self = true;
+                KeybdEvent(Keys.LControlKey, 2);
+                KeybdEvent(Keys.LMenu, 0);
+                Thread.Sleep(10);
+                KeybdEvent(Keys.LShiftKey, 0);
+                Thread.Sleep(10);
+                KeybdEvent(Keys.LMenu, 2);
+                Thread.Sleep(10);
+                KeybdEvent(Keys.LShiftKey, 2);
+                self = false;
+            }
+            if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "Right Control" && Key == Keys.RControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            {
+                self = true;
+                KeybdEvent(Keys.RControlKey, 2);
+                ChangeLayout();
+                self = false;
+            }
+            #endregion
+            #region Other, when KeyDown
             if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
-                if (!self && MMain.MySetts.OnlyKeyLayoutSwicth != "None")
-                {
-                    var s = MMain.MySetts.OnlyKeyLayoutSwicth;
-                    self = true;
-                    if (s == "CapsLock" && Key == Keys.CapsLock)
-                    {
-                        //Code below removes CapsLock original action, but if hold will not work...
-                        if (Control.IsKeyLocked(Keys.CapsLock))
-                        {
-                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
-                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
-                        }
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, true, true) }, false);
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.CapsLock, false, true) }, false);
-                        ChangeLayout();
-                    }
-                    else if (s == "Right Control" && Key == Keys.RControlKey ||
-                             s == "Left Control" && Key == Keys.LControlKey)
-                    {
-                        ChangeLayout();
-                    }
-                    self = false;
-                }
                 if (Key == Keys.Space && afterConversion && !self) // && MMain.MySetts.SpaceBreak
                 {
                     MMain.c_word.Clear();
@@ -159,7 +180,7 @@ namespace Mahou
                     printable = true;
                 }
                 else { printable = false; }
-                if (printable && !self && !win)
+                if (printable && !self && !win && !alt && !ctrl)
                 {
                     if (!shift)
                     {
@@ -173,6 +194,8 @@ namespace Mahou
                     }
                 }
             }
+            #endregion
+            #region Alt+Numpad (not implented yet)
             if (alt && (Key >= Keys.NumPad0 && Key <= Keys.NumPad9))
             {
                 //altnums_word += 1;
@@ -180,6 +203,7 @@ namespace Mahou
                 //altnum = true;
                 //altnumline = true;
             }
+            #endregion
             return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
         }
         public static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
@@ -211,12 +235,13 @@ namespace Mahou
                     //by pressing "Convert Selection hotkey" without selected text.
                     Clipboard.Clear();
                     //Without Thread.Sleep() below - Clipboard.GetText() will crash,
-                    keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0), 1, 0);
+                    KeybdEvent(Keys.RControlKey, 0);
                     Thread.Sleep(10);
-                    keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1, 0);
+                    KeybdEvent(Keys.Insert, 0);
                     Thread.Sleep(10);
-                    keybd_event((int)Keys.RControlKey, (byte)MapVirtualKey((int)Keys.RControlKey, 0),1 | 2, 0);
-                    keybd_event((int)Keys.Insert, (byte)MapVirtualKey((int)Keys.Insert, 0), 1 | 2, 0);
+                    KeybdEvent(Keys.RControlKey, 2);
+                    Thread.Sleep(10);
+                    KeybdEvent(Keys.Insert, 2);
                     Thread.Sleep(10);
                     Exception threadEx = null;
                     //If errored using thread, will not make all app to freeze, instead of just try/catch that actually will...
@@ -239,7 +264,7 @@ namespace Mahou
             {
                 if (!String.IsNullOrEmpty(ClipStr))
                 {
-                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
+                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true) }, false);
                     var result = "";
                     result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
                     //if same first time try switching locales
@@ -254,7 +279,7 @@ namespace Mahou
                     //reselects text
                     for (int i = result.Length; i != 0; i--)
                     {
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true, true) }, true);
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true) }, true);
                     }
                     Clipboard.Clear();
                 }
@@ -269,21 +294,21 @@ namespace Mahou
             if (PressShiftAgain)
             {
                 swas = true;
-                keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1, 0);
+                KeybdEvent(Keys.LShiftKey, 0);
                 Thread.Sleep(10);
                 PressShiftAgain = false;
             }
             if (PressAltAgain)
             {
                 awas = true;
-                keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1, 0);
+                KeybdEvent(Keys.LMenu, 0);
                 Thread.Sleep(10);
                 PressAltAgain = false;
             }
             if (PressCtrlAgain)
             {
                 cwas = true;
-                keybd_event((int)Keys.LControlKey, (byte)MapVirtualKey((int)Keys.LControlKey, 0), 1, 0);
+                KeybdEvent(Keys.LControlKey, 0);
                 Thread.Sleep(10);
                 PressCtrlAgain = false;
             }
@@ -322,11 +347,11 @@ namespace Mahou
                     ChangeLayout();
                     for (int e = YuKeys.Length; e != 0; e--)
                     {
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true, true) }, false);
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true) }, false);
                     }
                     foreach (YuKey yk in YuKeys)
                     {
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true, false) }, yk.upper);
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true) }, yk.upper);
                     }
                     RePress();
                     self = false;
@@ -402,18 +427,26 @@ namespace Mahou
         private static void CycleSwitch()
         {
             //Without Sleeps below won't work.
-            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 , 0);
-            Thread.Sleep(10);
-            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 , 0);
-            Thread.Sleep(10);
-            keybd_event((int)Keys.LShiftKey, (byte)MapVirtualKey((int)Keys.LShiftKey, 0), 1 | 2, 0);
-            keybd_event((int)Keys.LMenu, (byte)MapVirtualKey((int)Keys.LMenu, 0), 1 |2, 0);
-            Thread.Sleep(10);
+            KeybdEvent(Keys.LMenu, 0);
+            Thread.Sleep(5);
+            KeybdEvent(Keys.LShiftKey, 0);
+            Thread.Sleep(5);
+            KeybdEvent(Keys.LMenu, 2);
+            Thread.Sleep(5);
+            KeybdEvent(Keys.LShiftKey, 2);
         }
         public struct YuKey // YuKey is struct of key and it state(upper/lower)
         {
             public Keys yukey;
             public bool upper;
+        }
+        public static void KeybdEvent(Keys key, int flags) // Simplified keybd_event with exteded recongize feature
+        {
+            var extended = KInputs.IsExtended(key) ? 1 : 0;
+            //Console.WriteLine(key + ":" + (extended | flags).ToString());
+            //Do not remove this line, it needed for "Left Control Switch Layout" to work properly
+            Thread.Sleep(15);
+            keybd_event((byte)key, 0, flags | extended, 0);
         }
         #endregion
         #region DLL imports
@@ -422,8 +455,6 @@ namespace Mahou
         static extern bool SetForegroundWindow(IntPtr hWnd);
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
         public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
-        [DllImport("user32.dll")]
-        public static extern short MapVirtualKey(int wCode, int wMapType);
         [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode,
             byte[] lpKeyState, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
