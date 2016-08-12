@@ -31,8 +31,8 @@ namespace Mahou
                            win = false, alt = false, ctrl = false, shift = false,
                            PressShiftAgain = false, PressCtrlAgain = false, PressAltAgain = false,
                            awas = false, swas = false, cwas = false,
-                           bothnotmatch = false, altnum = false, altnumline = false;
-        public static int altnums_word = 0, altnums_line = 0;
+                           bothnotmatch = false, altinword = false, altinline = false;
+        public static int altcount_word = 0, altcount_line = 0;
         public static Exception notINany = new Exception("Selected text is not in any of selected layouts(locales/languages) in settings\nor contains characters from other than selected layouts(locales/languages).");
         public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
@@ -88,7 +88,7 @@ namespace Mahou
                 if (cwas)
                 {
                     cwas = false;
-                    KeybdEvent(Keys.LControlKey, 2);
+                    KeybdEvent(Keys.Control, 2);
                 }
                 Thread.Sleep(20);
             }
@@ -102,7 +102,7 @@ namespace Mahou
             }
             if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "CapsLock" && Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
-                self = true;  
+                self = true;
                 if (Control.IsKeyLocked(Keys.CapsLock)) // Turn off if alraedy on
                 {
                     KeybdEvent(Keys.CapsLock, 0);
@@ -115,22 +115,22 @@ namespace Mahou
             }
             if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "Left Control" && Key == Keys.LControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
             {
-                //The only working way for left control... o_0
                 self = true;
-                KeybdEvent(Keys.LControlKey, 2);
-                KeybdEvent(Keys.LMenu, 0);
-                Thread.Sleep(10);
-                KeybdEvent(Keys.LShiftKey, 0);
-                Thread.Sleep(10);
-                KeybdEvent(Keys.LMenu, 2);
-                Thread.Sleep(10);
-                KeybdEvent(Keys.LShiftKey, 2);
+                if (MMain.MySetts.EmulateLayoutSwitch)
+                {
+                    KeybdEvent(Keys.LControlKey, 2); // Sends it up to make it work when using "EmulateLayoutSwitch" 
+                } 
+                ChangeLayout();
+                KeybdEvent(Keys.LControlKey, 2); //fix for PostMessage, it somehow o_0 sends another ctrl...
                 self = false;
             }
             if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "Right Control" && Key == Keys.RControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
             {
                 self = true;
-                KeybdEvent(Keys.RControlKey, 2);
+                if (MMain.MySetts.EmulateLayoutSwitch)
+                {
+                    KeybdEvent(Keys.RControlKey, 2); // Sends it up to make it work when using "EmulateLayoutSwitch" 
+                }
                 ChangeLayout();
                 self = false;
             }
@@ -161,15 +161,12 @@ namespace Mahou
                 {
                     MMain.c_word.Clear();
                     MMain.c_line.Clear();
-                    //altnums_word = 0;
-                    //altnums_line = 0;
-                    //altnum = false;
-                    //altnumline = false;
+                    //altinline = false;
+                    //altinword = false;
                 }
                 if (Key == Keys.Space && !self)
                 {
-                    //altnum = false;
-                    //altnums_word = 0;
+                    //altinword = false;
                     MMain.c_word.Clear();
                     MMain.c_line.Add(new YuKey() { yukey = Keys.Space, upper = false });
                 }
@@ -196,13 +193,13 @@ namespace Mahou
                 }
             }
             #endregion
-            #region Alt+Numpad (not implented yet)
-            if (alt && (Key >= Keys.NumPad0 && Key <= Keys.NumPad9))
+            #region Alt+Numpad (not Implemented yet)
+            if (wParam == (IntPtr)KMMessages.WM_KEYUP && (Key == Keys.LMenu || Key == Keys.RMenu))
             {
-                //altnums_word += 1;
-                //altnums_line += 1;
-                //altnum = true;
-                //altnumline = true;
+                //altinline = true;
+                //altinword = true;
+                //altcount_word++;
+                //altcount_line++;
             }
             #endregion
             return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
@@ -235,15 +232,11 @@ namespace Mahou
                     //This prevents from converting text that alredy exist in Clipboard
                     //by pressing "Convert Selection hotkey" without selected text.
                     Clipboard.Clear();
-                    //Without Thread.Sleep() below - Clipboard.GetText() will crash,
-                    KeybdEvent(Keys.RControlKey, 0);
-                    Thread.Sleep(10);
-                    KeybdEvent(Keys.Insert, 0);
-                    Thread.Sleep(10);
-                    KeybdEvent(Keys.RControlKey, 2);
-                    Thread.Sleep(10);
-                    KeybdEvent(Keys.Insert, 2);
-                    Thread.Sleep(10);
+                    KInputs.MakeInput(new KInputs.INPUT[] {
+                        KInputs.AddKey(Keys.RControlKey,true),
+                        KInputs.AddKey(Keys.Insert, true),
+                        KInputs.AddKey(Keys.Insert,false),
+                        KInputs.AddKey(Keys.RControlKey, false)});
                     Exception threadEx = null;
                     //If errored using thread, will not make all app to freeze, instead of just try/catch that actually will...
                     Thread staThread = new Thread(delegate()
@@ -260,28 +253,81 @@ namespace Mahou
                     staThread.Join();
                 }
             }
-            catch (Exception e) { Console.WriteLine(e.Message); ConvertSelection(); }
+            catch (Exception e) { Console.WriteLine("CLIP-GET-ERROR:\n" + e.Message); ConvertSelection(); }
             finally
             {
                 if (!String.IsNullOrEmpty(ClipStr))
                 {
-                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true) }, false);
+                    KInputs.MakeInput(new KInputs.INPUT[] 
+                        { KInputs.AddKey(Keys.Back,true),
+                          KInputs.AddKey(Keys.Back,false) 
+                        });
+                    KInputs.INPUT[] Inputs = new KInputs.INPUT[] { };
                     var result = "";
-                    result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId, true);
-                    //if same first time try switching locales
-                    //Without Regex.Replace below selected text that heve new line will stop converting
-                    if (Regex.Replace(result, "\r\\D\n|\n\\D\r", "\n") == Regex.Replace(ClipStr, "\r\\D\n|\n\\D\r", "\n"))
+                    int items = 0;
+                    if (MMain.MySetts.SwitchLayoutInCS)
                     {
-                        result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId, true);
+                        var nowLocale = Locales.GetCurrentLocale();
+                        MahouForm.SendModsUp();
+                        self = true;
+                        List<KInputs.INPUT> l = new List<KInputs.INPUT>();
+                        List<YuKey> yukeys = UltimateUnicodeConverter.GetKeys(Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"), nowLocale);
+                        //var indexes = Enumerable.Range(0, yukeys.Count).Where(i => yukeys[i].yukey == Keys.None).ToList();
+                        //var keys = indexes.Select(index => yukeys[index].yukey).ToList();
+                        //for (int i = 0; i != indexes.Count; i++)
+                        //{
+                        //    Console.WriteLine(keys[i] + "=>" + indexes[i]);
+                        //}
+                        foreach (var yk in yukeys)
+                        {
+                            items++;
+                            //Console.WriteLine(yk.yukey + "u=" + yk.upper);
+                            if (yk.yukey == Keys.None) // retype unrecognized as unicode
+                            {
+                                var unrecognized = ClipStr[items - 1].ToString();
+                                KInputs.INPUT unr = KInputs.AddString(unrecognized)[0];
+                                //Console.WriteLine("Uis = " + unrecognized + " ind = " + (items - 1));
+                                //Console.WriteLine(unr.Data.Keyboard.Scan + "~" + unr.Data.Keyboard.Flags + "=>"  + unr.Data.Keyboard.Vk);
+                                l.Add(unr);
+                            }
+                            else
+                            {
+                                if (yk.upper)
+                                    l.Add(KInputs.AddKey(Keys.LShiftKey, true));
+                                l.Add(KInputs.AddKey(yk.yukey, true));
+                                l.Add(KInputs.AddKey(yk.yukey, false));
+                                if (yk.upper)
+                                    l.Add(KInputs.AddKey(Keys.LShiftKey, false));
+                            }
+                        }
+                        ChangeLayout();
+                        Inputs = l.ToArray();
                     }
-                    //Fix for multiline duplications
-                    result = Regex.Replace(result, "\r\\D\n|\n\\D\r", "\n");
-                    //Inputs converted text
-                    KInputs.MakeInput(KInputs.AddString(result, true), false);
-                    //reselects text
-                    for (int i = result.Length; i != 0; i--)
+                    else
                     {
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true) }, true);
+                        result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId);
+                        //if same first time try switching locales
+                        //Without Regex.Replace below selected text that heve new line will stop converting
+                        if (Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\r\n") == Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\r\n"))
+                        {
+                            result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId);
+                        }
+                        //Fix for multiline duplications
+                        result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\r\n");
+                        Inputs = KInputs.AddString(result);
+                        items = result.Length;
+                    }
+                    //Inputs converted text
+                    KInputs.MakeInput(Inputs);
+                    //reselects text
+                    for (int i = items; i != 0; i--)
+                    {
+                        KInputs.MakeInput(new KInputs.INPUT[] 
+                        { KInputs.AddKey(Keys.LShiftKey, true),
+                          KInputs.AddKey(Keys.Left,true),
+                          KInputs.AddKey(Keys.Left,false),
+                          KInputs.AddKey(Keys.LShiftKey, false),
+                        });
                     }
                     Clipboard.Clear();
                 }
@@ -315,31 +361,52 @@ namespace Mahou
                 PressCtrlAgain = false;
             }
         }
-        public static void ConvertLast(System.Collections.Generic.List<YuKey> c_, bool altn, int altnc)
+        public static void ConvertLast(List<YuKey> c_, bool useS)
         {
             Locales.IfLessThan2();
             YuKey[] YuKeys = c_.ToArray();
-            if (altn) // Fix if entered alt + numpad
-            {/*TODO Make it work with !self, if ever possible? :( :< :[
-                Console.WriteLine("I still working");
-                self = true;
-                Thread staThread = new Thread(delegate()
-                {
-                    for (int i = YuKeys.Length + altnc; i != 0; i--)
-                    {
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Left, true, true) }, true);
-                    }
-                    ConvertSelection();
-                    for (int i = YuKeys.Length + altnc; i != 0; i--)
-                    {
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Right, true, true) }, true);
-                    }
-                });
-                staThread.Name = "FIX FOR ALTNUM";
-                staThread.SetApartmentState(ApartmentState.STA);
-                staThread.Start();
-                staThread.Join();
-              */
+            if (useS) // Fix if entered alt + numpad
+            {
+                //TODO:        Make it work if ever possible? :( :< :[
+                //  ...........................IDEA...............................
+                //  : The main conception is to call ConvertSelection(), but     :
+                //  : reselect text will not be correct, because YuKeys.Length   :
+                //  : is smaller that YuKeys.Length + "Number user pressed alt", :
+                //  : even if i add variable to count press of alt, what Mahou   :
+                //  : should do if user press BackSpace?                         :
+                //  : Create a list with positions when user press's alt?        :
+                //  : What about c_word/c_line it will delete actual item...     :
+                //  : Add ability to skip deletion depending on list with        :
+                //  : positions when user press's alt? Maybe that's it...Maybe...:
+                //  ``````````````````````````````````````````````````````````````
+                //Console.WriteLine("I still working");
+                //self = true;
+                //Thread staThread = new Thread(delegate()
+                //{
+                //for (int i = YuKeys.Length; i != 0; i--)
+                //{
+                //    KInputs.MakeInput(new KInputs.INPUT[] 
+                //        { KInputs.AddKey(Keys.LShiftKey, true),
+                //          KInputs.AddKey(Keys.Left,true),
+                //          KInputs.AddKey(Keys.Left,false),
+                //          KInputs.AddKey(Keys.LShiftKey, false),
+                //        });
+                //}
+                //    ConvertSelection();
+                //for (int i = YuKeys.Length; i != 0; i--)
+                //{
+                //    KInputs.MakeInput(new KInputs.INPUT[] 
+                //        { KInputs.AddKey(Keys.LShiftKey, true),
+                //          KInputs.AddKey(Keys.Right,true),
+                //          KInputs.AddKey(Keys.Right,false),
+                //          KInputs.AddKey(Keys.LShiftKey, false),
+                //        });
+                //}
+                //});
+                //staThread.Name = "FIX FOR ALTNUM";
+                //staThread.SetApartmentState(ApartmentState.STA);
+                //staThread.Start();
+                //staThread.Join();
             }
             else
             {
@@ -349,12 +416,19 @@ namespace Mahou
                     ChangeLayout();
                     for (int e = YuKeys.Length; e != 0; e--)
                     {
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.Back, true) }, false);
+                        KInputs.MakeInput(new KInputs.INPUT[] 
+                        { KInputs.AddKey(Keys.Back,true),
+                          KInputs.AddKey(Keys.Back,false) 
+                        });
                     }
+                    List<KInputs.INPUT> yuInpt = new List<KInputs.INPUT>();
                     foreach (YuKey yk in YuKeys)
                     {
-                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true) }, yk.upper);
+                        if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, true)); }
+                        yuInpt.Add(KInputs.AddKey(yk.yukey, true));
+                        if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, false)); }
                     }
+                    KInputs.MakeInput(yuInpt.ToArray());
                     RePress();
                     self = false;
                     afterConversion = true;
@@ -371,12 +445,11 @@ namespace Mahou
                 //Cycles while layout not changed
                 while (Locales.GetCurrentLocale() == nowLocale)
                 {
-                    PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
+                    PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, notnowLocale);
                     Thread.Sleep(5);//Give some time to switch layout
                     tryes++;
                     if (tryes == 5)
                     {
-                        Console.WriteLine(Locales.GetCurrentLocale());
                         //Checking now because of * & **                                                         ↓
                         notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
                         //Some apps blocking PostMessage() so lets try CycleSwtich(),
@@ -414,10 +487,10 @@ namespace Mahou
                         Thread.Sleep(50);
                         //<-                                              
                         notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
-                        PostMessage(Locales.GetForegroundWindow(), 0x50, 0, notnowLocale);
+                        PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, notnowLocale);
                         break;
                     skip:
-                        Thread.Sleep(5);
+                        break;
                     }
                 }
             }
@@ -428,14 +501,20 @@ namespace Mahou
         }
         private static void CycleSwitch()
         {
-            //Without Sleeps below won't work.
-            KeybdEvent(Keys.LMenu, 0);
-            Thread.Sleep(5);
-            KeybdEvent(Keys.LShiftKey, 0);
-            Thread.Sleep(5);
-            KeybdEvent(Keys.LMenu, 2);
-            Thread.Sleep(5);
-            KeybdEvent(Keys.LShiftKey, 2);
+            if (MMain.MySetts.EmulateLayoutSwitch)
+            {
+                //Emulate Alt+Shift
+                KInputs.MakeInput(new KInputs.INPUT[]
+                 {KInputs.AddKey(Keys.LMenu, true),
+                  KInputs.AddKey(Keys.LShiftKey, true),
+                  KInputs.AddKey(Keys.LShiftKey, false),
+                  KInputs.AddKey(Keys.LMenu, false)});
+            }
+            else
+            {
+                //Use PostMessage to switch to next layout
+                PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, KInputs.HKL_NEXT);
+            }
         }
         public struct YuKey // YuKey is struct of key and it state(upper/lower)
         {
@@ -457,9 +536,6 @@ namespace Mahou
         static extern bool SetForegroundWindow(IntPtr hWnd);
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
         public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
-        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode,
-            byte[] lpKeyState, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr SetWindowsHookEx(int idHook,
            LowLevelProc lpfn, IntPtr hMod, uint dwThreadId);

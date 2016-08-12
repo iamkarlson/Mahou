@@ -16,8 +16,9 @@ namespace Mahou
         static string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None", // Temporary modifiers
             tempcbOnlyKey = "None";
         static int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0; // Temporary keys 
-        static bool tempcbTrayI, tempCycleM, tempAutoR, tempBlockCTRL,
-            tempCLEnabled, tempCSEnabled, tempCLineEnabled;//Temporary checkboxes values
+        static bool tempTrayI, tempCycleM, tempAutoR, tempBlockCTRL,
+            tempCLEnabled, tempCSEnabled, tempCLineEnabled,
+            tempSLinCS, tempUseEmulate;//Temporary checkboxes values
         public static bool hotkeywithmodsfired = false;
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
@@ -36,14 +37,23 @@ namespace Mahou
             ExitHk = new HotkeyHandler(Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT, Keys.F12, this);
             ExitHk.Register();
             HKCLast = new HotkeyHandler(CheckNGetModifiers(MMain.MySetts.HKCLMods), (Keys)MMain.MySetts.HKCLKey, this);
-            HKCLast.Register();
-            HKCLReg = true;
+            if (MMain.MySetts.HKCLEnabled)
+            {
+                HKCLast.Register();
+                HKCLReg = true;
+            }
             HKCSelection = new HotkeyHandler(CheckNGetModifiers(MMain.MySetts.HKCSMods), (Keys)MMain.MySetts.HKCSKey, this);
+            if (MMain.MySetts.HKCSEnabled)
+            {
             HKCSelection.Register();
             HKCSReg = true;
+            }
             HKCLine = new HotkeyHandler(CheckNGetModifiers(MMain.MySetts.HKCLineMods), (Keys)MMain.MySetts.HKCLineKey, this);
+            if (MMain.MySetts.HKCLineEnabled)
+            {
             HKCLine.Register();
             HKCLineReg = true;
+            }
         }
         #region Form Events
         private void MahouForm_Load(object sender, EventArgs e)
@@ -68,9 +78,18 @@ namespace Mahou
         }
         private void MahouForm_Activated(object sender, EventArgs e)
         {
-            HKCSelection.Unregister();
+            if (HKCSReg)
+            {
+                HKCSelection.Unregister();
+            }
+            if (HKCLReg)
+            {
             HKCLast.Unregister();
-            HKCLine.Unregister();
+            }
+            if (HKCLineReg)
+            {
+                HKCLine.Unregister();
+            }
             MMain.StopHook();
             LocalesRefresh();
         }
@@ -166,27 +185,46 @@ namespace Mahou
         private void cbCycleMode_CheckedChanged(object sender, EventArgs e)
         {
             tempCycleM = cbCycleMode.Checked;
+            if (!cbCycleMode.Checked)
+            { gbSBL.Enabled = true; }
+            else { gbSBL.Enabled = false; }
         }
         private void TrayIconCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            tempcbTrayI = TrayIconCheckBox.Checked;
+            tempTrayI = TrayIconCheckBox.Checked;
         }
-
         private void cbCLActive_CheckedChanged(object sender, EventArgs e)
         {
             tempCLEnabled = cbCLActive.Checked;
+            if (!cbCLActive.Checked)
+                 { tbCLHK.Enabled = false; }
+            else { tbCLHK.Enabled = true; }
         }
         private void cbCSActive_CheckedChanged(object sender, EventArgs e)
         {
             tempCSEnabled = cbCSActive.Checked;
+            if (!cbCSActive.Checked)
+                 { tbCSHK.Enabled = false; }
+            else { tbCSHK.Enabled = true; }
         }
         private void cbCLineActive_CheckedChanged(object sender, EventArgs e)
         {
             tempCLineEnabled = cbCLineActive.Checked;
+            if (!cbCLineActive.Checked)
+                 { tbCLineHK.Enabled = false; }
+            else { tbCLineHK.Enabled = true; }
         }
-        private void cbBlockAC_CheckedChanged(object sender, EventArgs e)
+        private void cbBlockC_CheckedChanged(object sender, EventArgs e)
         {
-            tempBlockCTRL = cbBlockAC.Checked;
+            tempBlockCTRL = cbBlockC.Checked;
+        }
+        private void cbUseEmulate_CheckedChanged(object sender, EventArgs e)
+        {
+            tempUseEmulate = cbUseEmulate.Checked;
+        }
+        private void cbSwitchLayoutInS_CheckedChanged(object sender, EventArgs e)
+        {
+            tempSLinCS = cbSwitchLayoutInS.Checked;
         }
         #endregion
         #region Buttons & link
@@ -209,7 +247,7 @@ namespace Mahou
         private void btnHelp_Click(object sender, EventArgs e)
         {
             messagebox = true;
-            MessageBox.Show("Press Pause(by Default) to Convert last selection.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), pressing \"Pause\" will switch typed text to Language 1.\n\n**If you have problems with symbols conversion(selection) try switching languages (1=>2 & 2=>1).\n\nHover on any control of main window for more info about it.\n\nRegards.", "****Attention****", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\nPress Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), pressing \"Pause\" will switch typed text to Language 1.\n\n**If you have problems with symbols conversion(selection) try \"switching languages (1=>2 & 2=>1)\" or \"Switch layout in CS\" option.\n\nHover on any control of main window for more info about it.\n\nRegards.", "****Attention****", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -264,7 +302,7 @@ namespace Mahou
                                 }
                         Console.WriteLine(r);
                         Task t = new Task(new Action(() => KMHook.ConvertLast(
-                            MMain.c_word, KMHook.altnum, KMHook.altnums_word)));
+                            MMain.c_word, KMHook.altinword)));
                         t.RunSynchronously();//Sync call Convert Last word
                         MahouForm.HKCLast.Register(); //Restores CL hotkey ability
                         }
@@ -283,7 +321,7 @@ namespace Mahou
                             //String below prevents queue converting
                             HKCLine.Unregister(); //Stops hotkey ability
                             Task t = new Task(new Action(() => KMHook.ConvertLast(
-                                MMain.c_line, KMHook.altnumline, KMHook.altnums_line)));
+                                MMain.c_line, KMHook.altinline)));
                             t.RunSynchronously();//Sync call Convert Last word
                             MahouForm.HKCLine.Register(); //Resorest CLine hotkey ability
                         }
@@ -353,10 +391,10 @@ namespace Mahou
             //These three below are needed to release all modifiers, so even if you will still hold any of it
             //it will skip them and do as it must.
             KMHook.self = true;
-            KMHook.KeybdEvent(Keys.RMenu, 2); // Right Alt Up
-            KMHook.KeybdEvent(Keys.LMenu, 2); // Left Alt Up
-            KMHook.KeybdEvent(Keys.RShiftKey, 2);// Right Shift Up
-            KMHook.KeybdEvent(Keys.LShiftKey, 2); // Left Shift Up
+            KMHook.KeybdEvent(Keys.RMenu, 2);       // Right Alt Up
+            KMHook.KeybdEvent(Keys.LMenu, 2);       // Left Alt Up
+            KMHook.KeybdEvent(Keys.RShiftKey, 2);   // Right Shift Up
+            KMHook.KeybdEvent(Keys.LShiftKey, 2);   // Left Shift Up
             KMHook.KeybdEvent(Keys.RControlKey, 2); // Right Control Up
             KMHook.KeybdEvent(Keys.LControlKey, 2); // Left Control Up
             System.Threading.Thread.Sleep(20);
@@ -368,7 +406,7 @@ namespace Mahou
             shift = inpt.Contains("Shift") ? true : false;
             alt = inpt.Contains("Alt") ? true : false;
             ctrl = inpt.Contains("Control") ? true : false;
-            System.Threading.Thread.Sleep(5);
+            System.Threading.Thread.Sleep(1);
             return (alt ? Modifiers.ALT : 0x0000) + (ctrl ? Modifiers.CTRL : 0x0000) + (shift ? Modifiers.SHIFT : 0x0000);
         }
         public static string Remake(Keys k) //Make readable some special keys
@@ -428,10 +466,12 @@ namespace Mahou
                 "Mahou.lnk")) ? true : false;
             tempcbOnlyKey = MMain.MySetts.OnlyKeyLayoutSwicth;
             tempCycleM = MMain.MySetts.CycleMode;
-            tempcbTrayI = MMain.MySetts.IconVisibility;
+            tempTrayI = MMain.MySetts.IconVisibility;
             tempCLEnabled = MMain.MySetts.HKCLEnabled;
             tempCSEnabled = MMain.MySetts.HKCSEnabled;
             tempCLineEnabled = MMain.MySetts.HKCLineEnabled;
+            tempSLinCS = MMain.MySetts.SwitchLayoutInCS;
+            tempUseEmulate = MMain.MySetts.EmulateLayoutSwitch;
             tempLoc1 = tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 };
         }
         public static void RegisterEnabled()
@@ -521,11 +561,13 @@ namespace Mahou
             }
             MMain.MySetts.OnlyKeyLayoutSwicth = tempcbOnlyKey;
             MMain.MySetts.CycleMode = tempCycleM;
-            MMain.MySetts.IconVisibility = tempcbTrayI;
+            MMain.MySetts.IconVisibility = tempTrayI;
             MMain.MySetts.HKCLEnabled = tempCLEnabled;
             MMain.MySetts.HKCSEnabled = tempCSEnabled;
             MMain.MySetts.HKCLineEnabled = tempCLineEnabled;
             MMain.MySetts.BlockCTRL = tempBlockCTRL;
+            MMain.MySetts.SwitchLayoutInCS = tempSLinCS;
+            MMain.MySetts.EmulateLayoutSwitch = tempUseEmulate;
             if (tempLoc1.Lang != "dummy" || tempLoc1.uId != 0)
             {
                 MMain.MySetts.locale1Lang = tempLoc1.Lang;
@@ -604,7 +646,9 @@ namespace Mahou
             cbCLActive.Checked = MMain.MySetts.HKCLEnabled;
             cbCLineActive.Checked = MMain.MySetts.HKCLineEnabled;
             cbCSActive.Checked = MMain.MySetts.HKCSEnabled;
-            cbBlockAC.Checked = MMain.MySetts.BlockCTRL;
+            cbBlockC.Checked = MMain.MySetts.BlockCTRL;
+            cbSwitchLayoutInS.Checked = MMain.MySetts.SwitchLayoutInCS;
+            cbUseEmulate.Checked = MMain.MySetts.EmulateLayoutSwitch;
             if (!messagebox)
             {
                 tbCLHK.Text = OemReadable((MMain.MySetts.HKCLMods.Replace(",", " +") + " + " + Remake((Keys)MMain.MySetts.HKCLKey)).Replace("None + ", ""));
@@ -688,7 +732,7 @@ namespace Mahou
         private void cbCycleMode_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbCycleMode.Text;
-            HelpTT.Show("While this option enabled, \"Convert Last\" will just cycle between all locales\ninstead of cycling between selected in settings.\nThis mode works for almost all programs.\nIf there is program in which \"Convert Last\" not work, try with this option enabled.\nIf you have just 2 layouts(input languages) it is HIGHLY RECOMMENDED to turn it ON.", cbCycleMode);
+            HelpTT.Show("While this option enabled, \"Convert Last\" will just cycle between all locales\ninstead of cycling between selected in settings.\nThis mode works for almost all programs.\nIf there is program in which \"Convert Last\" not work, try with this option enabled.\nIf you have just 2 layouts(input languages) it is HIGHLY RECOMMENDED to turn it ON, and \"Use Alt+Shift in CM\" too to ON.", cbCycleMode);
         }
         private void tbCLHK_MouseHover(object sender, EventArgs e)
         {
@@ -722,14 +766,28 @@ namespace Mahou
         }
         private void cbBlockAC_MouseHover(object sender, EventArgs e)
         {
-            HelpTT.ToolTipTitle = cbBlockAC.Text;
-            HelpTT.Show("Blocks hotkeys that use Control,\nwhen \"Switch layout by key\" is set to Left/Right Control.", cbBlockAC);
+            HelpTT.ToolTipTitle = cbBlockC.Text;
+            HelpTT.Show("Blocks hotkeys that use Control,\nwhen \"Switch layout by key\" is set to Left/Right Control.", cbBlockC);
         }
         private void cbSwitchLayoutKeys_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbSwitchLayoutKeys.Text;
-            HelpTT.Show("Left Control supports only \"Cycle switch\", other works depending on \"Enable cycle mode\" checkbox.\nAs for CapsLock please don't hold it when is assigned.", cbSwitchLayoutKeys);
-        
+            HelpTT.Show("This option works depending on \"Enable cycle mode\" & \"Use Alt+Shift in CM\" options.", cbSwitchLayoutKeys);
+        }
+        private void cbUseEmulate_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = cbUseEmulate.Text;
+            HelpTT.Show("If this option enabled, CycleMode will use Emulation of Alt+Shift instead \"sending window messag\" that changes layout.", cbUseEmulate);
+        }
+        private void cbUseCycleForCS_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = cbSwitchLayoutInS.Text;
+            HelpTT.Show("If this option enabled, Covert Selection will use layout switching.\nAll characters will be rewriten as they must.(no problems with symbols)", cbSwitchLayoutInS);
+        }
+        private void gbSBL_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = gbSBL.Text;
+            HelpTT.Show("Only works when cycle mode is OFF.", gbSBL);
         }
         #endregion
     }

@@ -6,6 +6,8 @@ class KInputs
 {
     #region Native Win32
     public const int INPUT_KEYBOARD = 1;
+    public const uint HKL_NEXT = 1;
+    public const uint WM_INPUTLANGCHANGEREQUEST = 0x0050;
     public const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
     public const uint KEYEVENTF_KEYUP = 0x0002;
     public const uint KEYEVENTF_UNICODE = 0x0004;
@@ -95,7 +97,7 @@ class KInputs
             key == Keys.Divide)
         { return true; } else { return false; }
     }
-    public static INPUT[] AddString(string str, bool down)
+    public static INPUT[] AddString(string str)
     {
         List<INPUT> result = new List<INPUT>();
         char[] inputs = str.ToCharArray();
@@ -106,7 +108,7 @@ class KInputs
         }
         foreach (var s in scans)
         {
-            INPUT input = new INPUT
+            INPUT down = new INPUT
             {
                 Type = INPUT_KEYBOARD,
                 Data =
@@ -114,33 +116,36 @@ class KInputs
                     Keyboard = new KEYBDINPUT
                     {
                         Vk = 0,
-                        Flags = down ? KEYEVENTF_UNICODE : (KEYEVENTF_UNICODE | KEYEVENTF_KEYUP),
+                        Flags = KEYEVENTF_UNICODE,
                         Scan = s,
                         ExtraInfo = IntPtr.Zero,
                         Time = 0
                     }
                 }
             };
-            result.Add(input);
+            INPUT up = new INPUT
+            {
+                Type = INPUT_KEYBOARD,
+                Data =
+                {
+                    Keyboard = new KEYBDINPUT
+                    {
+                        Vk = 0,
+                        Flags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP,
+                        Scan = s,
+                        ExtraInfo = IntPtr.Zero,
+                        Time = 0
+                    }
+                }
+            };
+            result.Add(down);
+            result.Add(up);
         }
         return result.ToArray();
     }
-    public static void MakeInput(INPUT[] inputs, bool shift)
+    public static void MakeInput(INPUT[] inputs)
     {
-        if (shift)
-        {
-            SendInput(1, new INPUT[] { AddKey(Keys.ShiftKey, true) }, Marshal.SizeOf(typeof(INPUT)));
-        }
-        foreach (INPUT INPT in inputs)
-        {
-            SendInput(1, new INPUT[] { INPT }, Marshal.SizeOf(typeof(INPUT)));
-            //Send UP for last input
-            //without below, input will skip repeats(aaaaa => a, 00100000 => 010 etc.) 
-            INPUT sendlastUP = new INPUT { Type = INPT.Type, Data = INPT.Data };
-            sendlastUP.Data.Keyboard.Flags = (KEYEVENTF_UNICODE | KEYEVENTF_KEYUP);
-            SendInput(1, new INPUT[] {sendlastUP}, Marshal.SizeOf(typeof(INPUT)));
-        }
-        SendInput(1, new INPUT[] { AddKey(Keys.ShiftKey, false) }, Marshal.SizeOf(typeof(INPUT)));
+        SendInput((UInt32)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
     }
     #endregion
     #region DLL

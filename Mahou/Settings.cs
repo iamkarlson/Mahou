@@ -124,10 +124,26 @@ namespace Mahou
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]
         [DefaultSettingValue("false")]
-        public bool CycleMode //Cycle mode for convert last, caps switch
+        public bool CycleMode //Cycle mode for convert last/line, Switch by key
         {
             get { return (bool)this["CycleMode"]; }
             set { this["CycleMode"] = (bool)value; }
+        }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
+        [DefaultSettingValue("true")]
+        public bool EmulateLayoutSwitch //Emulate Layout Switch for Cycle mode
+        {
+            get { return (bool)this["EmulateLayoutSwitch"]; }
+            set { this["EmulateLayoutSwitch"] = (bool)value; }
+        }
+        [SettingsProvider(typeof(PortableSettingsProvider))]
+        [UserScopedSetting()]
+        [DefaultSettingValue("false")]
+        public bool SwitchLayoutInCS //Enables layout switchin for Convert Selection
+        {
+            get { return (bool)this["SwitchLayoutInCS"]; }
+            set { this["SwitchLayoutInCS"] = (bool)value; }
         }
         [SettingsProvider(typeof(PortableSettingsProvider))]
         [UserScopedSetting()]

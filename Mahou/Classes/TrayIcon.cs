@@ -17,7 +17,7 @@ namespace Mahou
             trIcon.Visible = visible == true;
             cMenu.MenuItems.Add(new MenuItem("Show/Hide", ShowHideHandler));
             cMenu.MenuItems.Add(new MenuItem("Exit", ExitHandler));
-            trIcon.Text = "Mahou (魔法)\nA magick layout switcher";
+            trIcon.Text = "Mahou (魔法)\nA magical layout switcher.";
             trIcon.ContextMenu = cMenu;
             trIcon.MouseDoubleClick += ShowHideHandler;
             trIcon.BalloonTipClicked += ExitHandler;

@@ -8,7 +8,7 @@ using System.Linq;
 
 class UltimateUnicodeConverter
 {
-    public static string InAnother(string input, uint uID1, uint uID2, bool firstcall)
+    public static string InAnother(string input, uint uID1, uint uID2)
     {
         //actaully this impossible, but anyway...
         if (input == "")
@@ -26,13 +26,13 @@ class UltimateUnicodeConverter
         {
             var upper = false;
             var cc = c;
-            //Checks if 'c' is Upper Case or Matches UpperSymbols Regex
-            if (char.IsUpper(cc) ||
-                //This is the symbols that can be writen just with Shift, for most locales these are fine, but...
-                new Regex("[!@#$%^&*()_+|{}:\"<>?№~]").IsMatch(cc.ToString()))
-            { upper = true; }
+            var chsc = VkKeyScanEx(cc, (IntPtr)uID1);
+            var state = (chsc >> 8) & 0xff;
+            //Checks if 'chsc' have upper state
+            if (state == 1)
+                upper = true;
             //this scans char 'c' code and adds it to CaseChars list
-            CaseChars.Add(new CaseChar { chcode = VkKeyScanEx(cc, (IntPtr)uID1), upper = upper });
+            CaseChars.Add(new CaseChar { chcode = chsc, upper = upper });
         }
         #endregion
         #region Check for errors
@@ -75,6 +75,30 @@ class UltimateUnicodeConverter
         }
         #endregion
         return result;
+    }
+    public static List<Mahou.KMHook.YuKey> GetKeys(string input, uint uID)
+    {
+        List<Mahou.KMHook.YuKey> keys = new List<Mahou.KMHook.YuKey>();
+
+        foreach (char c in input)
+        {
+            var scan = VkKeyScanEx(c, (IntPtr)uID);
+            if (scan != -1)
+            {
+                var key = (Keys)(scan & 0xff);
+                var state = (VkKeyScanEx(c, (IntPtr)uID) >> 8) & 0xff;
+                bool upper = false;
+                if (state == 1)
+                    upper = true;
+                keys.Add(new Mahou.KMHook.YuKey() { yukey = key, upper = upper });
+                //Console.WriteLine(key + "~" + state);
+            }
+            else
+            {
+                keys.Add(new Mahou.KMHook.YuKey() { yukey = Keys.None, upper = false });
+            }
+        }
+        return keys;
     }
     public struct CaseChar //Case Char struct
     {

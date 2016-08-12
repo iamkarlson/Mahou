@@ -10,9 +10,23 @@ namespace Mahou
     {
         public static uint GetCurrentLocale()
         {
-            uint tid = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
+            uint tid = GetWindowThreadProcessId(ActiveWindow(), IntPtr.Zero);
             IntPtr layout = GetKeyboardLayout(tid);
             return (uint)(layout.ToInt32() & 0xFFFF);
+        }
+        public static IntPtr ActiveWindow()
+        {
+            IntPtr awHandle = IntPtr.Zero;
+            GUITHREADINFO gui = new GUITHREADINFO();
+            gui.cbSize = Marshal.SizeOf(gui);
+            GetGUIThreadInfo(GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero), ref gui);
+
+            awHandle = gui.hwndFocus;
+            if (awHandle == IntPtr.Zero)
+            {
+                awHandle = GetForegroundWindow();
+            } 
+            return awHandle;
         }
         public static Locale[] AllList()
         {
@@ -41,11 +55,32 @@ namespace Mahou
                 }
             }
         }
+        #region Structs
         public struct Locale
         {
             public string Lang { get; set; }
             public uint uId { get; set; }
         }
+        public struct RECT
+        {
+            public int iLeft;
+            public int iTop;
+            public int iRight;
+            public int iBottom;
+        }
+        public struct GUITHREADINFO
+        {
+            public int cbSize;
+            public int flags;
+            public IntPtr hwndActive;
+            public IntPtr hwndFocus;
+            public IntPtr hwndCapture;
+            public IntPtr hwndMenuOwner;
+            public IntPtr hwndMoveSize;
+            public IntPtr hwndCaret;
+            public RECT rectCaret;
+        }
+        #endregion
         #region DLLs
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         static extern IntPtr GetKeyboardLayout(uint WindowsThreadProcessID);
@@ -53,6 +88,8 @@ namespace Mahou
         public static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll")]
         static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr proccess);
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetGUIThreadInfo(uint hTreadID, ref GUITHREADINFO lpgui);
         #endregion
     }
 }
