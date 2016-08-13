@@ -23,7 +23,7 @@ namespace Mahou
         public static KMHook.LowLevelProc _proc = KMHook.HookCallback;
         public static KMHook.LowLevelProc _mouse_proc = KMHook.MouseHookCallback;
         public static Locales.Locale[] locales = Locales.AllList();
-        public static Settings MySetts = new Settings();
+        public static Configs MyConfs = new Configs();
         public static MahouForm mahou = new MahouForm();
         #endregion
         [STAThread] //DO NOT REMOVE THIS
@@ -54,14 +54,13 @@ namespace Mahou
                 {
                     StartHook();
                     //for first run, add your locale 1 & locale 2 to settings
-                    if (MySetts.locale1Lang == "" && MySetts.locale2Lang == "")
+                    if (MyConfs.Read("Locales", "locale1Lang") == "" && MyConfs.Read("Locales", "locale2Lang") == "")
                     {
-                        MySetts.locale1uId = locales[0].uId;
-                        MySetts.locale2uId = locales[1].uId;
-                        MySetts.locale1Lang = locales[0].Lang;
-                        MySetts.locale2Lang = locales[1].Lang;
+                        MyConfs.Write("Locales", "locale1uId", locales[0].uId.ToString());
+                        MyConfs.Write("Locales", "locale2uId", locales[1].uId.ToString());
+                        MyConfs.Write("Locales", "locale1Lang", locales[0].Lang);
+                        MyConfs.Write("Locales", "locale2Lang", locales[1].Lang);
                     }
-                    MySetts.Save();
                     Application.Run();
                     StopHook();
                 }

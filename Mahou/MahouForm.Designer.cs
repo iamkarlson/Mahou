@@ -56,6 +56,7 @@
             this.lbswithlayout = new System.Windows.Forms.Label();
             this.cbSwitchLayoutInS = new System.Windows.Forms.CheckBox();
             this.cbUseEmulate = new System.Windows.Forms.CheckBox();
+            this.cbRePress = new System.Windows.Forms.CheckBox();
             this.gbSBL.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -381,7 +382,7 @@
             // cbSwitchLayoutInS
             // 
             this.cbSwitchLayoutInS.AutoSize = true;
-            this.cbSwitchLayoutInS.Location = new System.Drawing.Point(38, 130);
+            this.cbSwitchLayoutInS.Location = new System.Drawing.Point(7, 130);
             this.cbSwitchLayoutInS.Name = "cbSwitchLayoutInS";
             this.cbSwitchLayoutInS.Size = new System.Drawing.Size(124, 17);
             this.cbSwitchLayoutInS.TabIndex = 7;
@@ -402,11 +403,24 @@
             this.cbUseEmulate.CheckedChanged += new System.EventHandler(this.cbUseEmulate_CheckedChanged);
             this.cbUseEmulate.MouseHover += new System.EventHandler(this.cbUseEmulate_MouseHover);
             // 
+            // cbRePress
+            // 
+            this.cbRePress.AutoSize = true;
+            this.cbRePress.Location = new System.Drawing.Point(129, 130);
+            this.cbRePress.Name = "cbRePress";
+            this.cbRePress.Size = new System.Drawing.Size(69, 17);
+            this.cbRePress.TabIndex = 27;
+            this.cbRePress.Text = "Re-Press";
+            this.cbRePress.UseVisualStyleBackColor = true;
+            this.cbRePress.CheckedChanged += new System.EventHandler(this.cbRePress_CheckedChanged);
+            this.cbRePress.MouseHover += new System.EventHandler(this.cbRePress_MouseHover);
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(330, 265);
+            this.Controls.Add(this.cbRePress);
             this.Controls.Add(this.cbUseEmulate);
             this.Controls.Add(this.cbSwitchLayoutInS);
             this.Controls.Add(this.cbBlockC);
@@ -474,5 +488,6 @@
         private System.Windows.Forms.Label lbswithlayout;
         private System.Windows.Forms.CheckBox cbSwitchLayoutInS;
         private System.Windows.Forms.CheckBox cbUseEmulate;
+        private System.Windows.Forms.CheckBox cbRePress;
     }
 }

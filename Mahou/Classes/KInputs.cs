@@ -12,14 +12,15 @@ class KInputs
     public const uint KEYEVENTF_KEYUP = 0x0002;
     public const uint KEYEVENTF_UNICODE = 0x0004;
     public const uint KEYEVENTF_SCANCODE = 0x0008;
-#pragma warning disable 649
+    #pragma warning disable 649
     internal struct INPUT
     {
         public UInt32 Type;
         public KEYBOARDMOUSEHARDWARE Data;
     }
     [StructLayout(LayoutKind.Explicit)]
-    internal struct KEYBOARDMOUSEHARDWARE
+    //This is KEYBOARD-MOUSE-HARDWARE union INPUT won't work if you remove MOUSE or HARDWARE
+    internal struct KEYBOARDMOUSEHARDWARE 
     {
         [FieldOffset(0)]
         public KEYBDINPUT Keyboard;
@@ -51,10 +52,10 @@ class KInputs
         public UInt16 ParamL;
         public UInt16 ParamH;
     }
-#pragma warning restore 649
+    #pragma warning restore 649
     #endregion
     #region Add Inputs & Make Input & check
-    public static INPUT AddKey(Keys key, bool down)
+    public static INPUT AddKey(Keys key, bool down) //Returns INPUT down or up
     {
         UInt16 vk = (UInt16)key;
         INPUT input = new INPUT
@@ -74,7 +75,7 @@ class KInputs
         };
         return input;
     }
-    public static bool IsExtended(Keys key)
+    public static bool IsExtended(Keys key) //Check for extended keys
     {
         if (key == Keys.Menu ||
             key == Keys.LMenu ||
@@ -97,7 +98,7 @@ class KInputs
             key == Keys.Divide)
         { return true; } else { return false; }
     }
-    public static INPUT[] AddString(string str)
+    public static INPUT[] AddString(string str) //Returns all string chars with down & up INPUT as INPUT[]
     {
         List<INPUT> result = new List<INPUT>();
         char[] inputs = str.ToCharArray();
@@ -143,7 +144,7 @@ class KInputs
         }
         return result.ToArray();
     }
-    public static void MakeInput(INPUT[] inputs)
+    public static void MakeInput(INPUT[] inputs) //Simply, sends input
     {
         SendInput((UInt32)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
     }

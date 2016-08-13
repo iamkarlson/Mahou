@@ -94,10 +94,8 @@
     <Compile Include="Classes\KMHook.cs" />
     <Compile Include="Classes\KInputs.cs" />
     <Compile Include="Classes\Locales.cs" />
-    <Compile Include="Classes\PortableSettingProvider.cs" />
     <Compile Include="Classes\TrayIcon.cs" />
-    <Compile Include="Classes\UltimateUnicodeConverter.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="Classes\Configs.cs" />
     <Compile Include="MahouForm.cs">
       <SubType>Form</SubType>
     </Compile>

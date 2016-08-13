@@ -97,7 +97,7 @@ DEL "".\Update.ps1""";
                         .FromAsync<WebResponse>(request.BeginGetResponse,
                         request.EndGetResponse,
                         null);
-                    Console.WriteLine(response.StatusCode);
+                    //Console.WriteLine(response.StatusCode)
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         var data = new StreamReader(response.GetResponseStream(), true).ReadToEnd();

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 namespace Mahou
@@ -37,7 +38,6 @@ namespace Mahou
         public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
         #region Keyboard & Mouse hooks events
-        static List<Keys> numpads = new List<Keys>();
         public static IntPtr SetHook(LowLevelProc proc)
         {
             using (Process currProcess = Process.GetCurrentProcess())
@@ -90,17 +90,16 @@ namespace Mahou
                     cwas = false;
                     KeybdEvent(Keys.Control, 2);
                 }
-                Thread.Sleep(20);
             }
             #endregion
             #region Switch only key
-            if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "CapsLock" && Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" && Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYUP)
             {
                 self = true;
                 ChangeLayout();
                 self = false;
             }
-            if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "CapsLock" && Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
+            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" && Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
                 self = true;
                 if (Control.IsKeyLocked(Keys.CapsLock)) // Turn off if alraedy on
@@ -113,21 +112,22 @@ namespace Mahou
                 KeybdEvent(Keys.CapsLock, 2);
                 self = false;
             }
-            if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "Left Control" && Key == Keys.LControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Left Control" && Key == Keys.LControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
             {
                 self = true;
-                if (MMain.MySetts.EmulateLayoutSwitch)
+                if (MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch"))
                 {
                     KeybdEvent(Keys.LControlKey, 2); // Sends it up to make it work when using "EmulateLayoutSwitch" 
-                } 
+                }
                 ChangeLayout();
                 KeybdEvent(Keys.LControlKey, 2); //fix for PostMessage, it somehow o_0 sends another ctrl...
+
                 self = false;
             }
-            if (!self && MMain.MySetts.OnlyKeyLayoutSwicth == "Right Control" && Key == Keys.RControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Right Control" && Key == Keys.RControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
             {
                 self = true;
-                if (MMain.MySetts.EmulateLayoutSwitch)
+                if (MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch"))
                 {
                     KeybdEvent(Keys.RControlKey, 2); // Sends it up to make it work when using "EmulateLayoutSwitch" 
                 }
@@ -218,7 +218,7 @@ namespace Mahou
         }
         #endregion
         #region Functions/Struct
-        public static void ConvertSelection()
+        public static void ConvertSelection() //Converts selected text
         {
             Locales.IfLessThan2();
             self = true;
@@ -265,60 +265,72 @@ namespace Mahou
                     KInputs.INPUT[] Inputs = new KInputs.INPUT[] { };
                     var result = "";
                     int items = 0;
-                    if (MMain.MySetts.SwitchLayoutInCS)
+                    if (MMain.MyConfs.ReadBool("Functions", "SwitchLayoutInCS"))
                     {
                         var nowLocale = Locales.GetCurrentLocale();
-                        MahouForm.SendModsUp();
                         self = true;
-                        List<KInputs.INPUT> l = new List<KInputs.INPUT>();
-                        List<YuKey> yukeys = UltimateUnicodeConverter.GetKeys(Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"), nowLocale);
                         //var indexes = Enumerable.Range(0, yukeys.Count).Where(i => yukeys[i].yukey == Keys.None).ToList();
                         //var keys = indexes.Select(index => yukeys[index].yukey).ToList();
                         //for (int i = 0; i != indexes.Count; i++)
                         //{
                         //    Console.WriteLine(keys[i] + "=>" + indexes[i]);
                         //}
-                        foreach (var yk in yukeys)
+                        ChangeLayout();
+                        foreach (char c in ClipStr)
                         {
                             items++;
-                            //Console.WriteLine(yk.yukey + "u=" + yk.upper);
+                            if (c == '\r')
+                                continue;
+                            var yk = new YuKey();
+                            var scan = VkKeyScanEx(c, (IntPtr)nowLocale);
+                            if (scan != -1)
+                            {
+                                var key = (Keys)(scan & 0xff);
+                                var state = (VkKeyScanEx(c, (IntPtr)nowLocale) >> 8) & 0xff;
+                                bool upper = false;
+                                if (state == 1)
+                                    upper = true;
+                                yk = new YuKey() { yukey = key, upper = upper };
+                                //Console.WriteLine(key + "~" + state);
+                            }
+                            else { yk = new YuKey() { yukey = Keys.None }; }
                             if (yk.yukey == Keys.None) // retype unrecognized as unicode
                             {
                                 var unrecognized = ClipStr[items - 1].ToString();
                                 KInputs.INPUT unr = KInputs.AddString(unrecognized)[0];
                                 //Console.WriteLine("Uis = " + unrecognized + " ind = " + (items - 1));
                                 //Console.WriteLine(unr.Data.Keyboard.Scan + "~" + unr.Data.Keyboard.Flags + "=>"  + unr.Data.Keyboard.Vk);
-                                l.Add(unr);
+                                KInputs.MakeInput(new KInputs.INPUT[] { unr });
                             }
                             else
                             {
                                 if (yk.upper)
-                                    l.Add(KInputs.AddKey(Keys.LShiftKey, true));
-                                l.Add(KInputs.AddKey(yk.yukey, true));
-                                l.Add(KInputs.AddKey(yk.yukey, false));
+                                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, true) });
+                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true) });
+                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, false) });
                                 if (yk.upper)
-                                    l.Add(KInputs.AddKey(Keys.LShiftKey, false));
+                                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, false) });
                             }
                         }
-                        ChangeLayout();
-                        Inputs = l.ToArray();
                     }
                     else
                     {
-                        result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale2uId, MMain.MySetts.locale1uId);
+                        var l1 = (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
+                        var l2 = (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId");
+                        result = InAnother(ClipStr, l2, l1);
                         //if same first time try switching locales
                         //Without Regex.Replace below selected text that heve new line will stop converting
                         if (Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\r\n") == Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\r\n"))
                         {
-                            result = UltimateUnicodeConverter.InAnother(ClipStr, MMain.MySetts.locale1uId, MMain.MySetts.locale2uId);
+                            result = InAnother(ClipStr, l1, l2);
+
                         }
                         //Fix for multiline duplications
                         result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\r\n");
-                        Inputs = KInputs.AddString(result);
+                        //Inputs converted text
+                        KInputs.MakeInput(KInputs.AddString(result));
                         items = result.Length;
                     }
-                    //Inputs converted text
-                    KInputs.MakeInput(Inputs);
                     //reselects text
                     for (int i = items; i != 0; i--)
                     {
@@ -336,32 +348,29 @@ namespace Mahou
                 MahouForm.HKCSelection.Register(); //Restores CS hotkey ability
             }
         }
-        public static void RePress()
+        public static void RePress() //Re-presses modifiers you hold when hotkey fired(due to SendModsUp())
         {
             //Repress's modifiers by Press Again variables
             if (PressShiftAgain)
             {
-                swas = true;
                 KeybdEvent(Keys.LShiftKey, 0);
-                Thread.Sleep(10);
                 PressShiftAgain = false;
+                swas = true;
             }
             if (PressAltAgain)
             {
                 awas = true;
                 KeybdEvent(Keys.LMenu, 0);
-                Thread.Sleep(10);
                 PressAltAgain = false;
             }
             if (PressCtrlAgain)
             {
                 cwas = true;
                 KeybdEvent(Keys.LControlKey, 0);
-                Thread.Sleep(10);
                 PressCtrlAgain = false;
             }
         }
-        public static void ConvertLast(List<YuKey> c_, bool useS)
+        public static void ConvertLast(List<YuKey> c_, bool useS) //Converts last word/line
         {
             Locales.IfLessThan2();
             YuKey[] YuKeys = c_.ToArray();
@@ -435,11 +444,13 @@ namespace Mahou
                 }
             }
         }
-        private static void ChangeLayout()
+        private static void ChangeLayout() //Changes current layout
         {
             var nowLocale = Locales.GetCurrentLocale();
-            uint notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
-            if (!MMain.MySetts.CycleMode)
+            uint notnowLocale = nowLocale == (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId")
+                ? (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId")
+                : (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
+            if (!MMain.MyConfs.ReadBool("Functions", "CycleMode"))
             {
                 int tryes = 0;
                 //Cycles while layout not changed
@@ -451,7 +462,9 @@ namespace Mahou
                     if (tryes == 5)
                     {
                         //Checking now because of * & **                                                         ↓
-                        notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
+                        notnowLocale = nowLocale == (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId")
+                            ? (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId")
+                            : (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
                         //Some apps blocking PostMessage() so lets try CycleSwtich(),
                         //Applyes for Foobar2000, maybe something else... except metro apps *                    ↓
                         do
@@ -486,7 +499,9 @@ namespace Mahou
                         SetForegroundWindow(lastwindow);
                         Thread.Sleep(50);
                         //<-                                              
-                        notnowLocale = nowLocale == MMain.MySetts.locale1uId ? MMain.MySetts.locale2uId : MMain.MySetts.locale1uId;
+                        notnowLocale = nowLocale == (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId")
+                            ? (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId")
+                            : (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
                         PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, notnowLocale);
                         break;
                     skip:
@@ -499,9 +514,9 @@ namespace Mahou
                 CycleSwitch();
             }
         }
-        private static void CycleSwitch()
+        private static void CycleSwitch() //Switches layout by cycling between installed all in system
         {
-            if (MMain.MySetts.EmulateLayoutSwitch)
+            if (MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch"))
             {
                 //Emulate Alt+Shift
                 KInputs.MakeInput(new KInputs.INPUT[]
@@ -516,10 +531,35 @@ namespace Mahou
                 PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, KInputs.HKL_NEXT);
             }
         }
-        public struct YuKey // YuKey is struct of key and it state(upper/lower)
+        public static string InAnother(string input, uint uID1, uint uID2)
         {
-            public Keys yukey;
-            public bool upper;
+            var result = "";
+            var index = 0;
+            foreach (char c in input.ToCharArray())
+            {
+                var upper = false;
+                var cc = c;
+                var chsc = VkKeyScanEx(cc, (IntPtr)uID1);
+                var state = (chsc >> 8) & 0xff;
+                //Checks if 'chsc' have upper state
+                if (state == 1)
+                    upper = true;
+                byte[] byt = new byte[256];
+                //it needs just 1 but,anyway let it be 10, i think that's better
+                StringBuilder s = new StringBuilder(10);
+                if (upper)
+                {
+                    byt[(int)Keys.ShiftKey] = 0xFF;
+                }
+                //"Convert magick✩" is the string below
+                var ant = ToUnicodeEx((uint)chsc, (uint)chsc, byt, s, s.Capacity, 0, (IntPtr)uID2);
+                if (chsc != -1)
+                    result += s;
+                else
+                    result += input[index];
+                index++;
+            }
+            return result;
         }
         public static void KeybdEvent(Keys key, int flags) // Simplified keybd_event with exteded recongize feature
         {
@@ -529,26 +569,45 @@ namespace Mahou
             Thread.Sleep(15);
             keybd_event((byte)key, 0, flags | extended, 0);
         }
+        public struct YuKey // YuKey is struct of key and it state(upper/lower)
+        {
+            public Keys yukey;
+            public bool upper;
+        }
         #endregion
         #region DLL imports
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetForegroundWindow(IntPtr hWnd);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
         public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr SetWindowsHookEx(int idHook,
            LowLevelProc lpfn, IntPtr hMod, uint dwThreadId);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
            IntPtr wParam, IntPtr lParam);
+
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool PostMessage(IntPtr hhwnd, uint msg, uint wparam, uint lparam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+        private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState,
+         StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern short VkKeyScanEx(char ch, IntPtr dwhkl);
         #endregion
     }
 }

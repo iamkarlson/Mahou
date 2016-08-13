@@ -8,13 +8,13 @@ namespace Mahou
 {
     class Locales
     {
-        public static uint GetCurrentLocale()
+        public static uint GetCurrentLocale() //Gets current locale in active window
         {
             uint tid = GetWindowThreadProcessId(ActiveWindow(), IntPtr.Zero);
             IntPtr layout = GetKeyboardLayout(tid);
             return (uint)(layout.ToInt32() & 0xFFFF);
         }
-        public static IntPtr ActiveWindow()
+        public static IntPtr ActiveWindow() //Gets active windows(focused) or foreground
         {
             IntPtr awHandle = IntPtr.Zero;
             GUITHREADINFO gui = new GUITHREADINFO();
@@ -28,7 +28,7 @@ namespace Mahou
             } 
             return awHandle;
         }
-        public static Locale[] AllList()
+        public static Locale[] AllList() //Gets list of all awaible layouts
         {
             int count = 0;
             List<Locale> locs = new List<Locale>();
@@ -43,8 +43,8 @@ namespace Mahou
             }
             return locs.ToArray();
         }
-        private static bool wasShown = false;
-        public static void IfLessThan2()
+        private static bool wasShown = false; //Prevents double MessageBox below ↓
+        public static void IfLessThan2() //Check if you have enough layouts
         {
             if (AllList().Length < 2 && !wasShown)
             {
