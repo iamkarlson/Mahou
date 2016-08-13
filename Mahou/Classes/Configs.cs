@@ -83,7 +83,7 @@ namespace Mahou
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCSEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCSEnabled", "true"); //Hotkey convert selection enabled
 
-            if (!Boolean.TryParse(this.Read("Functions", "HKCLineEnabled"), out bt))
+            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLineEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCLineEnabled", "true"); //Hotkey convert line enabled
 
         }
