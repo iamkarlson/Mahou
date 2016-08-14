@@ -276,24 +276,30 @@ namespace Mahou
                         //    Console.WriteLine(keys[i] + "=>" + indexes[i]);
                         //}
                         ChangeLayout();
-                        foreach (char c in ClipStr)
+                        foreach (char c in Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
                         {
                             items++;
-                            if (c == '\r')
-                                continue;
                             var yk = new YuKey();
                             var scan = VkKeyScanEx(c, (IntPtr)nowLocale);
-                            if (scan != -1)
+                            if (c == '\n')
                             {
-                                var key = (Keys)(scan & 0xff);
-                                var state = (VkKeyScanEx(c, (IntPtr)nowLocale) >> 8) & 0xff;
-                                bool upper = false;
-                                if (state == 1)
-                                    upper = true;
-                                yk = new YuKey() { yukey = key, upper = upper };
-                                //Console.WriteLine(key + "~" + state);
+                                yk.yukey = Keys.Enter;
+                                yk.upper = false;
                             }
-                            else { yk = new YuKey() { yukey = Keys.None }; }
+                            else
+                            {
+                                if (scan != -1)
+                                {
+                                    var key = (Keys)(scan & 0xff);
+                                    var state = (VkKeyScanEx(c, (IntPtr)nowLocale) >> 8) & 0xff;
+                                    bool upper = false;
+                                    if (state == 1)
+                                        upper = true;
+                                    yk = new YuKey() { yukey = key, upper = upper };
+                                    //Console.WriteLine(key + "~" + state);
+                                }
+                                else { yk = new YuKey() { yukey = Keys.None }; }
+                            }
                             if (yk.yukey == Keys.None) // retype unrecognized as unicode
                             {
                                 var unrecognized = ClipStr[items - 1].ToString();
@@ -319,14 +325,13 @@ namespace Mahou
                         var l2 = (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId");
                         result = InAnother(ClipStr, l2, l1);
                         //if same first time try switching locales
-                        //Without Regex.Replace below selected text that heve new line will stop converting
-                        if (Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\r\n") == Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\r\n"))
+                        //Without Regex.Replace "==" will fail
+                        if (Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n") == Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
                         {
                             result = InAnother(ClipStr, l1, l2);
 
                         }
-                        //Fix for multiline duplications
-                        result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\r\n");
+                        result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
                         //Inputs converted text
                         KInputs.MakeInput(KInputs.AddString(result));
                         items = result.Length;
@@ -435,6 +440,7 @@ namespace Mahou
                     {
                         if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, true)); }
                         yuInpt.Add(KInputs.AddKey(yk.yukey, true));
+                        yuInpt.Add(KInputs.AddKey(yk.yukey, false));
                         if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, false)); }
                     }
                     KInputs.MakeInput(yuInpt.ToArray());

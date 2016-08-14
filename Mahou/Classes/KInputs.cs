@@ -12,7 +12,7 @@ class KInputs
     public const uint KEYEVENTF_KEYUP = 0x0002;
     public const uint KEYEVENTF_UNICODE = 0x0004;
     public const uint KEYEVENTF_SCANCODE = 0x0008;
-    #pragma warning disable 649
+#pragma warning disable 649
     internal struct INPUT
     {
         public UInt32 Type;
@@ -20,7 +20,7 @@ class KInputs
     }
     [StructLayout(LayoutKind.Explicit)]
     //This is KEYBOARD-MOUSE-HARDWARE union INPUT won't work if you remove MOUSE or HARDWARE
-    internal struct KEYBOARDMOUSEHARDWARE 
+    internal struct KEYBOARDMOUSEHARDWARE
     {
         [FieldOffset(0)]
         public KEYBDINPUT Keyboard;
@@ -52,7 +52,7 @@ class KInputs
         public UInt16 ParamL;
         public UInt16 ParamH;
     }
-    #pragma warning restore 649
+#pragma warning restore 649
     #endregion
     #region Add Inputs & Make Input & check
     public static INPUT AddKey(Keys key, bool down) //Returns INPUT down or up
@@ -96,18 +96,14 @@ class KInputs
             key == Keys.Cancel ||
             key == Keys.Snapshot ||
             key == Keys.Divide)
-        { return true; } else { return false; }
+        { return true; }
+        else { return false; }
     }
     public static INPUT[] AddString(string str) //Returns all string chars with down & up INPUT as INPUT[]
     {
         List<INPUT> result = new List<INPUT>();
         char[] inputs = str.ToCharArray();
-        List<UInt16> scans = new List<UInt16>();
-        foreach (char c in inputs)
-        {
-            scans.Add(c);
-        }
-        foreach (var s in scans)
+        foreach (var s in inputs)
         {
             INPUT down = new INPUT
             {
@@ -118,7 +114,7 @@ class KInputs
                     {
                         Vk = 0,
                         Flags = KEYEVENTF_UNICODE,
-                        Scan = s,
+                        Scan = (UInt16)s,
                         ExtraInfo = IntPtr.Zero,
                         Time = 0
                     }
@@ -139,6 +135,12 @@ class KInputs
                     }
                 }
             };
+            if (s == '\n')
+            {
+                Console.WriteLine("s==\n");
+                down = AddKey(Keys.Return, true);
+                up = AddKey(Keys.Return, false);
+            }
             result.Add(down);
             result.Add(up);
         }
