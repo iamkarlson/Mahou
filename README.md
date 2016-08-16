@@ -35,6 +35,10 @@ Even selected text switches just between **selected** layouts, though if you lik
 
 **v1.0.4.7**<br/>
 - Improved "Update" feature into "Auto Update".
+
+**v1.0.7.9**<br/>
+- New method to save/load configuration which is more compatible.
+
 ### Hotkeys
 - "Pause/Break" - Convert last input.
 - "Shift + Pause/Break" - Convert last inputted line.
