@@ -18,8 +18,8 @@ namespace Mahou
             tempcbOnlyKey = "None";
         static int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0; // Temporary keys 
         static bool tempTrayI, tempCycleM, tempAutoR, tempBlockCTRL,
-            tempCLEnabled, tempCSEnabled, tempCLineEnabled,
-            tempSLinCS, tempUseEmulate, tempRePress;//Temporary checkboxes values
+            tempCLEnabled, tempCSEnabled, tempCLineEnabled, tempSLinCS,
+            tempUseEmulate, tempRePress, tempEOSpace;//Temporary checkboxes values
         public static bool hotkeywithmodsfired = false;
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
@@ -47,7 +47,7 @@ namespace Mahou
             HKCSelection = new HotkeyHandler(CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCSMods")),
                 (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey"), this);
             if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled"))
-            {
+            {MMain.MyConfs.Write("Functions", "EatOneSpace", tempEOSpace.ToString());
             HKCSelection.Register();
             HKCSReg = true;
             }
@@ -229,14 +229,19 @@ namespace Mahou
         {
             tempUseEmulate = cbUseEmulate.Checked;
         }
-        private void cbSwitchLayoutInS_CheckedChanged(object sender, EventArgs e)
+        private void cbCSSwitch_CheckedChanged(object sender, EventArgs e)
         {
-            tempSLinCS = cbSwitchLayoutInS.Checked;
+            tempSLinCS = cbCSSwitch.Checked;
         }
         private void cbRePress_CheckedChanged(object sender, EventArgs e)
         {
             tempRePress = cbRePress.Checked;
         }
+        private void cbEatOneSpace_CheckedChanged(object sender, EventArgs e)
+        {
+            tempEOSpace = cbEatOneSpace.Checked;
+        }
+		
         #endregion
         #region Buttons & link
         private void btnApply_Click(object sender, EventArgs e)
@@ -258,7 +263,7 @@ namespace Mahou
         private void btnHelp_Click(object sender, EventArgs e)
         {
             messagebox = true;
-            MessageBox.Show("Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\nPress Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), pressing \"Pause\" will switch typed text to Language 1.\n\n**If you have problems with symbols conversion(selection) try \"switching languages (1=>2 & 2=>1)\" or \"Switch layout in CS\" option.\n\nHover on any control of main window for more info about it.\n\nRegards.", "****Attention****", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\nPress Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), pressing \"Pause\" will switch typed text to Language 1.\n\n**If you have problems with symbols conversion(selection) try \"switching languages (1=>2 & 2=>1)\" or \"CS-Switch\" option.\n\nHover on any control of main window for more info about it.\n\nRegards.", "****Attention****", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -467,6 +472,8 @@ namespace Mahou
             tempCycleM = MMain.MyConfs.ReadBool("Functions", "CycleMode");
             tempTrayI = MMain.MyConfs.ReadBool("Functions", "IconVisibility");
             tempSLinCS = MMain.MyConfs.ReadBool("Functions", "SwitchLayoutInCS");
+            tempEOSpace = MMain.MyConfs.ReadBool("Functions", "EatOneSpace");
+            tempRePress = MMain.MyConfs.ReadBool("Functions", "RePress");
             tempUseEmulate = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
             tempCLEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled");
             tempCSEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
@@ -565,6 +572,7 @@ namespace Mahou
             MMain.MyConfs.Write("Functions", "SwitchLayoutInCS", tempSLinCS.ToString());
             MMain.MyConfs.Write("Functions", "EmulateLayoutSwitch", tempUseEmulate.ToString());
             MMain.MyConfs.Write("Functions", "RePress", tempRePress.ToString());
+            MMain.MyConfs.Write("Functions", "EatOneSpace", tempEOSpace.ToString());
             MMain.MyConfs.Write("EnabledHotkeys", "HKCLEnabled", tempCLEnabled.ToString());
             MMain.MyConfs.Write("EnabledHotkeys", "HKCSEnabled", tempCSEnabled.ToString());
             MMain.MyConfs.Write("EnabledHotkeys", "HKCLineEnabled", tempCLineEnabled.ToString());
@@ -647,8 +655,10 @@ namespace Mahou
             TrayIconCheckBox.Checked = MMain.MyConfs.ReadBool("Functions", "IconVisibility");
             cbCycleMode.Checked = MMain.MyConfs.ReadBool("Functions", "CycleMode");
             cbBlockC.Checked = MMain.MyConfs.ReadBool("Functions", "BlockCTRL");
-            cbSwitchLayoutInS.Checked = MMain.MyConfs.ReadBool("Functions", "SwitchLayoutInCS");
+            cbCSSwitch.Checked = MMain.MyConfs.ReadBool("Functions", "SwitchLayoutInCS");
             cbUseEmulate.Checked = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
+            cbRePress.Checked = MMain.MyConfs.ReadBool("Functions", "RePress");
+            cbEatOneSpace.Checked = MMain.MyConfs.ReadBool("Functions", "EatOneSpace");
             cbCLActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled");
             cbCLineActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLineEnabled");
             cbCSActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
@@ -787,8 +797,8 @@ namespace Mahou
         }
         private void cbUseCycleForCS_MouseHover(object sender, EventArgs e)
         {
-            HelpTT.ToolTipTitle = cbSwitchLayoutInS.Text;
-            HelpTT.Show("If this option enabled, Covert Selection will use layout switching.\nAll characters will be rewriten as they must.(no problems with symbols)", cbSwitchLayoutInS);
+            HelpTT.ToolTipTitle = cbCSSwitch.Text;
+            HelpTT.Show("If this option enabled, Covert Selection will use layout switching.\nAll characters will be rewriten as they must.(no problems with symbols)", cbCSSwitch);
         }
         private void gbSBL_MouseHover(object sender, EventArgs e)
         {
@@ -799,6 +809,12 @@ namespace Mahou
         {
             HelpTT.ToolTipTitle = cbRePress.Text;
             HelpTT.Show("If enabled, modifiers will be repressed after conversion.\nBUT if you able to release it before conversion done, modifiers will stuck.\nUse at own risk (not recommenden).", cbRePress);
+        }
+        private void cbEatOneSpace_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = cbEatOneSpace.Text;
+            HelpTT.Show("If enabled, pressing ONE space AFTER word will not clear last word.", cbEatOneSpace);
+
         }
         #endregion
     }

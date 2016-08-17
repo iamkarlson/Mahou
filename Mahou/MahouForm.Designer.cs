@@ -54,9 +54,10 @@
             this.cbSwitchLayoutKeys = new System.Windows.Forms.ComboBox();
             this.cbBlockC = new System.Windows.Forms.CheckBox();
             this.lbswithlayout = new System.Windows.Forms.Label();
-            this.cbSwitchLayoutInS = new System.Windows.Forms.CheckBox();
+            this.cbCSSwitch = new System.Windows.Forms.CheckBox();
             this.cbUseEmulate = new System.Windows.Forms.CheckBox();
             this.cbRePress = new System.Windows.Forms.CheckBox();
+            this.cbEatOneSpace = new System.Windows.Forms.CheckBox();
             this.gbSBL.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -379,17 +380,17 @@
             this.lbswithlayout.TabIndex = 25;
             this.lbswithlayout.Text = "Switch layout by key:";
             // 
-            // cbSwitchLayoutInS
+            // cbCSSwitch
             // 
-            this.cbSwitchLayoutInS.AutoSize = true;
-            this.cbSwitchLayoutInS.Location = new System.Drawing.Point(7, 130);
-            this.cbSwitchLayoutInS.Name = "cbSwitchLayoutInS";
-            this.cbSwitchLayoutInS.Size = new System.Drawing.Size(124, 17);
-            this.cbSwitchLayoutInS.TabIndex = 7;
-            this.cbSwitchLayoutInS.Text = "Switch layout in CS";
-            this.cbSwitchLayoutInS.UseVisualStyleBackColor = true;
-            this.cbSwitchLayoutInS.CheckedChanged += new System.EventHandler(this.cbSwitchLayoutInS_CheckedChanged);
-            this.cbSwitchLayoutInS.MouseHover += new System.EventHandler(this.cbUseCycleForCS_MouseHover);
+            this.cbCSSwitch.AutoSize = true;
+            this.cbCSSwitch.Location = new System.Drawing.Point(12, 130);
+            this.cbCSSwitch.Name = "cbCSSwitch";
+            this.cbCSSwitch.Size = new System.Drawing.Size(77, 17);
+            this.cbCSSwitch.TabIndex = 7;
+            this.cbCSSwitch.Text = "CS-Switch";
+            this.cbCSSwitch.UseVisualStyleBackColor = true;
+            this.cbCSSwitch.CheckedChanged += new System.EventHandler(this.cbCSSwitch_CheckedChanged);
+            this.cbCSSwitch.MouseHover += new System.EventHandler(this.cbUseCycleForCS_MouseHover);
             // 
             // cbUseEmulate
             // 
@@ -406,7 +407,7 @@
             // cbRePress
             // 
             this.cbRePress.AutoSize = true;
-            this.cbRePress.Location = new System.Drawing.Point(129, 130);
+            this.cbRePress.Location = new System.Drawing.Point(85, 130);
             this.cbRePress.Name = "cbRePress";
             this.cbRePress.Size = new System.Drawing.Size(69, 17);
             this.cbRePress.TabIndex = 27;
@@ -415,14 +416,27 @@
             this.cbRePress.CheckedChanged += new System.EventHandler(this.cbRePress_CheckedChanged);
             this.cbRePress.MouseHover += new System.EventHandler(this.cbRePress_MouseHover);
             // 
+            // cbEatOneSpace
+            // 
+            this.cbEatOneSpace.AutoSize = true;
+            this.cbEatOneSpace.Location = new System.Drawing.Point(151, 130);
+            this.cbEatOneSpace.Name = "cbEatOneSpace";
+            this.cbEatOneSpace.Size = new System.Drawing.Size(49, 17);
+            this.cbEatOneSpace.TabIndex = 28;
+            this.cbEatOneSpace.Text = "\" \" ←";
+            this.cbEatOneSpace.UseVisualStyleBackColor = true;
+            this.cbEatOneSpace.CheckedChanged += new System.EventHandler(this.cbEatOneSpace_CheckedChanged);
+            this.cbEatOneSpace.MouseHover += new System.EventHandler(this.cbEatOneSpace_MouseHover);
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(330, 265);
+            this.Controls.Add(this.cbEatOneSpace);
             this.Controls.Add(this.cbRePress);
             this.Controls.Add(this.cbUseEmulate);
-            this.Controls.Add(this.cbSwitchLayoutInS);
+            this.Controls.Add(this.cbCSSwitch);
             this.Controls.Add(this.cbBlockC);
             this.Controls.Add(this.cbSwitchLayoutKeys);
             this.Controls.Add(this.lbswithlayout);
@@ -486,8 +500,9 @@
         private System.Windows.Forms.ComboBox cbSwitchLayoutKeys;
         private System.Windows.Forms.CheckBox cbBlockC;
         private System.Windows.Forms.Label lbswithlayout;
-        private System.Windows.Forms.CheckBox cbSwitchLayoutInS;
+        private System.Windows.Forms.CheckBox cbCSSwitch;
         private System.Windows.Forms.CheckBox cbUseEmulate;
         private System.Windows.Forms.CheckBox cbRePress;
+        private System.Windows.Forms.CheckBox cbEatOneSpace;
     }
 }

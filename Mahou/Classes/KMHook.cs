@@ -31,7 +31,7 @@ namespace Mahou
         public static bool self = false, afterConversion = false, printable = false,
                            win = false, alt = false, ctrl = false, shift = false,
                            PressShiftAgain = false, PressCtrlAgain = false, PressAltAgain = false,
-                           awas = false, swas = false, cwas = false,
+                           awas = false, swas = false, cwas = false, afterEOS = false,
                            bothnotmatch = false, altinword = false, altinline = false;
         public static int altcount_word = 0, altcount_line = 0;
         public static Exception notINany = new Exception("Selected text is not in any of selected layouts(locales/languages) in settings\nor contains characters from other than selected layouts(locales/languages).");
@@ -167,7 +167,17 @@ namespace Mahou
                 if (Key == Keys.Space && !self)
                 {
                     //altinword = false;
-                    MMain.c_word.Clear();
+                    if (MMain.MyConfs.ReadBool("Functions", "EatOneSpace") && MMain.c_word.Count != 0 && MMain.c_word[MMain.c_word.Count - 1].yukey != Keys.Space)
+                    {
+
+                        MMain.c_word.Add(new YuKey() { yukey = Keys.Space, upper = false });
+                        afterEOS = true;
+                    }
+                    else
+                    {
+                        MMain.c_word.Clear();
+                        afterEOS = false;
+                    }
                     MMain.c_line.Add(new YuKey() { yukey = Keys.Space, upper = false });
                 }
                 if (
@@ -180,6 +190,11 @@ namespace Mahou
                 else { printable = false; }
                 if (printable && !self && !win && !alt && !ctrl)
                 {
+                    if (afterEOS) //Clears word after Eat one space
+                    {
+                        MMain.c_word.Clear();
+                        afterEOS = false;
+                    }
                     if (!shift)
                     {
                         MMain.c_word.Add(new YuKey() { yukey = Key, upper = false });

@@ -76,6 +76,9 @@ namespace Mahou
             if (!Boolean.TryParse(this.Read("Functions", "RePress"), out bt))
                 this.Write("Functions", "RePress", "false");
 
+            if (!Boolean.TryParse(this.Read("Functions", "EatOneSpace"), out bt))
+                this.Write("Functions", "EatOneSpace", "false");
+
             //EnabledHotkeys section
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCLEnabled", "true"); //Hotkey convert last word enabled
