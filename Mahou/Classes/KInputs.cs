@@ -137,7 +137,6 @@ class KInputs
             };
             if (s == '\n')
             {
-                Console.WriteLine("s==\n");
                 down = AddKey(Keys.Return, true);
                 up = AddKey(Keys.Return, false);
             }

@@ -223,135 +223,124 @@ namespace Mahou
             Locales.IfLessThan2();
             self = true;
             string ClipStr = "";
-            try
+            //This prevents from converting text that alredy exist in Clipboard
+            //by pressing "Convert Selection hotkey" without selected text.
+            NativeClipboard.Clear();
+            //TODO: Make clipboard restore work...
+            //var datas = new NativeClipboard.ClipboardData()
+            //{
+            //    data = new List<IntPtr>(),
+            //    format = new List<uint>()
+            //};
+            //Task t = new Task(() =>
+            //    {
+            //        datas = NativeClipboard.GetClipboardDatas();
+            //    });
+            //t.RunSynchronously();
+            //Console.WriteLine(datas.data[0] + " and " + datas.format[0]);
+            //NativeClipboard.RestoreData(datas); // place this after conversion
+            NativeClipboard.Clear();
+            KInputs.MakeInput(new KInputs.INPUT[] {
+                KInputs.AddKey(Keys.RControlKey,true),
+                KInputs.AddKey(Keys.Insert, true),
+                KInputs.AddKey(Keys.Insert,false),
+                KInputs.AddKey(Keys.RControlKey, false)});
+            Thread.Sleep(15);
+            ClipStr = NativeClipboard.GetText();
+            if (!String.IsNullOrEmpty(ClipStr))
             {
-                for (int i = 1; i != 5; i++)
-                {
-                    if (!String.IsNullOrEmpty(ClipStr))
-                    { break; }
-                    //This prevents from converting text that alredy exist in Clipboard
-                    //by pressing "Convert Selection hotkey" without selected text.
-                    Clipboard.Clear();
-                    KInputs.MakeInput(new KInputs.INPUT[] {
-                        KInputs.AddKey(Keys.RControlKey,true),
-                        KInputs.AddKey(Keys.Insert, true),
-                        KInputs.AddKey(Keys.Insert,false),
-                        KInputs.AddKey(Keys.RControlKey, false)});
-                    Exception threadEx = null;
-                    //If errored using thread, will not make all app to freeze, instead of just try/catch that actually will...
-                    Thread staThread = new Thread(delegate()
-                    {
-                        try
-                        {
-                            Console.WriteLine("Try #" + i); ClipStr = Clipboard.GetText();
-                        }
-                        catch (Exception ex) { threadEx = ex; }
-                    });
-                    staThread.Name = "GetText";
-                    staThread.SetApartmentState(ApartmentState.STA);
-                    staThread.Start();
-                    staThread.Join();
-                }
-            }
-            catch (Exception e) { Console.WriteLine("CLIP-GET-ERROR:\n" + e.Message); ConvertSelection(); }
-            finally
-            {
-                if (!String.IsNullOrEmpty(ClipStr))
-                {
-                    KInputs.MakeInput(new KInputs.INPUT[] 
+                KInputs.MakeInput(new KInputs.INPUT[] 
                         { KInputs.AddKey(Keys.Back,true),
                           KInputs.AddKey(Keys.Back,false) 
                         });
-                    KInputs.INPUT[] Inputs = new KInputs.INPUT[] { };
-                    var result = "";
-                    int items = 0;
-                    if (MMain.MyConfs.ReadBool("Functions", "SwitchLayoutInCS"))
+                var result = "";
+                int items = 0;
+                if (MMain.MyConfs.ReadBool("Functions", "SwitchLayoutInCS"))
+                {
+                    var nowLocale = Locales.GetCurrentLocale();
+                    self = true;
+                    //var indexes = Enumerable.Range(0, yukeys.Count).Where(i => yukeys[i].yukey == Keys.None).ToList();
+                    //var keys = indexes.Select(index => yukeys[index].yukey).ToList();
+                    //for (int i = 0; i != indexes.Count; i++)
+                    //{
+                    //    Console.WriteLine(keys[i] + "=>" + indexes[i]);
+                    //}
+                    ChangeLayout();
+                    // Don't even think "Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n")" can't be used as variable...
+                    foreach (char c in Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
                     {
-                        var nowLocale = Locales.GetCurrentLocale();
-                        self = true;
-                        //var indexes = Enumerable.Range(0, yukeys.Count).Where(i => yukeys[i].yukey == Keys.None).ToList();
-                        //var keys = indexes.Select(index => yukeys[index].yukey).ToList();
-                        //for (int i = 0; i != indexes.Count; i++)
-                        //{
-                        //    Console.WriteLine(keys[i] + "=>" + indexes[i]);
-                        //}
-                        ChangeLayout();
-                        foreach (char c in Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
+                        items++;
+                        var yk = new YuKey();
+                        var scan = VkKeyScanEx(c, (IntPtr)nowLocale);
+                        if (c == '\n')
                         {
-                            items++;
-                            var yk = new YuKey();
-                            var scan = VkKeyScanEx(c, (IntPtr)nowLocale);
-                            if (c == '\n')
+                            yk.yukey = Keys.Enter;
+                            yk.upper = false;
+                        }
+                        else
+                        {
+                            if (scan != -1)
                             {
-                                yk.yukey = Keys.Enter;
-                                yk.upper = false;
+                                var key = (Keys)(scan & 0xff);
+                                var state = (VkKeyScanEx(c, (IntPtr)nowLocale) >> 8) & 0xff;
+                                bool upper = false;
+                                if (state == 1)
+                                    upper = true;
+                                yk = new YuKey() { yukey = key, upper = upper };
+                                //Console.WriteLine(key + "~" + state);
                             }
-                            else
-                            {
-                                if (scan != -1)
-                                {
-                                    var key = (Keys)(scan & 0xff);
-                                    var state = (VkKeyScanEx(c, (IntPtr)nowLocale) >> 8) & 0xff;
-                                    bool upper = false;
-                                    if (state == 1)
-                                        upper = true;
-                                    yk = new YuKey() { yukey = key, upper = upper };
-                                    //Console.WriteLine(key + "~" + state);
-                                }
-                                else { yk = new YuKey() { yukey = Keys.None }; }
-                            }
-                            if (yk.yukey == Keys.None) // retype unrecognized as unicode
-                            {
-                                var unrecognized = ClipStr[items - 1].ToString();
-                                KInputs.INPUT unr = KInputs.AddString(unrecognized)[0];
-                                //Console.WriteLine("Uis = " + unrecognized + " ind = " + (items - 1));
-                                //Console.WriteLine(unr.Data.Keyboard.Scan + "~" + unr.Data.Keyboard.Flags + "=>"  + unr.Data.Keyboard.Vk);
-                                KInputs.MakeInput(new KInputs.INPUT[] { unr });
-                            }
-                            else
-                            {
-                                if (yk.upper)
-                                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, true) });
-                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true) });
-                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, false) });
-                                if (yk.upper)
-                                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, false) });
-                            }
+                            else { yk = new YuKey() { yukey = Keys.None }; }
+                        }
+                        if (yk.yukey == Keys.None) // retype unrecognized as unicode
+                        {
+                            var unrecognized = ClipStr[items - 1].ToString();
+                            KInputs.INPUT unr = KInputs.AddString(unrecognized)[0];
+                            //Console.WriteLine("Uis = " + unrecognized + " ind = " + (items - 1));
+                            //Console.WriteLine(unr.Data.Keyboard.Scan + "~" + unr.Data.Keyboard.Flags + "=>"  + unr.Data.Keyboard.Vk);
+                            KInputs.MakeInput(new KInputs.INPUT[] { unr });
+                        }
+                        else
+                        {
+                            if (yk.upper)
+                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, true) });
+                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true) });
+                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, false) });
+                            if (yk.upper)
+                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, false) });
                         }
                     }
-                    else
+                }
+                else
+                {
+                    var l1 = (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
+                    var l2 = (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId");
+                    result = InAnother(ClipStr, l2, l1);
+                    //if same first time try switching locales
+                    //Without Regex.Replace "==" will fail
+                    if (Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n") == Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
                     {
-                        var l1 = (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
-                        var l2 = (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId");
-                        result = InAnother(ClipStr, l2, l1);
-                        //if same first time try switching locales
-                        //Without Regex.Replace "==" will fail
-                        if (Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n") == Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
-                        {
-                            result = InAnother(ClipStr, l1, l2);
+                        result = InAnother(ClipStr, l1, l2);
 
-                        }
-                        result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
-                        //Inputs converted text
-                        KInputs.MakeInput(KInputs.AddString(result));
-                        items = result.Length;
                     }
-                    //reselects text
-                    for (int i = items; i != 0; i--)
-                    {
-                        KInputs.MakeInput(new KInputs.INPUT[] 
+                    result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
+                    //Inputs converted text
+                    KInputs.MakeInput(KInputs.AddString(result));
+                    items = result.Length;
+                }
+                //reselects text
+                for (int i = items; i != 0; i--)
+                {
+                    KInputs.MakeInput(new KInputs.INPUT[] 
                         { KInputs.AddKey(Keys.LShiftKey, true),
                           KInputs.AddKey(Keys.Left,true),
                           KInputs.AddKey(Keys.Left,false),
                           KInputs.AddKey(Keys.LShiftKey, false),
                         });
-                    }
-                    Clipboard.Clear();
                 }
-                RePress();
-                self = false;
-                MahouForm.HKCSelection.Register(); //Restores CS hotkey ability
             }
+            RePress();
+            self = false;
+            MahouForm.HKCSelection.Register(); //Restores CS hotkey ability
         }
         public static void RePress() //Re-presses modifiers you hold when hotkey fired(due to SendModsUp())
         {
@@ -375,80 +364,84 @@ namespace Mahou
                 PressCtrlAgain = false;
             }
         }
-        public static void ConvertLast(List<YuKey> c_, bool useS) //Converts last word/line
+        public static void ConvertLast(List<YuKey> c_, bool type) //Converts last word/line
         {
             Locales.IfLessThan2();
             YuKey[] YuKeys = c_.ToArray();
-            if (useS) // Fix if entered alt + numpad
+            //if (useS) // Fix if entered alt + numpad
+            //{
+            //TODO:        Make it work if ever possible? :( :< :[
+            //  ...........................IDEA...............................
+            //  : The main conception is to call ConvertSelection(), but     :
+            //  : reselect text will not be correct, because YuKeys.Length   :
+            //  : is smaller that YuKeys.Length + "Number user pressed alt", :
+            //  : even if i add variable to count press of alt, what Mahou   :
+            //  : should do if user press BackSpace?                         :
+            //  : Create a list with positions when user press's alt?        :
+            //  : What about c_word/c_line it will delete actual item...     :
+            //  : Add ability to skip deletion depending on list with        :
+            //  : positions when user press's alt? Maybe that's it...Maybe...:
+            //  ``````````````````````````````````````````````````````````````
+            //Console.WriteLine("I still working");
+            //self = true;
+            //Thread staThread = new Thread(delegate()
+            //{
+            //for (int i = YuKeys.Length; i != 0; i--)
+            //{
+            //    KInputs.MakeInput(new KInputs.INPUT[] 
+            //        { KInputs.AddKey(Keys.LShiftKey, true),
+            //          KInputs.AddKey(Keys.Left,true),
+            //          KInputs.AddKey(Keys.Left,false),
+            //          KInputs.AddKey(Keys.LShiftKey, false),
+            //        });
+            //}
+            //    ConvertSelection();
+            //for (int i = YuKeys.Length; i != 0; i--)
+            //{
+            //    KInputs.MakeInput(new KInputs.INPUT[] 
+            //        { KInputs.AddKey(Keys.LShiftKey, true),
+            //          KInputs.AddKey(Keys.Right,true),
+            //          KInputs.AddKey(Keys.Right,false),
+            //          KInputs.AddKey(Keys.LShiftKey, false),
+            //        });
+            //}
+            //});
+            //staThread.Name = "FIX FOR ALTNUM";
+            //staThread.SetApartmentState(ApartmentState.STA);
+            //staThread.Start();
+            //staThread.Join();
+            //}
+            //else
+            //{
+            if (YuKeys.Length > 0)
             {
-                //TODO:        Make it work if ever possible? :( :< :[
-                //  ...........................IDEA...............................
-                //  : The main conception is to call ConvertSelection(), but     :
-                //  : reselect text will not be correct, because YuKeys.Length   :
-                //  : is smaller that YuKeys.Length + "Number user pressed alt", :
-                //  : even if i add variable to count press of alt, what Mahou   :
-                //  : should do if user press BackSpace?                         :
-                //  : Create a list with positions when user press's alt?        :
-                //  : What about c_word/c_line it will delete actual item...     :
-                //  : Add ability to skip deletion depending on list with        :
-                //  : positions when user press's alt? Maybe that's it...Maybe...:
-                //  ``````````````````````````````````````````````````````````````
-                //Console.WriteLine("I still working");
-                //self = true;
-                //Thread staThread = new Thread(delegate()
-                //{
-                //for (int i = YuKeys.Length; i != 0; i--)
-                //{
-                //    KInputs.MakeInput(new KInputs.INPUT[] 
-                //        { KInputs.AddKey(Keys.LShiftKey, true),
-                //          KInputs.AddKey(Keys.Left,true),
-                //          KInputs.AddKey(Keys.Left,false),
-                //          KInputs.AddKey(Keys.LShiftKey, false),
-                //        });
-                //}
-                //    ConvertSelection();
-                //for (int i = YuKeys.Length; i != 0; i--)
-                //{
-                //    KInputs.MakeInput(new KInputs.INPUT[] 
-                //        { KInputs.AddKey(Keys.LShiftKey, true),
-                //          KInputs.AddKey(Keys.Right,true),
-                //          KInputs.AddKey(Keys.Right,false),
-                //          KInputs.AddKey(Keys.LShiftKey, false),
-                //        });
-                //}
-                //});
-                //staThread.Name = "FIX FOR ALTNUM";
-                //staThread.SetApartmentState(ApartmentState.STA);
-                //staThread.Start();
-                //staThread.Join();
-            }
-            else
-            {
-                if (YuKeys.Length > 0)
+                self = true;
+                ChangeLayout();
+                for (int e = YuKeys.Length; e != 0; e--)
                 {
-                    self = true;
-                    ChangeLayout();
-                    for (int e = YuKeys.Length; e != 0; e--)
-                    {
-                        KInputs.MakeInput(new KInputs.INPUT[] 
+                    KInputs.MakeInput(new KInputs.INPUT[] 
                         { KInputs.AddKey(Keys.Back,true),
                           KInputs.AddKey(Keys.Back,false) 
                         });
-                    }
-                    List<KInputs.INPUT> yuInpt = new List<KInputs.INPUT>();
-                    foreach (YuKey yk in YuKeys)
-                    {
-                        if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, true)); }
-                        yuInpt.Add(KInputs.AddKey(yk.yukey, true));
-                        yuInpt.Add(KInputs.AddKey(yk.yukey, false));
-                        if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, false)); }
-                    }
-                    KInputs.MakeInput(yuInpt.ToArray());
-                    RePress();
-                    self = false;
-                    afterConversion = true;
                 }
+                List<KInputs.INPUT> yuInpt = new List<KInputs.INPUT>();
+                foreach (YuKey yk in YuKeys)
+                {
+                    if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, true)); }
+                    yuInpt.Add(KInputs.AddKey(yk.yukey, true));
+                    yuInpt.Add(KInputs.AddKey(yk.yukey, false));
+                    if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, false)); }
+                }
+                KInputs.MakeInput(yuInpt.ToArray());
+                RePress();
+                self = false;
+                afterConversion = true;
             }
+            if (type)
+                MahouForm.HKCLast.Register(); //Restores CL hotkey ability
+            else
+                MahouForm.HKCLine.Register(); //Resorest CLine hotkey ability
+            // }
         }
         private static void ChangeLayout() //Changes current layout
         {
@@ -569,11 +562,9 @@ namespace Mahou
         }
         public static void KeybdEvent(Keys key, int flags) // Simplified keybd_event with exteded recongize feature
         {
-            var extended = KInputs.IsExtended(key) ? 1 : 0;
-            //Console.WriteLine(key + ":" + (extended | flags).ToString());
             //Do not remove this line, it needed for "Left Control Switch Layout" to work properly
             Thread.Sleep(15);
-            keybd_event((byte)key, 0, flags | extended, 0);
+            keybd_event((byte)key, 0, flags | (KInputs.IsExtended(key) ? 1 : 0), 0);
         }
         public struct YuKey // YuKey is struct of key and it state(upper/lower)
         {

@@ -293,26 +293,40 @@ namespace Mahou
                 //This stops hotkeys when main window is visible
                 if (!this.Focused)
                 {
-                    if (Key == (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey") && Modifs == CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCLMods")))
-                    {
-                        if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") && MMain.MyConfs.Read("Hotkeys", "HKCLMods").Contains("Control")){}
-                        else
+                        if (Key == (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey") && Modifs == CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCSMods")))
                         {
-                            if (HKHaveModifiers(MMain.MyConfs.Read("Hotkeys", "HKCLMods")) && MMain.MyConfs.ReadBool("Functions", "RePress"))
+                            if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") && MMain.MyConfs.Read("Hotkeys", "HKCSMods").Contains("Control")) { }
+                            else
+                            {
+                                if (HKHaveModifiers(MMain.MyConfs.Read("Hotkeys", "HKCSMods")) && MMain.MyConfs.ReadBool("Functions", "RePress"))
+                                {
+                                    hotkeywithmodsfired = true;
+                                    RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCSMods"));
+                                }
+                                SendModsUp();
+                                //Prevents queue converting
+                                HKCSelection.Unregister(); //Stops hotkey ability
+                                Task t = new Task(KMHook.ConvertSelection);
+                                t.RunSynchronously();
+                            }
+                        }
+                        if (Key == (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey") && Modifs == CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCLMods")))
                         {
-                            hotkeywithmodsfired = true;
-                            RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCLMods"));
+                            if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") && MMain.MyConfs.Read("Hotkeys", "HKCLMods").Contains("Control")) { }
+                            else
+                            {
+                                if (HKHaveModifiers(MMain.MyConfs.Read("Hotkeys", "HKCLMods")) && MMain.MyConfs.ReadBool("Functions", "RePress"))
+                                {
+                                    hotkeywithmodsfired = true;
+                                    RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCLMods"));
+                                }
+                                SendModsUp();
+                                //String below prevents queue converting
+                                HKCLast.Unregister(); //Stops hotkey ability
+                                Task t = new Task(new Action(() => KMHook.ConvertLast(MMain.c_word, true)));
+                                t.RunSynchronously();
+                            }
                         }
-                        SendModsUp();
-                        //String below prevents queue converting
-                        HKCLast.Unregister(); //Stops hotkey ability
-                        Task t = new Task(new Action(() => KMHook.ConvertLast(
-                            MMain.c_word, KMHook.altinword)));
-                        Monitor.Enter(t); try { t.Start(); } finally { Monitor.Exit(t); }
-                        KMHook.RePress();
-                        HKCLast.Register(); //Restores CL hotkey ability
-                        }
-                    }
                     if (Key == (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCLineKey") && Modifs == CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")))
                     {
                         if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") && MMain.MyConfs.Read("Hotkeys", "HKCLineMods").Contains("Control")){}
@@ -326,27 +340,8 @@ namespace Mahou
                             SendModsUp();
                             //String below prevents queue converting
                             HKCLine.Unregister(); //Stops hotkey ability
-                            Task t = new Task(new Action(() => KMHook.ConvertLast(
-                                MMain.c_line, KMHook.altinline)));
-                            Monitor.Enter(t); try { t.Start(); } finally { Monitor.Exit(t); }
-                            KMHook.RePress(); //Re-Presses modifiers you pressed before SendModsUp()
-                            HKCLine.Register(); //Resorest CLine hotkey ability
-                        }
-                    }
-                    if (Key == (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey") && Modifs == CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCSMods")))
-                    {
-                        if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") && MMain.MyConfs.Read("Hotkeys", "HKCSMods").Contains("Control")){}
-                        else
-                        {
-                            if (HKHaveModifiers(MMain.MyConfs.Read("Hotkeys", "HKCSMods")) && MMain.MyConfs.ReadBool("Functions", "RePress"))
-                            {
-                                hotkeywithmodsfired = true;
-                                RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCSMods"));
-                            }
-                            SendModsUp();
-                            //Prevents queue converting
-                            HKCSelection.Unregister(); //Stops hotkey ability
-                            KMHook.ConvertSelection();
+                            Task t = new Task(new Action(() => KMHook.ConvertLast(MMain.c_line, false)));
+                            t.RunSynchronously();
                         }
                     }
                 }
