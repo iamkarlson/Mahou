@@ -67,8 +67,8 @@ namespace Mahou
             if (!Boolean.TryParse(this.Read("Functions", "EmulateLayoutSwitch"), out bt))
                 this.Write("Functions", "EmulateLayoutSwitch", "false");
 
-            if (!Boolean.TryParse(this.Read("Functions", "SwitchLayoutInCS"), out bt))
-                this.Write("Functions", "SwitchLayoutInCS", "true");
+            if (!Boolean.TryParse(this.Read("Functions", "CSSwitch"), out bt))
+                this.Write("Functions", "CSSwitch", "true");
 
             if (!Boolean.TryParse(this.Read("Functions", "BlockCTRL"), out bt))
                 this.Write("Functions", "BlockCTRL", "false");
@@ -77,8 +77,8 @@ namespace Mahou
                 this.Write("Functions", "RePress", "false");
 
             if (!Boolean.TryParse(this.Read("Functions", "EatOneSpace"), out bt))
-                this.Write("Functions", "EatOneSpace", "false");
-
+                this.Write("Functions", "EatOneSpace", "False");
+            Console.WriteLine(bt);
             //EnabledHotkeys section
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCLEnabled", "true"); //Hotkey convert last word enabled

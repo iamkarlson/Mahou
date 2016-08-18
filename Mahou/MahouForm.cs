@@ -47,7 +47,7 @@ namespace Mahou
             HKCSelection = new HotkeyHandler(CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCSMods")),
                 (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey"), this);
             if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled"))
-            {MMain.MyConfs.Write("Functions", "EatOneSpace", tempEOSpace.ToString());
+            {
             HKCSelection.Register();
             HKCSReg = true;
             }
@@ -398,6 +398,10 @@ namespace Mahou
             KMHook.self = true;
             KMHook.KeybdEvent(Keys.RMenu, 2); // Right Alt Up
             KMHook.KeybdEvent(Keys.LMenu, 2); // Left Alt Up
+            //Fix for Sticky notes, maybe something more...
+            KInputs.MakeInput(new KInputs.INPUT[] {
+                KInputs.AddKey(Keys.Escape, true),
+                KInputs.AddKey(Keys.Escape, false)});
             KMHook.KeybdEvent(Keys.RShiftKey, 2); // Right Shift Up
             KMHook.KeybdEvent(Keys.LShiftKey, 2); // Left Shift Up
             KMHook.KeybdEvent(Keys.RControlKey, 2); // Right Control Up
@@ -471,7 +475,7 @@ namespace Mahou
             tempcbOnlyKey = MMain.MyConfs.Read("Hotkeys", "OnlyKeyLayoutSwicth");
             tempCycleM = MMain.MyConfs.ReadBool("Functions", "CycleMode");
             tempTrayI = MMain.MyConfs.ReadBool("Functions", "IconVisibility");
-            tempSLinCS = MMain.MyConfs.ReadBool("Functions", "SwitchLayoutInCS");
+            tempSLinCS = MMain.MyConfs.ReadBool("Functions", "CSSwitch");
             tempEOSpace = MMain.MyConfs.ReadBool("Functions", "EatOneSpace");
             tempRePress = MMain.MyConfs.ReadBool("Functions", "RePress");
             tempUseEmulate = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
@@ -655,7 +659,7 @@ namespace Mahou
             TrayIconCheckBox.Checked = MMain.MyConfs.ReadBool("Functions", "IconVisibility");
             cbCycleMode.Checked = MMain.MyConfs.ReadBool("Functions", "CycleMode");
             cbBlockC.Checked = MMain.MyConfs.ReadBool("Functions", "BlockCTRL");
-            cbCSSwitch.Checked = MMain.MyConfs.ReadBool("Functions", "SwitchLayoutInCS");
+            cbCSSwitch.Checked = MMain.MyConfs.ReadBool("Functions", "CSSwitch");
             cbUseEmulate.Checked = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
             cbRePress.Checked = MMain.MyConfs.ReadBool("Functions", "RePress");
             cbEatOneSpace.Checked = MMain.MyConfs.ReadBool("Functions", "EatOneSpace");
