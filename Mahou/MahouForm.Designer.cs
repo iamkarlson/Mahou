@@ -58,6 +58,7 @@
             this.cbUseEmulate = new System.Windows.Forms.CheckBox();
             this.cbRePress = new System.Windows.Forms.CheckBox();
             this.cbEatOneSpace = new System.Windows.Forms.CheckBox();
+            this.cbResel = new System.Windows.Forms.CheckBox();
             this.gbSBL.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -67,7 +68,7 @@
             this.btnOK.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnOK.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnOK.Location = new System.Drawing.Point(87, 236);
+            this.btnOK.Location = new System.Drawing.Point(87, 251);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
@@ -79,7 +80,7 @@
             // 
             this.btnApply.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
             this.btnApply.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnApply.Location = new System.Drawing.Point(6, 236);
+            this.btnApply.Location = new System.Drawing.Point(6, 251);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 1;
@@ -92,7 +93,7 @@
             this.btnCancel.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.MenuHighlight;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnCancel.Location = new System.Drawing.Point(168, 236);
+            this.btnCancel.Location = new System.Drawing.Point(168, 251);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 2;
@@ -175,7 +176,7 @@
             this.TrayIconCheckBox.AutoSize = true;
             this.TrayIconCheckBox.BackColor = System.Drawing.Color.Transparent;
             this.TrayIconCheckBox.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TrayIconCheckBox.Location = new System.Drawing.Point(201, 180);
+            this.TrayIconCheckBox.Location = new System.Drawing.Point(201, 193);
             this.TrayIconCheckBox.Name = "TrayIconCheckBox";
             this.TrayIconCheckBox.Size = new System.Drawing.Size(102, 17);
             this.TrayIconCheckBox.TabIndex = 14;
@@ -188,7 +189,7 @@
             // 
             this.btnHelp.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnHelp.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnHelp.Location = new System.Drawing.Point(249, 236);
+            this.btnHelp.Location = new System.Drawing.Point(249, 251);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(75, 23);
             this.btnHelp.TabIndex = 15;
@@ -228,7 +229,7 @@
             this.gbSBL.Controls.Add(this.cbLangOne);
             this.gbSBL.Controls.Add(this.cbLangTwo);
             this.gbSBL.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.gbSBL.Location = new System.Drawing.Point(6, 153);
+            this.gbSBL.Location = new System.Drawing.Point(6, 170);
             this.gbSBL.Name = "gbSBL";
             this.gbSBL.Size = new System.Drawing.Size(189, 77);
             this.gbSBL.TabIndex = 19;
@@ -320,7 +321,7 @@
             // 
             this.cbCycleMode.AutoSize = true;
             this.cbCycleMode.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.cbCycleMode.Location = new System.Drawing.Point(201, 198);
+            this.cbCycleMode.Location = new System.Drawing.Point(201, 212);
             this.cbCycleMode.Name = "cbCycleMode";
             this.cbCycleMode.Size = new System.Drawing.Size(123, 17);
             this.cbCycleMode.TabIndex = 22;
@@ -351,7 +352,7 @@
             "Left Control",
             "Right Control",
             "None"});
-            this.cbSwitchLayoutKeys.Location = new System.Drawing.Point(201, 141);
+            this.cbSwitchLayoutKeys.Location = new System.Drawing.Point(201, 147);
             this.cbSwitchLayoutKeys.Name = "cbSwitchLayoutKeys";
             this.cbSwitchLayoutKeys.Size = new System.Drawing.Size(117, 21);
             this.cbSwitchLayoutKeys.TabIndex = 24;
@@ -361,7 +362,7 @@
             // 
             // cbBlockC
             // 
-            this.cbBlockC.Location = new System.Drawing.Point(201, 163);
+            this.cbBlockC.Location = new System.Drawing.Point(201, 174);
             this.cbBlockC.Name = "cbBlockC";
             this.cbBlockC.Size = new System.Drawing.Size(102, 17);
             this.cbBlockC.TabIndex = 0;
@@ -374,7 +375,7 @@
             // 
             this.lbswithlayout.AutoSize = true;
             this.lbswithlayout.BackColor = System.Drawing.Color.Transparent;
-            this.lbswithlayout.Location = new System.Drawing.Point(204, 125);
+            this.lbswithlayout.Location = new System.Drawing.Point(202, 130);
             this.lbswithlayout.Name = "lbswithlayout";
             this.lbswithlayout.Size = new System.Drawing.Size(114, 13);
             this.lbswithlayout.TabIndex = 25;
@@ -395,7 +396,7 @@
             // cbUseEmulate
             // 
             this.cbUseEmulate.AutoSize = true;
-            this.cbUseEmulate.Location = new System.Drawing.Point(201, 216);
+            this.cbUseEmulate.Location = new System.Drawing.Point(201, 232);
             this.cbUseEmulate.Name = "cbUseEmulate";
             this.cbUseEmulate.Size = new System.Drawing.Size(127, 17);
             this.cbUseEmulate.TabIndex = 26;
@@ -407,7 +408,7 @@
             // cbRePress
             // 
             this.cbRePress.AutoSize = true;
-            this.cbRePress.Location = new System.Drawing.Point(85, 130);
+            this.cbRePress.Location = new System.Drawing.Point(106, 130);
             this.cbRePress.Name = "cbRePress";
             this.cbRePress.Size = new System.Drawing.Size(69, 17);
             this.cbRePress.TabIndex = 27;
@@ -419,7 +420,7 @@
             // cbEatOneSpace
             // 
             this.cbEatOneSpace.AutoSize = true;
-            this.cbEatOneSpace.Location = new System.Drawing.Point(151, 130);
+            this.cbEatOneSpace.Location = new System.Drawing.Point(12, 151);
             this.cbEatOneSpace.Name = "cbEatOneSpace";
             this.cbEatOneSpace.Size = new System.Drawing.Size(49, 17);
             this.cbEatOneSpace.TabIndex = 28;
@@ -428,11 +429,24 @@
             this.cbEatOneSpace.CheckedChanged += new System.EventHandler(this.cbEatOneSpace_CheckedChanged);
             this.cbEatOneSpace.MouseHover += new System.EventHandler(this.cbEatOneSpace_MouseHover);
             // 
+            // cbResel
+            // 
+            this.cbResel.AutoSize = true;
+            this.cbResel.Location = new System.Drawing.Point(106, 151);
+            this.cbResel.Name = "cbResel";
+            this.cbResel.Size = new System.Drawing.Size(73, 17);
+            this.cbResel.TabIndex = 29;
+            this.cbResel.Text = "Re-Select";
+            this.cbResel.UseVisualStyleBackColor = true;
+            this.cbResel.CheckedChanged += new System.EventHandler(this.cbResel_CheckedChanged);
+            this.cbResel.MouseHover += new System.EventHandler(this.cbResel_MouseHover);
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(330, 265);
+            this.ClientSize = new System.Drawing.Size(330, 278);
+            this.Controls.Add(this.cbResel);
             this.Controls.Add(this.cbEatOneSpace);
             this.Controls.Add(this.cbRePress);
             this.Controls.Add(this.cbUseEmulate);
@@ -504,5 +518,6 @@
         private System.Windows.Forms.CheckBox cbUseEmulate;
         private System.Windows.Forms.CheckBox cbRePress;
         private System.Windows.Forms.CheckBox cbEatOneSpace;
+        private System.Windows.Forms.CheckBox cbResel;
     }
 }

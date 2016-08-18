@@ -19,7 +19,7 @@ namespace Mahou
         static int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0; // Temporary keys 
         static bool tempTrayI, tempCycleM, tempAutoR, tempBlockCTRL,
             tempCLEnabled, tempCSEnabled, tempCLineEnabled, tempSLinCS,
-            tempUseEmulate, tempRePress, tempEOSpace;//Temporary checkboxes values
+            tempUseEmulate, tempRePress, tempEOSpace, tempResel;//Temporary checkboxes values
         public static bool hotkeywithmodsfired = false;
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
@@ -241,7 +241,10 @@ namespace Mahou
         {
             tempEOSpace = cbEatOneSpace.Checked;
         }
-		
+        private void cbResel_CheckedChanged(object sender, EventArgs e)
+        {
+            tempResel = cbResel.Checked;
+        }
         #endregion
         #region Buttons & link
         private void btnApply_Click(object sender, EventArgs e)
@@ -494,6 +497,7 @@ namespace Mahou
             tempSLinCS = MMain.MyConfs.ReadBool("Functions", "CSSwitch");
             tempEOSpace = MMain.MyConfs.ReadBool("Functions", "EatOneSpace");
             tempRePress = MMain.MyConfs.ReadBool("Functions", "RePress");
+            tempResel = MMain.MyConfs.ReadBool("Functions", "ReSelect");
             tempUseEmulate = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
             tempCLEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled");
             tempCSEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
@@ -589,10 +593,11 @@ namespace Mahou
             MMain.MyConfs.Write("Functions", "CycleMode", tempCycleM.ToString());
             MMain.MyConfs.Write("Functions", "IconVisibility", tempTrayI.ToString());
             MMain.MyConfs.Write("Functions", "BlockCTRL", tempBlockCTRL.ToString());
-            MMain.MyConfs.Write("Functions", "SwitchLayoutInCS", tempSLinCS.ToString());
+            MMain.MyConfs.Write("Functions", "CSSwitch", tempSLinCS.ToString());
             MMain.MyConfs.Write("Functions", "EmulateLayoutSwitch", tempUseEmulate.ToString());
             MMain.MyConfs.Write("Functions", "RePress", tempRePress.ToString());
             MMain.MyConfs.Write("Functions", "EatOneSpace", tempEOSpace.ToString());
+            MMain.MyConfs.Write("Functions", "ReSelect", tempResel.ToString());
             MMain.MyConfs.Write("EnabledHotkeys", "HKCLEnabled", tempCLEnabled.ToString());
             MMain.MyConfs.Write("EnabledHotkeys", "HKCSEnabled", tempCSEnabled.ToString());
             MMain.MyConfs.Write("EnabledHotkeys", "HKCLineEnabled", tempCLineEnabled.ToString());
@@ -679,6 +684,7 @@ namespace Mahou
             cbUseEmulate.Checked = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
             cbRePress.Checked = MMain.MyConfs.ReadBool("Functions", "RePress");
             cbEatOneSpace.Checked = MMain.MyConfs.ReadBool("Functions", "EatOneSpace");
+            cbResel.Checked = MMain.MyConfs.ReadBool("Functions", "ReSelect");
             cbCLActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled");
             cbCLineActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLineEnabled");
             cbCSActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
@@ -835,6 +841,11 @@ namespace Mahou
             HelpTT.ToolTipTitle = cbEatOneSpace.Text;
             HelpTT.Show("If enabled, pressing ONE space AFTER word will not clear last word.", cbEatOneSpace);
 
+        }
+        private void cbResel_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = cbResel.Text;
+            HelpTT.Show("Enabling this, will reselect text after \"Convert Selection\".", cbResel);
         }
         #endregion
     }

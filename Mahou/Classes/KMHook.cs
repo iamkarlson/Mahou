@@ -28,7 +28,7 @@ namespace Mahou
             WM_KEYUP = 0x0101,
             WM_SYSKEYDOWN = 0x0104
         }
-        public static bool self = false, afterConversion = false, printable = false,
+        public static bool self = false, printable = false,
                            win = false, alt = false, ctrl = false, shift = false,
                            PressShiftAgain = false, PressCtrlAgain = false, PressAltAgain = false,
                            awas = false, swas = false, cwas = false, afterEOS = false,
@@ -138,11 +138,6 @@ namespace Mahou
             #region Other, when KeyDown
             if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
-                if (Key == Keys.Space && afterConversion && !self) // && MMain.MySetts.SpaceBreak
-                {
-                    MMain.c_word.Clear();
-                    afterConversion = false;
-                }
                 if (Key == Keys.Back && !self) //Removes last item from current word when user press Backspace
                 {
                     if (MMain.c_word.Count != 0)
@@ -169,7 +164,6 @@ namespace Mahou
                     //altinword = false;
                     if (MMain.MyConfs.ReadBool("Functions", "EatOneSpace") && MMain.c_word.Count != 0 && MMain.c_word[MMain.c_word.Count - 1].yukey != Keys.Space)
                     {
-
                         MMain.c_word.Add(new YuKey() { yukey = Keys.Space, upper = false });
                         afterEOS = true;
                     }
@@ -270,7 +264,7 @@ namespace Mahou
                         });
                 var result = "";
                 int items = 0;
-                if (MMain.MyConfs.ReadBool("Functions", "SwitchLayoutInCS"))
+                if (MMain.MyConfs.ReadBool("Functions", "CSSwitch"))
                 {
                     var nowLocale = Locales.GetCurrentLocale();
                     self = true;
@@ -343,14 +337,17 @@ namespace Mahou
                     items = result.Length;
                 }
                 //reselects text
-                for (int i = items; i != 0; i--)
+                if (MMain.MyConfs.ReadBool("Functions", "ReSelect"))
                 {
-                    KInputs.MakeInput(new KInputs.INPUT[] 
+                    for (int i = items; i != 0; i--)
+                    {
+                        KInputs.MakeInput(new KInputs.INPUT[] 
                         { KInputs.AddKey(Keys.LShiftKey, true),
                           KInputs.AddKey(Keys.Left,true),
                           KInputs.AddKey(Keys.Left,false),
                           KInputs.AddKey(Keys.LShiftKey, false),
                         });
+                    }
                 }
             }
             RePress();
@@ -450,7 +447,6 @@ namespace Mahou
                 KInputs.MakeInput(yuInpt.ToArray());
                 RePress();
                 self = false;
-                afterConversion = true;
             }
             if (type)
                 MahouForm.HKCLast.Register(); //Restores CL hotkey ability
