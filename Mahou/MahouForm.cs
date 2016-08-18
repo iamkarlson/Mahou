@@ -308,7 +308,7 @@ namespace Mahou
                                     hotkeywithmodsfired = true;
                                     RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCSMods"));
                                 }
-                                SendModsUp();
+                                SendModsUp(GetHKMods(MMain.MyConfs.Read("Hotkeys", "HKCSMods")));
                                 //Prevents queue converting
                                 HKCSelection.Unregister(); //Stops hotkey ability
                                 Task t = new Task(KMHook.ConvertSelection);
@@ -325,7 +325,7 @@ namespace Mahou
                                     hotkeywithmodsfired = true;
                                     RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCLMods"));
                                 }
-                                SendModsUp();
+                                SendModsUp(GetHKMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods")));
                                 //String below prevents queue converting
                                 HKCLast.Unregister(); //Stops hotkey ability
                                 Task t = new Task(new Action(() => KMHook.ConvertLast(MMain.c_word, true)));
@@ -342,7 +342,7 @@ namespace Mahou
                                 hotkeywithmodsfired = true;
                                 RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCLineMods"));
                             }
-                            SendModsUp();
+                            SendModsUp(GetHKMods(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")));
                             //String below prevents queue converting
                             HKCLine.Unregister(); //Stops hotkey ability
                             Task t = new Task(new Action(() => KMHook.ConvertLast(MMain.c_line, false)));
@@ -391,21 +391,37 @@ namespace Mahou
             else
                 KMHook.PressCtrlAgain = false;
         }
-        public static void SendModsUp()
+        public static bool[] GetHKMods(string hkmods)
+        {
+            bool alt=false, shift=false, ctrl=false;
+            if (hkmods.Contains("Control"))
+                ctrl = true;
+            if (hkmods.Contains("Alt"))
+                alt = true;
+            if (hkmods.Contains("Shift"))
+                shift = true;
+            return new bool[] { alt, shift, ctrl };
+        }
+        public static void SendModsUp(bool[] modstoup)
         {
             //These three below are needed to release all modifiers, so even if you will still hold any of it
             //it will skip them and do as it must.
             KMHook.self = true;
-            KMHook.KeybdEvent(Keys.RMenu, 2); // Right Alt Up
-            KMHook.KeybdEvent(Keys.LMenu, 2); // Left Alt Up
-            //Fix for Sticky notes, maybe something more...
-            KInputs.MakeInput(new KInputs.INPUT[] {
-                KInputs.AddKey(Keys.Escape, true),
-                KInputs.AddKey(Keys.Escape, false)});
-            KMHook.KeybdEvent(Keys.RShiftKey, 2); // Right Shift Up
-            KMHook.KeybdEvent(Keys.LShiftKey, 2); // Left Shift Up
-            KMHook.KeybdEvent(Keys.RControlKey, 2); // Right Control Up
-            KMHook.KeybdEvent(Keys.LControlKey, 2); // Left Control Up
+            if (modstoup[0])
+            {
+                KMHook.KeybdEvent(Keys.RMenu, 2); // Right Alt Up
+                KMHook.KeybdEvent(Keys.LMenu, 2); // Left Alt Up
+            }
+            if (modstoup[1])
+            {
+                KMHook.KeybdEvent(Keys.RShiftKey, 2); // Right Shift Up
+                KMHook.KeybdEvent(Keys.LShiftKey, 2); // Left Shift Up
+            }
+            if (modstoup[2])
+            {
+                KMHook.KeybdEvent(Keys.RControlKey, 2); // Right Control Up
+                KMHook.KeybdEvent(Keys.LControlKey, 2); // Left Control Up
+            } 
             KMHook.self = false;
         }
         public int CheckNGetModifiers(string inpt)
