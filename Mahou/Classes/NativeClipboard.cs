@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Collections.Generic;
 namespace Mahou
 {
     public static class NativeClipboard
@@ -48,7 +46,7 @@ namespace Mahou
         //    ClipboardData cd = new ClipboardData() {
         //        data = new List<IntPtr>(),
         //        format = new List<uint>() };
-        //    OpenClipboard((IntPtr)0);
+        //    OpenClipboard(IntPtr.Zero);
         //    foreach (var fmt in (uint[])Enum.GetValues(typeof(uFormat)))
         //    {
         //        if(IsClipboardFormatAvailable(fmt))
@@ -64,7 +62,7 @@ namespace Mahou
         //}
         //public static void RestoreData(ClipboardData datas)
         //{
-        //    OpenClipboard((IntPtr)0);
+        //    OpenClipboard(IntPtr.Zero);
         //    for (int i = 0; i != datas.data.Count; i++)
         //    {
         //        var data = datas.data[i];
@@ -84,7 +82,7 @@ namespace Mahou
         //}
         public static void Clear()
         {
-            OpenClipboard((IntPtr)0);
+            OpenClipboard(IntPtr.Zero);
             EmptyClipboard();
             CloseClipboard();
         }
@@ -98,7 +96,7 @@ namespace Mahou
             while (true)
             {
                 ++Tries;
-                opened = OpenClipboard((IntPtr)0);
+                opened = OpenClipboard(IntPtr.Zero);
                 var hGlobal = GetClipboardData((uint)uFormat.CF_UNICODETEXT);
                 var lpwcstr = GlobalLock(hGlobal);
                 data = Marshal.PtrToStringUni(lpwcstr);

@@ -87,7 +87,7 @@ namespace Mahou
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll")]
-        static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr proccess);
+        public static extern uint GetWindowThreadProcessId(IntPtr hwnd, IntPtr proccess);
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool GetGUIThreadInfo(uint hTreadID, ref GUITHREADINFO lpgui);
         #endregion

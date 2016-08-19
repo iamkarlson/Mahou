@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading;
 using System.Text;
@@ -28,13 +27,11 @@ namespace Mahou
             WM_KEYUP = 0x0101,
             WM_SYSKEYDOWN = 0x0104
         }
-        public static bool self = false, printable = false,
-                           win = false, alt = false, ctrl = false, shift = false,
-                           PressShiftAgain = false, PressCtrlAgain = false, PressAltAgain = false,
-                           awas = false, swas = false, cwas = false, afterEOS = false,
-                           bothnotmatch = false, altinword = false, altinline = false;
-        public static int altcount_word = 0, altcount_line = 0;
-        public static Exception notINany = new Exception("Selected text is not in any of selected layouts(locales/languages) in settings\nor contains characters from other than selected layouts(locales/languages).");
+        public static bool self, win, alt, ctrl, shift,
+                           shiftRP, ctrlRP, altRP, //RP = Re-Press
+                           awas, swas, cwas, afterEOS; //*was = alt/shift/ctrl was
+        //altinword , altinline;
+        //public static int altcount_word = 0, altcount_line = 0;
         public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
         #region Keyboard & Mouse hooks events
@@ -174,17 +171,11 @@ namespace Mahou
                     }
                     MMain.c_line.Add(new YuKey() { yukey = Keys.Space, upper = false });
                 }
-                if (
-                    (Key >= Keys.D0 && Key <= Keys.Z) ||
-                    Key >= Keys.Oem1 && Key <= Keys.OemBackslash
-                    )
+                if (((Key >= Keys.D0 && Key <= Keys.Z) || // This is 0-9 & A-Z
+                    Key >= Keys.Oem1 && Key <= Keys.OemBackslash // All other printables
+                    ) && !self && !win && !alt && !ctrl)
                 {
-                    printable = true;
-                }
-                else { printable = false; }
-                if (printable && !self && !win && !alt && !ctrl)
-                {
-                    if (afterEOS) //Clears word after Eat one space
+                    if (afterEOS) //Clears word after Eat ONE space
                     {
                         MMain.c_word.Clear();
                         afterEOS = false;
@@ -203,13 +194,13 @@ namespace Mahou
             }
             #endregion
             #region Alt+Numpad (not Implemented yet)
-            if (wParam == (IntPtr)KMMessages.WM_KEYUP && (Key == Keys.LMenu || Key == Keys.RMenu))
-            {
-                //altinline = true;
-                //altinword = true;
-                //altcount_word++;
-                //altcount_line++;
-            }
+            //if (wParam == (IntPtr)KMMessages.WM_KEYUP && (Key == Keys.LMenu || Key == Keys.RMenu))
+            //{
+            //    altinline = true;
+            //    altinword = true;
+            //    altcount_word++;
+            //    altcount_line++;
+            //}
             #endregion
             return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
         }
@@ -248,32 +239,24 @@ namespace Mahou
             //t.RunSynchronously();
             //Console.WriteLine(datas.data[0] + " and " + datas.format[0]);
             //NativeClipboard.RestoreData(datas); // place this after conversion
-            NativeClipboard.Clear();
             KInputs.MakeInput(new KInputs.INPUT[] {
                 KInputs.AddKey(Keys.RControlKey,true),
                 KInputs.AddKey(Keys.Insert, true),
                 KInputs.AddKey(Keys.Insert,false),
                 KInputs.AddKey(Keys.RControlKey, false)});
-            Thread.Sleep(15);
+            Thread.Sleep(30);
             ClipStr = NativeClipboard.GetText();
             if (!String.IsNullOrEmpty(ClipStr))
             {
-                KInputs.MakeInput(new KInputs.INPUT[] 
-                        { KInputs.AddKey(Keys.Back,true),
-                          KInputs.AddKey(Keys.Back,false) 
-                        });
+                KInputs.MakeInput(new KInputs.INPUT[] {
+                    KInputs.AddKey(Keys.Back,true),
+                    KInputs.AddKey(Keys.Back,false) });
                 var result = "";
                 int items = 0;
                 if (MMain.MyConfs.ReadBool("Functions", "CSSwitch"))
                 {
                     var nowLocale = Locales.GetCurrentLocale();
                     self = true;
-                    //var indexes = Enumerable.Range(0, yukeys.Count).Where(i => yukeys[i].yukey == Keys.None).ToList();
-                    //var keys = indexes.Select(index => yukeys[index].yukey).ToList();
-                    //for (int i = 0; i != indexes.Count; i++)
-                    //{
-                    //    Console.WriteLine(keys[i] + "=>" + indexes[i]);
-                    //}
                     ChangeLayout();
                     // Don't even think "Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n")" can't be used as variable...
                     foreach (char c in Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
@@ -336,17 +319,16 @@ namespace Mahou
                     KInputs.MakeInput(KInputs.AddString(result));
                     items = result.Length;
                 }
-                //reselects text
                 if (MMain.MyConfs.ReadBool("Functions", "ReSelect"))
                 {
+                    //reselects text
                     for (int i = items; i != 0; i--)
                     {
-                        KInputs.MakeInput(new KInputs.INPUT[] 
-                        { KInputs.AddKey(Keys.LShiftKey, true),
-                          KInputs.AddKey(Keys.Left,true),
-                          KInputs.AddKey(Keys.Left,false),
-                          KInputs.AddKey(Keys.LShiftKey, false),
-                        });
+                        KInputs.MakeInput(new KInputs.INPUT[] { 
+                            KInputs.AddKey(Keys.LShiftKey, true),
+                            KInputs.AddKey(Keys.Left,true),
+                            KInputs.AddKey(Keys.Left,false),
+                            KInputs.AddKey(Keys.LShiftKey, false) });
                     }
                 }
             }
@@ -357,23 +339,23 @@ namespace Mahou
         public static void RePress() //Re-presses modifiers you hold when hotkey fired(due to SendModsUp())
         {
             //Repress's modifiers by Press Again variables
-            if (PressShiftAgain)
+            if (shiftRP)
             {
                 KeybdEvent(Keys.LShiftKey, 0);
-                PressShiftAgain = false;
                 swas = true;
+                shiftRP = false;
             }
-            if (PressAltAgain)
+            if (altRP)
             {
-                awas = true;
                 KeybdEvent(Keys.LMenu, 0);
-                PressAltAgain = false;
+                awas = true;
+                altRP = false;
             }
-            if (PressCtrlAgain)
+            if (ctrlRP)
             {
-                cwas = true;
                 KeybdEvent(Keys.LControlKey, 0);
-                PressCtrlAgain = false;
+                cwas = true;
+                ctrlRP = false;
             }
         }
         public static void ConvertLast(List<YuKey> c_, bool type) //Converts last word/line
@@ -462,84 +444,45 @@ namespace Mahou
                 : (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
             if (!MMain.MyConfs.ReadBool("Functions", "CycleMode"))
             {
-                int tryes = 0;
+                int tries = 0;
                 //Cycles while layout not changed
                 while (Locales.GetCurrentLocale() == nowLocale)
                 {
                     PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, notnowLocale);
-                    Thread.Sleep(5);//Give some time to switch layout
-                    tryes++;
-                    if (tryes == 5)
-                    {
-                        //Checking now because of * & **                                                         ↓
-                        notnowLocale = nowLocale == (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId")
-                            ? (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId")
-                            : (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
-                        //Some apps blocking PostMessage() so lets try CycleSwtich(),
-                        //Applyes for Foobar2000, maybe something else... except metro apps *                    ↓
-                        do
-                        {
-                            CycleSwitch();
-                            //Check if abowe worked                       
-                            if (Locales.GetCurrentLocale() == notnowLocale) { goto skip; }
-                            tryes++;
-                            //For return to last layout ***
-                            if (tryes == 5 + MMain.locales.Length)
-                            {
-                                break;
-                            }
-                        } while (Locales.GetCurrentLocale() == nowLocale);
-                        //Another fix for metro apps(if 3 or more languages)
-                        //if all 5 times GetCurrentLocale() == nowLocale & 3 CycleSwitch()'es failed,
-                        //then it is must be metro app, in which GetCurrentLocale() will not return properly id, *
-                        //the only way to fix it is to re-focus app.                                             **
-                        //->  Re-focus
-                        IntPtr lastwindow = Locales.GetForegroundWindow();
-                        Form f = new Form();
-                        f.ShowInTaskbar = false;
-                        f.TopMost = true;
-                        f.Opacity = 0;
-                        f.Show();
-                        SetForegroundWindow(f.Handle);
-                        //Thanks to ***                ↑
-                        //Works perfect :)
-                        //Time has been reduced to 0.1 sec seperately
-                        Thread.Sleep(50);
-                        f.Hide();
-                        SetForegroundWindow(lastwindow);
-                        Thread.Sleep(50);
-                        //<-                                              
-                        notnowLocale = nowLocale == (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId")
-                            ? (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId")
-                            : (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
-                        PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, notnowLocale);
+                    Thread.Sleep(50);//Give some time to switch layout
+                    tries++;
+                    if (tries == 3)
                         break;
-                    skip:
-                        break;
-                    }
                 }
             }
             else
-            {
                 CycleSwitch();
-            }
         }
         private static void CycleSwitch() //Switches layout by cycling between installed all in system
         {
             if (MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch"))
             {
-                //Emulate Alt+Shift
-                KInputs.MakeInput(new KInputs.INPUT[]
-                 {KInputs.AddKey(Keys.LMenu, true),
-                  KInputs.AddKey(Keys.LShiftKey, true),
-                  KInputs.AddKey(Keys.LShiftKey, false),
-                  KInputs.AddKey(Keys.LMenu, false)});
+                if (MMain.MyConfs.ReadBool("Functions", "ELSAlSh"))
+                    //Emulate Alt+Shift
+                    KInputs.MakeInput(new KInputs.INPUT[] {
+                      KInputs.AddKey(Keys.LMenu, true),
+                      KInputs.AddKey(Keys.LShiftKey, true),
+                      KInputs.AddKey(Keys.LShiftKey, false),
+                      KInputs.AddKey(Keys.LMenu, false)   });
+                else
+                {
+                    //Emulate Win+Space
+                    KInputs.MakeInput(new KInputs.INPUT[] {
+                        KInputs.AddKey(Keys.LWin, true),
+                        KInputs.AddKey(Keys.Space, true),
+                        KInputs.AddKey(Keys.Space, false),
+                        KInputs.AddKey(Keys.LWin, false)  });
+                    Thread.Sleep(100); //Important!
+                }
             }
             else
-            {
                 //Use PostMessage to switch to next layout
                 PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, KInputs.HKL_NEXT);
-            }
         }
         public static string InAnother(string input, uint uID1, uint uID2)
         {
@@ -582,6 +525,26 @@ namespace Mahou
             public Keys yukey;
             public bool upper;
         }
+        //private static void Refocus() // No more needed since Win+Space exist...
+        //{
+        //    //Another fix for metro apps(if 3 or more languages)
+        //    //if all 5 times GetCurrentLocale() == nowLocale & 3 CycleSwitch()'es failed,
+        //    //then it is must be metro app, in which GetCurrentLocale() will not return properly id, *
+        //    //the only way to fix it is to re-focus app.                                             **
+        //    IntPtr lastwindow = Locales.ActiveWindow();
+        //    Form f = new Form();
+        //    f.ShowInTaskbar = false;
+        //    f.TopMost = true;
+        //    f.Opacity = 0;
+        //    f.Show();
+        //    SetForegroundWindow(f.Handle);
+        //    //Works perfect :)
+        //    //Time has been reduced to 0.1 sec seperately
+        //    Thread.Sleep(50);
+        //    f.Hide();
+        //    SetForegroundWindow(lastwindow);
+        //    Thread.Sleep(50);
+        //}
         #endregion
         #region DLL imports
         [DllImport("user32.dll")]

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Reflection;
 using IWshRuntimeLibrary;
 using System.Threading.Tasks;
-using System.Threading;
 namespace Mahou
 {
     public partial class MahouForm : Form
@@ -19,7 +17,7 @@ namespace Mahou
         static int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0; // Temporary keys 
         static bool tempTrayI, tempCycleM, tempAutoR, tempBlockCTRL,
             tempCLEnabled, tempCSEnabled, tempCLineEnabled, tempSLinCS,
-            tempUseEmulate, tempRePress, tempEOSpace, tempResel;//Temporary checkboxes values
+            tempUseEmulate, tempRePress, tempEOSpace, tempResel, tempELST;//Temporary checkboxes values
         public static bool hotkeywithmodsfired = false;
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
@@ -74,7 +72,6 @@ namespace Mahou
                 ToggleVisibility();
             }
             tempRestore();
-
         }
         private void MahouForm_VisibleChanged(object sender, EventArgs e)
         {
@@ -183,6 +180,13 @@ namespace Mahou
         {
             tempcbOnlyKey = cbSwitchLayoutKeys.Text;
         }
+        private void cbELSType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbELSType.SelectedIndex == 0)
+                tempELST = true;
+            else
+                tempELST = false;
+        }
         #endregion
         #region Checkboxes
         private void cbAutorun_CheckedChanged(object sender, EventArgs e)
@@ -193,8 +197,17 @@ namespace Mahou
         {
             tempCycleM = cbCycleMode.Checked;
             if (!cbCycleMode.Checked)
-            { gbSBL.Enabled = true; }
-            else { gbSBL.Enabled = false; }
+            { 
+                gbSBL.Enabled = true;
+                cbUseEmulate.Enabled = false;
+                cbELSType.Enabled = false;
+            }
+            else
+            {
+                gbSBL.Enabled = false;
+                cbUseEmulate.Enabled = true;
+                cbELSType.Enabled = true;
+            }
         }
         private void TrayIconCheckBox_CheckedChanged(object sender, EventArgs e)
         {
@@ -266,7 +279,7 @@ namespace Mahou
         private void btnHelp_Click(object sender, EventArgs e)
         {
             messagebox = true;
-            MessageBox.Show("Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\nPress Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), pressing \"Pause\" will switch typed text to Language 1.\n\n**If you have problems with symbols conversion(selection) try \"switching languages (1=>2 & 2=>1)\" or \"CS-Switch\" option.\n\nHover on any control of main window for more info about it.\n\nRegards.", "****Attention****", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\nPress Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), pressing \"Pause\" will switch typed text to Language 1.\n\n**If you have problems with symbols conversion(selection) try \"switching languages (1=>2 & 2=>1)\" or \"CS-Switch\" option.\n\nHover on any control of main window for more info about it.\n\n************WINDOWS 10 USERS WHO USE METRO APPS************\nEnable \"Cycle Mode\", \"Emu\" and set Emu type to \"Win+Space\" these settings work better for Metro apps.\n\nRegards.", "****Attention****", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -382,17 +395,17 @@ namespace Mahou
         {
             // Sets Press Again variables for modifiers
             if (where.Contains("Shift"))
-                KMHook.PressShiftAgain = true;
+                KMHook.shiftRP = true;
             else
-                KMHook.PressShiftAgain = false;
+                KMHook.shiftRP = false;
             if (where.Contains("Alt"))
-                KMHook.PressAltAgain = true;
+                KMHook.altRP = true;
             else
-                KMHook.PressAltAgain = false;
+                KMHook.altRP = false;
             if (where.Contains("Control"))
-                KMHook.PressCtrlAgain = true;
+                KMHook.ctrlRP = true;
             else
-                KMHook.PressCtrlAgain = false;
+                KMHook.ctrlRP = false;
         }
         public static bool[] GetHKMods(string hkmods)
         {
@@ -481,28 +494,34 @@ namespace Mahou
         }
         public static void tempRestore()
         {
-            // Restores temps
-            tempCLKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey");
-            tempCSKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey");
-            tempCLineKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCLineKey");
-            tempCLMods = MMain.MyConfs.Read("Hotkeys", "HKCLMods");
-            tempCSMods = MMain.MyConfs.Read("Hotkeys", "HKCSMods");
-            tempCLineMods = MMain.MyConfs.Read("Hotkeys", "HKCLineMods");
-            tempAutoR = System.IO.File.Exists(System.IO.Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Startup),
-                "Mahou.lnk")) ? true : false;
-            tempcbOnlyKey = MMain.MyConfs.Read("Hotkeys", "OnlyKeyLayoutSwicth");
-            tempCycleM = MMain.MyConfs.ReadBool("Functions", "CycleMode");
-            tempTrayI = MMain.MyConfs.ReadBool("Functions", "IconVisibility");
-            tempSLinCS = MMain.MyConfs.ReadBool("Functions", "CSSwitch");
-            tempEOSpace = MMain.MyConfs.ReadBool("Functions", "EatOneSpace");
-            tempRePress = MMain.MyConfs.ReadBool("Functions", "RePress");
-            tempResel = MMain.MyConfs.ReadBool("Functions", "ReSelect");
-            tempUseEmulate = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
-            tempCLEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled");
-            tempCSEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
-            tempCLineEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLineEnabled");
-            tempLoc1 = tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 };
+            try
+            {
+                // Restores temps
+                tempCLKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey");
+                tempCSKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey");
+                tempCLineKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCLineKey");
+                tempCLMods = MMain.MyConfs.Read("Hotkeys", "HKCLMods");
+                tempCSMods = MMain.MyConfs.Read("Hotkeys", "HKCSMods");
+                tempCLineMods = MMain.MyConfs.Read("Hotkeys", "HKCLineMods");
+                tempAutoR = System.IO.File.Exists(System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Startup),
+                    "Mahou.lnk")) ? true : false;
+                tempcbOnlyKey = MMain.MyConfs.Read("Hotkeys", "OnlyKeyLayoutSwicth");
+                tempCycleM = MMain.MyConfs.ReadBool("Functions", "CycleMode");
+                tempTrayI = MMain.MyConfs.ReadBool("Functions", "IconVisibility");
+                tempSLinCS = MMain.MyConfs.ReadBool("Functions", "CSSwitch");
+                tempEOSpace = MMain.MyConfs.ReadBool("Functions", "EatOneSpace");
+                tempRePress = MMain.MyConfs.ReadBool("Functions", "RePress");
+                tempResel = MMain.MyConfs.ReadBool("Functions", "ReSelect");
+                tempELST = MMain.MyConfs.ReadBool("Functions", "ELSAlSh");
+                tempUseEmulate = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
+                tempCLEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled");
+                tempCSEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
+                tempCLineEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLineEnabled");
+                tempLoc1 = tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 };
+            }
+            //This creates(silently) new config file if existed one disappeared o_O
+            catch { MMain.MyConfs = new Configs(); tempRestore(); }
         }
         public static void RegisterEnabled()
         {
@@ -595,6 +614,7 @@ namespace Mahou
             MMain.MyConfs.Write("Functions", "BlockCTRL", tempBlockCTRL.ToString());
             MMain.MyConfs.Write("Functions", "CSSwitch", tempSLinCS.ToString());
             MMain.MyConfs.Write("Functions", "EmulateLayoutSwitch", tempUseEmulate.ToString());
+            MMain.MyConfs.Write("Functions", "ELSAlSh", tempELST.ToString());
             MMain.MyConfs.Write("Functions", "RePress", tempRePress.ToString());
             MMain.MyConfs.Write("Functions", "EatOneSpace", tempEOSpace.ToString());
             MMain.MyConfs.Write("Functions", "ReSelect", tempResel.ToString());
@@ -688,6 +708,10 @@ namespace Mahou
             cbCLActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled");
             cbCLineActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLineEnabled");
             cbCSActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
+            if (MMain.MyConfs.ReadBool("Functions", "ELSAlSh"))
+                cbELSType.SelectedIndex = 0;
+            else
+                cbELSType.SelectedIndex = 1;
             if (!messagebox)
             {
                 tbCLHK.Text = OemReadable((MMain.MyConfs.Read("Hotkeys", "HKCLMods").Replace(",", " +") +
@@ -774,7 +798,7 @@ namespace Mahou
         private void cbCycleMode_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbCycleMode.Text;
-            HelpTT.Show("While this option enabled, \"Convert Last\" will just cycle between all locales\ninstead of cycling between selected in settings.\nThis mode works for almost all programs.\nIf there is program in which \"Convert Last\" not work, try with this option enabled.\nIf you have just 2 layouts(input languages) it is HIGHLY RECOMMENDED to turn it ON, and \"Use Alt+Shift in CM\" too to ON.", cbCycleMode);
+            HelpTT.Show("While this option enabled, [Convert Last] and [Convert Line] and [Convert Selection with \"CS-Switch\" enabled]\nwill just cycle between all locales instead of switching between selected in settings.\nThis mode works for almost all programs.\nIf there is program in which [Convert Last] or [Convert Line] or [Convert Selection with \"CS-Switch\" enabled] not work,\ntry with this option enabled.\nIf you have just 2 layouts(input languages) it is HIGHLY RECOMMENDED to turn it ON, and \"Emu\" too to ON.", cbCycleMode);
         }
         private void tbCLHK_MouseHover(object sender, EventArgs e)
         {
@@ -819,7 +843,7 @@ namespace Mahou
         private void cbUseEmulate_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbUseEmulate.Text;
-            HelpTT.Show("If this option enabled, CycleMode will use Emulation of Alt+Shift instead \"sending window messag\" that changes layout.", cbUseEmulate);
+            HelpTT.Show("If this option enabled, CycleMode will use Emulation of Alt+Shift/Win+Space instead \"sending window message\" that changes layout.", cbUseEmulate);
         }
         private void cbUseCycleForCS_MouseHover(object sender, EventArgs e)
         {
@@ -846,6 +870,11 @@ namespace Mahou
         {
             HelpTT.ToolTipTitle = cbResel.Text;
             HelpTT.Show("Enabling this, will reselect text after \"Convert Selection\".", cbResel);
+        }
+        private void cbELSType_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = "Emu Type";
+            HelpTT.Show("Select type for Emulate change layout.\nWin+Space works only in Windows 10!!\nWin+Space also will work better in Metro apps.", cbELSType);
         }
         #endregion
     }

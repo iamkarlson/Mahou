@@ -7,7 +7,7 @@ using System.Resources;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("Mahou")]
-[assembly: AssemblyDescription("A magic layou switcher.")]
+[assembly: AssemblyDescription("A magical layou switcher.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("BladeMight")]
 [assembly: AssemblyProduct("Mahou")]
@@ -33,6 +33,6 @@ using System.Resources;
 // Можно задать все значения или принять номер построения и номер редакции по умолчанию, 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.9.2")]
-[assembly: AssemblyFileVersion("1.0.9.2")]
+[assembly: AssemblyVersion("1.0.9.6")]
+[assembly: AssemblyFileVersion("1.0.9.6")]
 [assembly: NeutralResourcesLanguageAttribute("en")]

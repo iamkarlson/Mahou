@@ -2,40 +2,58 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Threading;
 using System.IO;
 using System.Diagnostics;
-using System.Text;
 using System.Windows.Forms;
 namespace Mahou
 {
     public partial class Update : Form
     {
         static string[] UpdInfo;
-        static bool updating = false, was = false;
+        static bool updating, was;
+        static Timer tmr = new Timer();
         public Update()
         {
+            tmr.Interval = 3000;
             InitializeComponent();
         }
-        private void btDMahou_Click(object sender, EventArgs e)
+        async private void btDMahou_Click(object sender, EventArgs e)
         {
             if (!updating)
             {
                 try
                 {
+                    updating = true;
+                    //Checks if internet is awaible.
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(UpdInfo[3]);
+                    request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
+                    var response = (HttpWebResponse)await Task.Factory
+                        .FromAsync<WebResponse>(request.BeginGetResponse,
+                        request.EndGetResponse,
+                        null);
+                    //Downloads latest Mahou
                     using (WebClient wc = new WebClient())
                     {
+                        wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                         // Gets filename from url
                         var fn = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
-                        wc.DownloadProgressChanged += wc_DownloadProgressChanged;
-                        wc.DownloadFileAsync(new System.Uri(UpdInfo[3]),fn);
+                        wc.DownloadFileAsync(new System.Uri(UpdInfo[3]), fn);
                         btDMahou.Text = "Downloading " + fn;
                     }
                 }
-                catch { }
+                catch
+                {
+                    updating = false;
+                    btDMahou.Text = "Error, download failed...";
+                    tmr.Tick += (_, __) =>
+                    {
+                        btDMahou.Text = "Update Mahou to " + UpdInfo[2];
+                        tmr.Stop();
+                    };
+                    tmr.Start();
+                }
             }
         }
 
@@ -50,7 +68,7 @@ namespace Mahou
                 var arch = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
                 MahouForm.icon.Hide();
                 //Batch script to run powershell script
-                var batPSStart =
+                const string batPSStart =
 @"@ECHO OFF
 SET ThisScriptsDirectory=%~dp0
 SET PowerShellScriptPath=%ThisScriptsDirectory%Update.ps1
@@ -67,7 +85,7 @@ DEL "".\Mahou.exe""
 Add-Type -A System.IO.Compression.FileSystem
 [IO.Compression.ZipFile]::ExtractToDirectory(""" + arch + @""", '.\')
 start Mahou.exe _!_updated_!_
-DEL "+arch+@"
+DEL " + arch + @"
 DEL "".\Update.ps1""";
                 //Save PS script
                 File.WriteAllText("Update.ps1", psMahouUpdate);
@@ -90,7 +108,7 @@ DEL "".\Update.ps1""";
                 try
                 {
                     // Latest Mahou release url
-                    string url = "https://github.com/BladeMight/Mahou/releases/latest";
+                    const string url = "https://github.com/BladeMight/Mahou/releases/latest";
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                     request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
                     var response = (HttpWebResponse)await Task.Factory
@@ -129,8 +147,6 @@ DEL "".\Update.ps1""";
                 }
                 UpdInfo = Info.ToArray();
             });
-            System.Windows.Forms.Timer tmr = new System.Windows.Forms.Timer();
-            tmr.Interval = 5000;
             tmr.Tick += (_, __) =>
             {
                 btnCheck.Text = "Check for Updates";
@@ -141,10 +157,18 @@ DEL "".\Update.ps1""";
                 btnCheck.Text = "Error occured during check...";
                 tmr.Start();
                 SetUInfo();
+                tmr.Tick += (_, __) =>
+                {
+                    gpRTitle.Text = "Release Title";
+                    lbRDesc.Text = "Release Description";
+                    lbVer.Text = "Release Version:";
+                    tmr.Stop();
+                };
+                tmr.Start();
             }
             else
             {
-                if (flVersion("v" + Application.ProductVersion.ToString()) <
+                if (flVersion("v" + Application.ProductVersion) <
                     flVersion(UpdInfo[2]))
                 {
                     btnCheck.Text = "I think you need to update...";
@@ -171,7 +195,7 @@ DEL "".\Update.ps1""";
         public float flVersion(string ver) // converts "Mahou version type" to float
         {
             var justdigs = Regex.Replace(ver, "\\D", "");
-            return float.Parse(justdigs[0] + "."+justdigs.Substring(1) , CultureInfo.InvariantCulture);
+            return float.Parse(justdigs[0] + "." + justdigs.Substring(1), CultureInfo.InvariantCulture);
         }
     }
 }

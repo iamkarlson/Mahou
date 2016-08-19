@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Mahou
 {
     class Configs
     {
-        //Path where Mahou is now + configs.ini
+        //Path where Mahou is now + Mahou.ini
         private string filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mahou.ini");
         public Configs()//Initializes settings, if some of elements or settinhs file, not exists it creates them with default value
         {
@@ -66,6 +64,9 @@ namespace Mahou
 
             if (!Boolean.TryParse(this.Read("Functions", "EmulateLayoutSwitch"), out bt))
                 this.Write("Functions", "EmulateLayoutSwitch", "false");
+
+            if (!Boolean.TryParse(this.Read("Functions", "ELSAlSh"), out bt))
+                this.Write("Functions", "ELSAlSh", "true");
 
             if (!Boolean.TryParse(this.Read("Functions", "CSSwitch"), out bt))
                 this.Write("Functions", "CSSwitch", "true");

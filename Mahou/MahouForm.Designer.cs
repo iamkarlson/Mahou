@@ -59,6 +59,7 @@
             this.cbRePress = new System.Windows.Forms.CheckBox();
             this.cbEatOneSpace = new System.Windows.Forms.CheckBox();
             this.cbResel = new System.Windows.Forms.CheckBox();
+            this.cbELSType = new System.Windows.Forms.ComboBox();
             this.gbSBL.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -106,7 +107,7 @@
             this.lbl1lng.AutoSize = true;
             this.lbl1lng.BackColor = System.Drawing.Color.Transparent;
             this.lbl1lng.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbl1lng.Location = new System.Drawing.Point(6, 24);
+            this.lbl1lng.Location = new System.Drawing.Point(6, 23);
             this.lbl1lng.Name = "lbl1lng";
             this.lbl1lng.Size = new System.Drawing.Size(70, 13);
             this.lbl1lng.TabIndex = 3;
@@ -117,7 +118,7 @@
             this.lbl2lng.AutoSize = true;
             this.lbl2lng.BackColor = System.Drawing.Color.Transparent;
             this.lbl2lng.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbl2lng.Location = new System.Drawing.Point(6, 49);
+            this.lbl2lng.Location = new System.Drawing.Point(6, 48);
             this.lbl2lng.Name = "lbl2lng";
             this.lbl2lng.Size = new System.Drawing.Size(70, 13);
             this.lbl2lng.TabIndex = 4;
@@ -128,7 +129,7 @@
             this.cbLangOne.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLangOne.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbLangOne.FormattingEnabled = true;
-            this.cbLangOne.Location = new System.Drawing.Point(81, 21);
+            this.cbLangOne.Location = new System.Drawing.Point(81, 20);
             this.cbLangOne.Name = "cbLangOne";
             this.cbLangOne.Size = new System.Drawing.Size(102, 21);
             this.cbLangOne.TabIndex = 5;
@@ -139,7 +140,7 @@
             this.cbLangTwo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLangTwo.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbLangTwo.FormattingEnabled = true;
-            this.cbLangTwo.Location = new System.Drawing.Point(81, 46);
+            this.cbLangTwo.Location = new System.Drawing.Point(81, 45);
             this.cbLangTwo.Name = "cbLangTwo";
             this.cbLangTwo.Size = new System.Drawing.Size(102, 21);
             this.cbLangTwo.TabIndex = 6;
@@ -229,7 +230,7 @@
             this.gbSBL.Controls.Add(this.cbLangOne);
             this.gbSBL.Controls.Add(this.cbLangTwo);
             this.gbSBL.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.gbSBL.Location = new System.Drawing.Point(6, 170);
+            this.gbSBL.Location = new System.Drawing.Point(6, 169);
             this.gbSBL.Name = "gbSBL";
             this.gbSBL.Size = new System.Drawing.Size(189, 77);
             this.gbSBL.TabIndex = 19;
@@ -303,7 +304,7 @@
             this.tbCLineHK.ReadOnly = true;
             this.tbCLineHK.Size = new System.Drawing.Size(176, 22);
             this.tbCLineHK.TabIndex = 14;
-            this.tbCLineHK.Text = "Control + Pause";
+            this.tbCLineHK.Text = "Shift + Pause";
             this.tbCLineHK.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbCLineHK_KeyDown);
             this.tbCLineHK.MouseHover += new System.EventHandler(this.tbCLineHK_MouseHover);
             // 
@@ -311,11 +312,11 @@
             // 
             this.HelpTT.AutomaticDelay = 0;
             this.HelpTT.AutoPopDelay = 0;
-            this.HelpTT.BackColor = System.Drawing.SystemColors.Highlight;
+            this.HelpTT.BackColor = System.Drawing.Color.Empty;
             this.HelpTT.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.HelpTT.InitialDelay = 0;
             this.HelpTT.ReshowDelay = 1;
-            this.HelpTT.ShowAlways = true;
+            this.HelpTT.UseAnimation = false;
             // 
             // cbCycleMode
             // 
@@ -323,9 +324,9 @@
             this.cbCycleMode.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.cbCycleMode.Location = new System.Drawing.Point(201, 212);
             this.cbCycleMode.Name = "cbCycleMode";
-            this.cbCycleMode.Size = new System.Drawing.Size(123, 17);
+            this.cbCycleMode.Size = new System.Drawing.Size(85, 17);
             this.cbCycleMode.TabIndex = 22;
-            this.cbCycleMode.Text = "Enable Cycle Mode";
+            this.cbCycleMode.Text = "Cycle Mode";
             this.cbCycleMode.UseVisualStyleBackColor = true;
             this.cbCycleMode.CheckedChanged += new System.EventHandler(this.cbCycleMode_CheckedChanged);
             this.cbCycleMode.MouseHover += new System.EventHandler(this.cbCycleMode_MouseHover);
@@ -375,7 +376,7 @@
             // 
             this.lbswithlayout.AutoSize = true;
             this.lbswithlayout.BackColor = System.Drawing.Color.Transparent;
-            this.lbswithlayout.Location = new System.Drawing.Point(202, 130);
+            this.lbswithlayout.Location = new System.Drawing.Point(202, 131);
             this.lbswithlayout.Name = "lbswithlayout";
             this.lbswithlayout.Size = new System.Drawing.Size(114, 13);
             this.lbswithlayout.TabIndex = 25;
@@ -398,9 +399,9 @@
             this.cbUseEmulate.AutoSize = true;
             this.cbUseEmulate.Location = new System.Drawing.Point(201, 232);
             this.cbUseEmulate.Name = "cbUseEmulate";
-            this.cbUseEmulate.Size = new System.Drawing.Size(127, 17);
+            this.cbUseEmulate.Size = new System.Drawing.Size(48, 17);
             this.cbUseEmulate.TabIndex = 26;
-            this.cbUseEmulate.Text = "Use Alt+Shift in CM";
+            this.cbUseEmulate.Text = "Emu";
             this.cbUseEmulate.UseVisualStyleBackColor = true;
             this.cbUseEmulate.CheckedChanged += new System.EventHandler(this.cbUseEmulate_CheckedChanged);
             this.cbUseEmulate.MouseHover += new System.EventHandler(this.cbUseEmulate_MouseHover);
@@ -408,7 +409,7 @@
             // cbRePress
             // 
             this.cbRePress.AutoSize = true;
-            this.cbRePress.Location = new System.Drawing.Point(106, 130);
+            this.cbRePress.Location = new System.Drawing.Point(110, 131);
             this.cbRePress.Name = "cbRePress";
             this.cbRePress.Size = new System.Drawing.Size(69, 17);
             this.cbRePress.TabIndex = 27;
@@ -420,7 +421,7 @@
             // cbEatOneSpace
             // 
             this.cbEatOneSpace.AutoSize = true;
-            this.cbEatOneSpace.Location = new System.Drawing.Point(12, 151);
+            this.cbEatOneSpace.Location = new System.Drawing.Point(12, 149);
             this.cbEatOneSpace.Name = "cbEatOneSpace";
             this.cbEatOneSpace.Size = new System.Drawing.Size(49, 17);
             this.cbEatOneSpace.TabIndex = 28;
@@ -432,7 +433,7 @@
             // cbResel
             // 
             this.cbResel.AutoSize = true;
-            this.cbResel.Location = new System.Drawing.Point(106, 151);
+            this.cbResel.Location = new System.Drawing.Point(110, 151);
             this.cbResel.Name = "cbResel";
             this.cbResel.Size = new System.Drawing.Size(73, 17);
             this.cbResel.TabIndex = 29;
@@ -441,11 +442,28 @@
             this.cbResel.CheckedChanged += new System.EventHandler(this.cbResel_CheckedChanged);
             this.cbResel.MouseHover += new System.EventHandler(this.cbResel_MouseHover);
             // 
+            // cbELSType
+            // 
+            this.cbELSType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbELSType.FormattingEnabled = true;
+            this.cbELSType.Items.AddRange(new object[] {
+            "Alt+Shift",
+            "Win+Space"});
+            this.cbELSType.Location = new System.Drawing.Point(250, 230);
+            this.cbELSType.Name = "cbELSType";
+            this.cbELSType.Size = new System.Drawing.Size(73, 21);
+            this.cbELSType.TabIndex = 30;
+            this.cbELSType.SelectedIndexChanged += new System.EventHandler(this.cbELSType_SelectedIndexChanged);
+            this.cbELSType.MouseHover += new System.EventHandler(this.cbELSType_MouseHover);
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(330, 278);
+            this.Controls.Add(this.gbSBL);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.cbELSType);
             this.Controls.Add(this.cbResel);
             this.Controls.Add(this.cbEatOneSpace);
             this.Controls.Add(this.cbRePress);
@@ -457,12 +475,10 @@
             this.Controls.Add(this.btnUpd);
             this.Controls.Add(this.cbCycleMode);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.gbSBL);
             this.Controls.Add(this.cbAutorun);
             this.Controls.Add(this.GitHubLink);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.TrayIconCheckBox);
-            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.btnOK);
             this.DoubleBuffered = true;
@@ -519,5 +535,6 @@
         private System.Windows.Forms.CheckBox cbRePress;
         private System.Windows.Forms.CheckBox cbEatOneSpace;
         private System.Windows.Forms.CheckBox cbResel;
+        private System.Windows.Forms.ComboBox cbELSType;
     }
 }
