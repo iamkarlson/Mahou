@@ -462,13 +462,22 @@ namespace Mahou
         {
             if (MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch"))
             {
-                if (MMain.MyConfs.ReadBool("Functions", "ELSAlSh"))
+                if (MMain.MyConfs.ReadInt("Functions", "ELSType") == 0)
                     //Emulate Alt+Shift
                     KInputs.MakeInput(new KInputs.INPUT[] {
                       KInputs.AddKey(Keys.LMenu, true),
                       KInputs.AddKey(Keys.LShiftKey, true),
                       KInputs.AddKey(Keys.LShiftKey, false),
-                      KInputs.AddKey(Keys.LMenu, false)   });
+                      KInputs.AddKey(Keys.LMenu, false)});
+                else if (MMain.MyConfs.ReadInt("Functions", "ELSType") == 1)
+                {
+                    //Emulate Ctrl+Shift
+                    KInputs.MakeInput(new KInputs.INPUT[] {
+                      KInputs.AddKey(Keys.LControlKey, true),
+                      KInputs.AddKey(Keys.LShiftKey, true),
+                      KInputs.AddKey(Keys.LShiftKey, false),
+                      KInputs.AddKey(Keys.LControlKey, false)});
+                }
                 else
                 {
                     //Emulate Win+Space
@@ -476,7 +485,7 @@ namespace Mahou
                         KInputs.AddKey(Keys.LWin, true),
                         KInputs.AddKey(Keys.Space, true),
                         KInputs.AddKey(Keys.Space, false),
-                        KInputs.AddKey(Keys.LWin, false)  });
+                        KInputs.AddKey(Keys.LWin, false)});
                     Thread.Sleep(100); //Important!
                 }
             }

@@ -65,8 +65,8 @@ namespace Mahou
             if (!Boolean.TryParse(this.Read("Functions", "EmulateLayoutSwitch"), out bt))
                 this.Write("Functions", "EmulateLayoutSwitch", "false");
 
-            if (!Boolean.TryParse(this.Read("Functions", "ELSAlSh"), out bt))
-                this.Write("Functions", "ELSAlSh", "true");
+            if (!Int32.TryParse(this.Read("Functions", "ELSType"), out it))
+                this.Write("Functions", "ELSType", "0");
 
             if (!Boolean.TryParse(this.Read("Functions", "CSSwitch"), out bt))
                 this.Write("Functions", "CSSwitch", "true");

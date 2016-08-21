@@ -448,6 +448,7 @@
             this.cbELSType.FormattingEnabled = true;
             this.cbELSType.Items.AddRange(new object[] {
             "Alt+Shift",
+            "Ctrl+Shift",
             "Win+Space"});
             this.cbELSType.Location = new System.Drawing.Point(250, 230);
             this.cbELSType.Name = "cbELSType";

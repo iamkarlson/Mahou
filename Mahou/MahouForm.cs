@@ -14,10 +14,10 @@ namespace Mahou
         bool shift = false, alt = false, ctrl = false, messagebox = false;
         static string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None", // Temporary modifiers
             tempcbOnlyKey = "None";
-        static int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0; // Temporary keys 
+        static int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0, tempELST = 0; // Temporary keys 
         static bool tempTrayI, tempCycleM, tempAutoR, tempBlockCTRL,
             tempCLEnabled, tempCSEnabled, tempCLineEnabled, tempSLinCS,
-            tempUseEmulate, tempRePress, tempEOSpace, tempResel, tempELST;//Temporary checkboxes values
+            tempUseEmulate, tempRePress, tempEOSpace, tempResel;//Temporary checkboxes values
         public static bool hotkeywithmodsfired = false;
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
@@ -63,6 +63,16 @@ namespace Mahou
             this.Text += " " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
             tempRestore();
             RefreshControlsData();
+            if (!cbCycleMode.Checked)
+            {
+                cbUseEmulate.Enabled = false;
+                cbELSType.Enabled = false;
+            }
+            else
+            {
+                cbUseEmulate.Enabled = true;
+                cbELSType.Enabled = true;
+            }
         }
         private void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -182,10 +192,7 @@ namespace Mahou
         }
         private void cbELSType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbELSType.SelectedIndex == 0)
-                tempELST = true;
-            else
-                tempELST = false;
+                tempELST = cbELSType.SelectedIndex;
         }
         #endregion
         #region Checkboxes
@@ -513,7 +520,7 @@ namespace Mahou
                 tempEOSpace = MMain.MyConfs.ReadBool("Functions", "EatOneSpace");
                 tempRePress = MMain.MyConfs.ReadBool("Functions", "RePress");
                 tempResel = MMain.MyConfs.ReadBool("Functions", "ReSelect");
-                tempELST = MMain.MyConfs.ReadBool("Functions", "ELSAlSh");
+                tempELST = MMain.MyConfs.ReadInt("Functions", "ELSType");
                 tempUseEmulate = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
                 tempCLEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled");
                 tempCSEnabled = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
@@ -614,7 +621,7 @@ namespace Mahou
             MMain.MyConfs.Write("Functions", "BlockCTRL", tempBlockCTRL.ToString());
             MMain.MyConfs.Write("Functions", "CSSwitch", tempSLinCS.ToString());
             MMain.MyConfs.Write("Functions", "EmulateLayoutSwitch", tempUseEmulate.ToString());
-            MMain.MyConfs.Write("Functions", "ELSAlSh", tempELST.ToString());
+            MMain.MyConfs.Write("Functions", "ELSType", tempELST.ToString());
             MMain.MyConfs.Write("Functions", "RePress", tempRePress.ToString());
             MMain.MyConfs.Write("Functions", "EatOneSpace", tempEOSpace.ToString());
             MMain.MyConfs.Write("Functions", "ReSelect", tempResel.ToString());
@@ -708,10 +715,7 @@ namespace Mahou
             cbCLActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled");
             cbCLineActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLineEnabled");
             cbCSActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
-            if (MMain.MyConfs.ReadBool("Functions", "ELSAlSh"))
-                cbELSType.SelectedIndex = 0;
-            else
-                cbELSType.SelectedIndex = 1;
+            cbELSType.SelectedIndex = MMain.MyConfs.ReadInt("Functions", "ELSType");
             if (!messagebox)
             {
                 tbCLHK.Text = OemReadable((MMain.MyConfs.Read("Hotkeys", "HKCLMods").Replace(",", " +") +
