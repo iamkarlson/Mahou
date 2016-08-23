@@ -39,6 +39,15 @@ Even selected text switches just between **selected** layouts, though if you lik
 **v1.0.7.9**<br/>
 - New method to save/load configuration which is more compatible.
 
+**v1.0.8.7**<br/>
+- New feature """ " ←"(Eat one space).
+
+**v1.0.9.6**<br/>
+- Feature "Use Alt+Shift in CM" upgraded to "Emu"(Which is more customizable).
+
+**v1.1.0.0**<br/>
+- New method to save/load configuration which is more compatible.
+
 ### Hotkeys
 - "Pause/Break" - Convert last input.
 - "Shift + Pause/Break" - Convert last inputted line.
