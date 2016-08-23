@@ -223,22 +223,28 @@ namespace Mahou
             Locales.IfLessThan2();
             self = true;
             string ClipStr = "";
+            // Backup & Restore feature, now only text supported...
+            var doBackup = false;
+            if (NativeClipboard.IsClipboardFormatAvailable((uint)NativeClipboard.uFormat.CF_UNICODETEXT))
+            {
+                doBackup = true;
+            }
+            var datas = new NativeClipboard.ClipboardData()
+            {
+                data = new List<byte[]>(),
+                format = new List<uint>()
+            };
+            if (doBackup)
+            {
+                var t = new System.Threading.Tasks.Task(() =>
+                    {
+                        datas = NativeClipboard.GetClipboardDatas();
+                    });
+                t.RunSynchronously();
+            }
             //This prevents from converting text that alredy exist in Clipboard
             //by pressing "Convert Selection hotkey" without selected text.
             NativeClipboard.Clear();
-            //TODO: Make clipboard restore work...
-            //var datas = new NativeClipboard.ClipboardData()
-            //{
-            //    data = new List<IntPtr>(),
-            //    format = new List<uint>()
-            //};
-            //Task t = new Task(() =>
-            //    {
-            //        datas = NativeClipboard.GetClipboardDatas();
-            //    });
-            //t.RunSynchronously();
-            //Console.WriteLine(datas.data[0] + " and " + datas.format[0]);
-            //NativeClipboard.RestoreData(datas); // place this after conversion
             KInputs.MakeInput(new KInputs.INPUT[] {
                 KInputs.AddKey(Keys.RControlKey,true),
                 KInputs.AddKey(Keys.Insert, true),
@@ -333,6 +339,11 @@ namespace Mahou
                 }
             }
             RePress();
+            NativeClipboard.Clear();
+            if (doBackup)
+            {
+                NativeClipboard.RestoreData(datas);
+            }
             self = false;
             MahouForm.HKCSelection.Register(); //Restores CS hotkey ability
         }
