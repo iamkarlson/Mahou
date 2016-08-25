@@ -12,46 +12,72 @@ namespace Mahou
     public partial class Update : Form
     {
         static string[] UpdInfo;
-        static bool updating, was;
+        static bool updating, was, isold =true;
         static Timer tmr = new Timer();
+        static Timer old = new Timer();
+        static Timer animate = new Timer();
+        static int progress = 0, _progress = 0;
         public Update()
         {
+            animate.Interval = 2500;
             tmr.Interval = 3000;
+            old.Interval = 7500;
+            old.Tick += (_, __) => //Toggles every 7.5 sec
+                {
+                    if (isold)
+                        isold = false;
+                    else
+                        isold = true;
+                };
             InitializeComponent();
         }
-        async private void btDMahou_Click(object sender, EventArgs e)
+        private void btDMahou_Click(object sender, EventArgs e)
         {
             if (!updating)
             {
-                try
+                updating = true;
+                //Downloads latest Mahou
+                using (WebClient wc = new WebClient())
                 {
-                    updating = true;
-                    //Checks if internet is awaible.
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(UpdInfo[3]);
-                    request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
-                    var response = (HttpWebResponse)await Task.Factory
-                        .FromAsync<WebResponse>(request.BeginGetResponse,
-                        request.EndGetResponse,
-                        null);
-                    //Downloads latest Mahou
-                    using (WebClient wc = new WebClient())
-                    {
-                        wc.DownloadProgressChanged += wc_DownloadProgressChanged;
-                        // Gets filename from url
-                        var fn = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
-                        wc.DownloadFileAsync(new System.Uri(UpdInfo[3]), fn);
-                        btDMahou.Text = "Downloading " + fn;
-                    }
-                }
-                catch
-                {
-                    updating = false;
-                    btDMahou.Text = "Error, download failed...";
+                    wc.DownloadProgressChanged += wc_DownloadProgressChanged;
+                    // Gets filename from url
+                    var BDMText = btDMahou.Text;
+                    var fn = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
+                    wc.DownloadFileAsync(new System.Uri(UpdInfo[3]), fn);
+                    lbDownloading.Text = "Downloading " + fn;
+                    animate.Tick += (_, __) =>
+                        {
+                            lbDownloading.Text += ".";
+                        };
+                    animate.Start();
+                    btDMahou.Visible = false;
+                    lbDownloading.Visible = true;
                     tmr.Tick += (_, __) =>
                     {
-                        btDMahou.Text = "Update Mahou to " + UpdInfo[2];
-                        tmr.Stop();
+                        // Checks if progress changed?
+                        if (progress == _progress)
+                        {
+                            btDMahou.Visible = true;
+                            lbDownloading.Visible = false;
+                            animate.Stop();
+                            pbStatus.Value = progress = _progress = 0;
+                            wc.CancelAsync();
+                            updating = false;
+                            btDMahou.Text = "Timed out...";
+                            tmr.Tick += (o, oo) =>
+                            {
+                                btDMahou.Text = BDMText;
+                                tmr.Stop();
+                            };
+                            tmr.Interval = 3000;
+                            tmr.Start();
+                        }
+                        else
+                        {
+                            tmr.Stop();
+                        }
                     };
+                    tmr.Interval = 15000;
                     tmr.Start();
                 }
             }
@@ -59,7 +85,9 @@ namespace Mahou
 
         void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            pbStatus.Value = e.ProgressPercentage;
+            if (isold)
+                _progress = e.ProgressPercentage;
+            pbStatus.Value = progress = e.ProgressPercentage;
             //Below in "if" is AUTO-UPDATE feature ;)
             if (e.ProgressPercentage == 100 && !was)
             {

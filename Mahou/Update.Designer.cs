@@ -34,6 +34,7 @@
             this.lbRDesc = new System.Windows.Forms.TextBox();
             this.btnCheck = new System.Windows.Forms.Button();
             this.btDMahou = new System.Windows.Forms.Button();
+            this.lbDownloading = new System.Windows.Forms.Label();
             this.gpRTitle.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -97,11 +98,22 @@
             this.btDMahou.UseVisualStyleBackColor = true;
             this.btDMahou.Click += new System.EventHandler(this.btDMahou_Click);
             // 
+            // lbDownloading
+            // 
+            this.lbDownloading.Location = new System.Drawing.Point(12, 202);
+            this.lbDownloading.Name = "lbDownloading";
+            this.lbDownloading.Size = new System.Drawing.Size(260, 13);
+            this.lbDownloading.TabIndex = 5;
+            this.lbDownloading.Text = "Downloading...";
+            this.lbDownloading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbDownloading.Visible = false;
+            // 
             // Update
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.lbDownloading);
             this.Controls.Add(this.btDMahou);
             this.Controls.Add(this.btnCheck);
             this.Controls.Add(this.gpRTitle);
@@ -130,5 +142,6 @@
         private System.Windows.Forms.Button btnCheck;
         private System.Windows.Forms.Button btDMahou;
         private System.Windows.Forms.TextBox lbRDesc;
+        private System.Windows.Forms.Label lbDownloading;
     }
 }
