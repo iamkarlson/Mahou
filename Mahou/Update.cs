@@ -12,7 +12,7 @@ namespace Mahou
     public partial class Update : Form
     {
         static string[] UpdInfo;
-        static bool updating, was, isold =true;
+        static bool updating, was, isold = true;
         static Timer tmr = new Timer();
         static Timer old = new Timer();
         static Timer animate = new Timer();
@@ -24,6 +24,7 @@ namespace Mahou
             old.Interval = 7500;
             old.Tick += (_, __) => //Toggles every 7.5 sec
                 {
+                    Console.WriteLine(isold);
                     if (isold)
                         isold = false;
                     else
@@ -57,6 +58,8 @@ namespace Mahou
                         // Checks if progress changed?
                         if (progress == _progress)
                         {
+                            old.Stop();
+                            isold = true;
                             btDMahou.Visible = true;
                             lbDownloading.Visible = false;
                             animate.Stop();
@@ -77,6 +80,7 @@ namespace Mahou
                             tmr.Stop();
                         }
                     };
+                    old.Start();
                     tmr.Interval = 15000;
                     tmr.Start();
                 }
