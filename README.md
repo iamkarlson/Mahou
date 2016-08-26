@@ -7,7 +7,7 @@ Even selected text switches just between **selected** layouts, though if you lik
 
 ###### How to use:
 1. To convert selection hit <kbd>Scroll</kbd> when select text
-2. To convert input hit <kbd>Pause<kbd> when typing
+2. To convert input hit <kbd>Pause</kbd> when typing
 
 ###### What it can do:
 1. Convert last input to another of selected in settings locales.
