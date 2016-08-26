@@ -119,10 +119,10 @@ namespace Mahou
             for (int i = 0; i != datas.data.Count; i++)
             {
                 var data = datas.data[i];
-                foreach (var d in data)
-                {
-                    Console.WriteLine("|"+d);
-                }
+                //foreach (var d in data)
+                //{
+                //    Console.WriteLine("|"+d);
+                //}
                 //Console.WriteLine(data.GetLength(0));
                 IntPtr alloc = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, new UIntPtr(Convert.ToUInt32(data.GetLength(0))));
                 var glock = GlobalLock(alloc);

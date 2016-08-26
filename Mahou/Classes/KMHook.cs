@@ -25,13 +25,12 @@ namespace Mahou
             WH_MOUSE_LL = 14,
             WM_KEYDOWN = 0x0100,
             WM_KEYUP = 0x0101,
-            WM_SYSKEYDOWN = 0x0104
+            WM_SYSKEYDOWN = 0x0104,
+            WM_SYSKEYUP = 0x0105
         }
         public static bool self, win, alt, ctrl, shift,
                            shiftRP, ctrlRP, altRP, //RP = Re-Press
                            awas, swas, cwas, afterEOS; //*was = alt/shift/ctrl was
-        //altinword , altinline;
-        //public static int altcount_word = 0, altcount_line = 0;
         public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
         #region Keyboard & Mouse hooks events
@@ -193,14 +192,18 @@ namespace Mahou
                 }
             }
             #endregion
-            #region Alt+Numpad (not Implemented yet)
-            //if (wParam == (IntPtr)KMMessages.WM_KEYUP && (Key == Keys.LMenu || Key == Keys.RMenu))
-            //{
-            //    altinline = true;
-            //    altinword = true;
-            //    altcount_word++;
-            //    altcount_line++;
-            //}
+            #region Alt+Numpad (not fully workable)
+            if (!self && alt && (Key >= Keys.NumPad0 && Key <= Keys.NumPad9) && wParam == (IntPtr)KMMessages.WM_SYSKEYUP)
+            {
+                MMain.c_word.Add(new YuKey() { yukey = Key, altnum = true });
+                MMain.c_line.Add(new YuKey() { yukey = Key, altnum = true });
+                Console.WriteLine("Added the " + Key);
+                //foreach (var cha in MMain.c_word)
+                //{
+                //    Console.Write(cha.yukey + "/" + cha.altnum);
+                //}
+                //Console.WriteLine();
+            }
             #endregion
             return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
         }
@@ -373,56 +376,10 @@ namespace Mahou
         {
             Locales.IfLessThan2();
             YuKey[] YuKeys = c_.ToArray();
-            //if (useS) // Fix if entered alt + numpad
-            //{
-            //TODO:        Make it work if ever possible? :( :< :[
-            //  ...........................IDEA...............................
-            //  : The main conception is to call ConvertSelection(), but     :
-            //  : reselect text will not be correct, because YuKeys.Length   :
-            //  : is smaller that YuKeys.Length + "Number user pressed alt", :
-            //  : even if i add variable to count press of alt, what Mahou   :
-            //  : should do if user press BackSpace?                         :
-            //  : Create a list with positions when user press's alt?        :
-            //  : What about c_word/c_line it will delete actual item...     :
-            //  : Add ability to skip deletion depending on list with        :
-            //  : positions when user press's alt? Maybe that's it...Maybe...:
-            //  ``````````````````````````````````````````````````````````````
-            //Console.WriteLine("I still working");
-            //self = true;
-            //Thread staThread = new Thread(delegate()
-            //{
-            //for (int i = YuKeys.Length; i != 0; i--)
-            //{
-            //    KInputs.MakeInput(new KInputs.INPUT[] 
-            //        { KInputs.AddKey(Keys.LShiftKey, true),
-            //          KInputs.AddKey(Keys.Left,true),
-            //          KInputs.AddKey(Keys.Left,false),
-            //          KInputs.AddKey(Keys.LShiftKey, false),
-            //        });
-            //}
-            //    ConvertSelection();
-            //for (int i = YuKeys.Length; i != 0; i--)
-            //{
-            //    KInputs.MakeInput(new KInputs.INPUT[] 
-            //        { KInputs.AddKey(Keys.LShiftKey, true),
-            //          KInputs.AddKey(Keys.Right,true),
-            //          KInputs.AddKey(Keys.Right,false),
-            //          KInputs.AddKey(Keys.LShiftKey, false),
-            //        });
-            //}
-            //});
-            //staThread.Name = "FIX FOR ALTNUM";
-            //staThread.SetApartmentState(ApartmentState.STA);
-            //staThread.Start();
-            //staThread.Join();
-            //}
-            //else
-            //{
-            if (YuKeys.Length > 0)
             {
                 self = true;
                 ChangeLayout();
-                for (int e = YuKeys.Length; e != 0; e--)
+                for (int e = 0; e < YuKeys.Length; e++)
                 {
                     KInputs.MakeInput(new KInputs.INPUT[] 
                         { KInputs.AddKey(Keys.Back,true),
@@ -430,12 +387,18 @@ namespace Mahou
                         });
                 }
                 List<KInputs.INPUT> yuInpt = new List<KInputs.INPUT>();
-                foreach (YuKey yk in YuKeys)
+                for (int i = 0; i < YuKeys.Length; i++)
                 {
-                    if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, true)); }
-                    yuInpt.Add(KInputs.AddKey(yk.yukey, true));
-                    yuInpt.Add(KInputs.AddKey(yk.yukey, false));
-                    if (yk.upper) { yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, false)); }
+                    if (YuKeys[i].upper)
+                        yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, true));
+                    if (YuKeys[i].altnum)
+                        yuInpt.Add(KInputs.AddKey(Keys.LMenu, true));
+                    yuInpt.Add(KInputs.AddKey(YuKeys[i].yukey, true));
+                    yuInpt.Add(KInputs.AddKey(YuKeys[i].yukey, false));
+                    if (YuKeys[i].upper)
+                        yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, false));
+                    if (YuKeys[i].altnum)
+                        yuInpt.Add(KInputs.AddKey(Keys.LMenu, false));
                 }
                 KInputs.MakeInput(yuInpt.ToArray());
                 RePress();
@@ -445,7 +408,6 @@ namespace Mahou
                 MahouForm.HKCLast.Register(); //Restores CL hotkey ability
             else
                 MahouForm.HKCLine.Register(); //Resorest CLine hotkey ability
-            // }
         }
         private static void ChangeLayout() //Changes current layout
         {
@@ -540,10 +502,11 @@ namespace Mahou
             Thread.Sleep(15);
             keybd_event((byte)key, 0, flags | (KInputs.IsExtended(key) ? 1 : 0), 0);
         }
-        public struct YuKey // YuKey is struct of key and it state(upper/lower)
+        public struct YuKey // YuKey is struct of key and it state(upper/lower) AND if it is Alt+[NumPad]
         {
             public Keys yukey;
             public bool upper;
+            public bool altnum;
         }
         //private static void Refocus() // No more needed since Win+Space exist...
         //{

@@ -67,7 +67,7 @@ class KInputs
                 {
                     Vk = vk,
                     Flags = IsExtended(key) ? (down ? (KEYEVENTF_EXTENDEDKEY) : (KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY)) : (down ? 0 : KEYEVENTF_KEYUP),
-                    Scan = 0,
+                    Scan = (ushort)MapVirtualKey(vk, 0),
                     ExtraInfo = IntPtr.Zero,
                     Time = 0
                 }
@@ -153,5 +153,7 @@ class KInputs
     #region DLL
     [DllImport("user32.dll", SetLastError = true)]
     static extern UInt32 SendInput(UInt32 numberOfInputs, INPUT[] inputs, Int32 sizeOfInputStructure);
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern int MapVirtualKey(uint uCode, uint uMapType);
     #endregion
 }
