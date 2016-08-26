@@ -46,7 +46,7 @@ Even selected text switches just between **selected** layouts, though if you lik
 - Feature "Use Alt+Shift in CM" upgraded to "Emu"(Which is more customizable).
 
 **v1.1.0.0**<br/>
-- New method to save/load configuration which is more compatible.
+- Added TEXT auto-backup feature for convert selection.
 
 ### Hotkeys
 - "Pause/Break" - Convert last input.
