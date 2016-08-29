@@ -47,7 +47,7 @@ Even selected text switches just between **selected** layouts, though if you lik
 
 **v1.1.0.0**<br/>
 - Added TEXT auto-backup feature for convert selection.
-- 
+
 **v1.1.1.0**<br/>
 - Added feature "Extended CTRLs config".
 
