@@ -25,6 +25,7 @@ namespace Mahou
         public static Locales.Locale[] locales = Locales.AllList();
         public static Configs MyConfs = new Configs();
         public static MahouForm mahou = new MahouForm();
+        public static List<string> lcnmid = new List<string>();
         #endregion
         [STAThread] //DO NOT REMOVE THIS
         public static void Main(string[] args)

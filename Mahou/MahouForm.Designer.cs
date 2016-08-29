@@ -60,6 +60,7 @@
             this.cbEatOneSpace = new System.Windows.Forms.CheckBox();
             this.cbResel = new System.Windows.Forms.CheckBox();
             this.cbELSType = new System.Windows.Forms.ComboBox();
+            this.btnDDD = new System.Windows.Forms.Button();
             this.gbSBL.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -355,7 +356,7 @@
             "None"});
             this.cbSwitchLayoutKeys.Location = new System.Drawing.Point(201, 147);
             this.cbSwitchLayoutKeys.Name = "cbSwitchLayoutKeys";
-            this.cbSwitchLayoutKeys.Size = new System.Drawing.Size(117, 21);
+            this.cbSwitchLayoutKeys.Size = new System.Drawing.Size(93, 21);
             this.cbSwitchLayoutKeys.TabIndex = 24;
             this.cbSwitchLayoutKeys.ValueMember = "0";
             this.cbSwitchLayoutKeys.SelectedIndexChanged += new System.EventHandler(this.cbSwitchLayoutKeys_SelectedIndexChanged);
@@ -457,11 +458,22 @@
             this.cbELSType.SelectedIndexChanged += new System.EventHandler(this.cbELSType_SelectedIndexChanged);
             this.cbELSType.MouseHover += new System.EventHandler(this.cbELSType_MouseHover);
             // 
+            // btnDDD
+            // 
+            this.btnDDD.Location = new System.Drawing.Point(298, 146);
+            this.btnDDD.Name = "btnDDD";
+            this.btnDDD.Size = new System.Drawing.Size(25, 23);
+            this.btnDDD.TabIndex = 31;
+            this.btnDDD.Text = "...";
+            this.btnDDD.UseVisualStyleBackColor = true;
+            this.btnDDD.Click += new System.EventHandler(this.btnDDD_Click);
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(330, 278);
+            this.Controls.Add(this.btnDDD);
             this.Controls.Add(this.gbSBL);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.cbELSType);
@@ -537,5 +549,6 @@
         private System.Windows.Forms.CheckBox cbEatOneSpace;
         private System.Windows.Forms.CheckBox cbResel;
         private System.Windows.Forms.ComboBox cbELSType;
+        private System.Windows.Forms.Button btnDDD;
     }
 }

@@ -97,6 +97,12 @@
     <Compile Include="Classes\NativeClipboard.cs" />
     <Compile Include="Classes\TrayIcon.cs" />
     <Compile Include="Classes\Configs.cs" />
+    <Compile Include="ExtCtrl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExtCtrl.Designer.cs">
+      <DependentUpon>ExtCtrl.cs</DependentUpon>
+    </Compile>
     <Compile Include="MahouForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,6 +117,9 @@
     <Compile Include="Update.Designer.cs">
       <DependentUpon>Update.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ExtCtrl.resx">
+      <DependentUpon>ExtCtrl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MahouForm.resx">
       <DependentUpon>MahouForm.cs</DependentUpon>
     </EmbeddedResource>

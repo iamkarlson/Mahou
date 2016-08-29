@@ -22,8 +22,8 @@ namespace Mahou
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         public static TrayIcon icon;
-        List<string> lcnmid = new List<string>();
         static Form update = new Update();
+        static Form ExtendedCTRLs = new ExtCtrls();
         #endregion
         public MahouForm()
         {
@@ -73,6 +73,7 @@ namespace Mahou
                 cbUseEmulate.Enabled = true;
                 cbELSType.Enabled = true;
             }
+            RemoveAddCtrls();
         }
         private void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -295,6 +296,10 @@ namespace Mahou
         private void btnUpd_Click(object sender, EventArgs e)
         {
             update.ShowDialog();
+        }
+        private void btnDDD_Click(object sender, EventArgs e)
+        {
+            ExtendedCTRLs.ShowDialog();
         }
         #endregion
         #region Tray Events
@@ -682,7 +687,7 @@ namespace Mahou
         {
             if (this.Visible != false)
             {
-                this.Visible = false;
+                this.Visible = ExtendedCTRLs.Visible = update.Visible = false;
             }
             else
             {
@@ -692,6 +697,24 @@ namespace Mahou
                 this.TopMost = false;
             }
             Refresh();
+        }
+        public void RemoveAddCtrls()
+        {
+            if (MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls"))
+            {
+                cbSwitchLayoutKeys.SelectedIndex = 0;
+                cbSwitchLayoutKeys.Items.Remove("Left Control");
+                cbSwitchLayoutKeys.Items.Remove("Right Control");
+            }
+            else
+            {
+                cbSwitchLayoutKeys.Items.Remove("None");
+                if (!cbSwitchLayoutKeys.Items.Contains("Left Control"))
+                    cbSwitchLayoutKeys.Items.Add("Left Control");
+                if (!cbSwitchLayoutKeys.Items.Contains("Right Control"))
+                    cbSwitchLayoutKeys.Items.Add("Right Control");
+                cbSwitchLayoutKeys.Items.Add("None");
+            }
         }
         public void ExitProgram()
         {
@@ -736,17 +759,17 @@ namespace Mahou
             MMain.locales = Locales.AllList();
             cbLangOne.Items.Clear();
             cbLangTwo.Items.Clear();
-            lcnmid.Clear();
+            MMain.lcnmid.Clear();
             foreach (Locales.Locale lc in MMain.locales)
             {
                 cbLangOne.Items.Add(lc.Lang + "(" + lc.uId + ")");
                 cbLangTwo.Items.Add(lc.Lang + "(" + lc.uId + ")");
-                lcnmid.Add(lc.Lang + "(" + lc.uId + ")");
+                MMain.lcnmid.Add(lc.Lang + "(" + lc.uId + ")");
             } 
             try
             {
-                cbLangOne.SelectedIndex = lcnmid.IndexOf(MMain.MyConfs.Read("Locales", "locale1Lang") + "(" + MMain.MyConfs.Read("Locales", "locale1uId") + ")");
-                cbLangTwo.SelectedIndex = lcnmid.IndexOf(MMain.MyConfs.Read("Locales", "locale2Lang") + "(" + MMain.MyConfs.Read("Locales", "locale2uId") + ")");
+                cbLangOne.SelectedIndex = MMain.lcnmid.IndexOf(MMain.MyConfs.Read("Locales", "locale1Lang") + "(" + MMain.MyConfs.Read("Locales", "locale1uId") + ")");
+                cbLangTwo.SelectedIndex = MMain.lcnmid.IndexOf(MMain.MyConfs.Read("Locales", "locale2Lang") + "(" + MMain.MyConfs.Read("Locales", "locale2uId") + ")");
             }
             catch
             {

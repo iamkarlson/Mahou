@@ -89,13 +89,15 @@ namespace Mahou
             }
             #endregion
             #region Switch only key
-            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" && Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
+                Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYUP)
             {
                 self = true;
                 ChangeLayout();
                 self = false;
             }
-            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" && Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
+            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" && 
+                Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
                 self = true;
                 if (Control.IsKeyLocked(Keys.CapsLock)) // Turn off if alraedy on
@@ -108,7 +110,9 @@ namespace Mahou
                 KeybdEvent(Keys.CapsLock, 2);
                 self = false;
             }
-            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Left Control" && Key == Keys.LControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Left Control" &&
+                Key == Keys.LControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP &&
+                !MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls"))
             {
                 self = true;
                 if (MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch"))
@@ -120,7 +124,9 @@ namespace Mahou
 
                 self = false;
             }
-            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Right Control" && Key == Keys.RControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Right Control" &&
+                Key == Keys.RControlKey && wParam == (IntPtr)KMMessages.WM_KEYUP &&
+                !MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls"))
             {
                 self = true;
                 if (MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch"))
@@ -129,6 +135,19 @@ namespace Mahou
                 }
                 ChangeLayout();
                 self = false;
+            }
+            #endregion
+            #region By Ctrls switch
+            if (!self && MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls") && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            {
+                if (Key == Keys.RControlKey)
+                {
+                    PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, (uint)MMain.MyConfs.ReadInt("ExtCtrls", "RCLocale"));
+                }
+                if (Key == Keys.LControlKey)
+                {
+                    PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, (uint)MMain.MyConfs.ReadInt("ExtCtrls", "LCLocale"));
+                }
             }
             #endregion
             #region Other, when KeyDown

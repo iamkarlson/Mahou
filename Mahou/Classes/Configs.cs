@@ -93,6 +93,22 @@ namespace Mahou
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLineEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCLineEnabled", "true"); //Hotkey convert line enabled
 
+            //ExtCtrls section
+            if (!Boolean.TryParse(this.Read("ExtCtrls", "UseExtCtrls"), out bt))
+                this.Write("ExtCtrls", "UseExtCtrls", "false"); //Use extended CTRLs feature
+
+            if (!Int32.TryParse(this.Read("ExtCtrls", "LCLocale"), out it))
+                this.Write("ExtCtrls", "LCLocale", ""); //Left CTRL switch to locale
+
+            if (String.IsNullOrEmpty(this.Read("ExtCtrls", "LCLocaleName")))
+                this.Write("ExtCtrls", "LCLocaleName", "");
+
+            if (!Int32.TryParse(this.Read("ExtCtrls", "RCLocale"), out it))
+                this.Write("ExtCtrls", "RCLocale", ""); //Right CTRL switch to locale
+
+            if (String.IsNullOrEmpty(this.Read("ExtCtrls", "RCLocaleName")))
+                this.Write("ExtCtrls", "RCLocaleName", "");
+
         }
         public void Write(string section, string key, string value) //Writes "value" to "key" in "section"
         {
