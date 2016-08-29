@@ -11,6 +11,8 @@ namespace Mahou
 {
     public partial class Update : Form
     {
+        //Path to now Mahou
+        static string nPath = AppDomain.CurrentDomain.BaseDirectory;
         static string[] UpdInfo;
         static bool updating, was, isold = true;
         static Timer tmr = new Timer();
@@ -44,7 +46,7 @@ namespace Mahou
                     // Gets filename from url
                     var BDMText = btDMahou.Text;
                     var fn = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
-                    wc.DownloadFileAsync(new System.Uri(UpdInfo[3]), fn);
+                    wc.DownloadFileAsync(new System.Uri(UpdInfo[3]), Path.Combine(new string[]{nPath,fn}));
                     lbDownloading.Text = "Downloading " + fn;
                     animate.Tick += (_, __) =>
                         {
@@ -96,6 +98,7 @@ namespace Mahou
             if (e.ProgressPercentage == 100 && !was)
             {
                 int MahouPID = Process.GetCurrentProcess().Id;
+                Console.WriteLine(nPath);
                 //Downloaded archive 
                 var arch = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
                 MahouForm.icon.Hide();
@@ -107,7 +110,7 @@ SET PowerShellScriptPath=%ThisScriptsDirectory%Update.ps1
 PowerShell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command ""& '%PowerShellScriptPath%'""
 DEL PSStart.cmd";
                 //Save Batch script
-                File.WriteAllText("PSStart.cmd", batPSStart);
+                File.WriteAllText(Path.Combine(new string[] { nPath, "PSStart.cmd" }), batPSStart);
                 //Powershell script to shutdown running Mahou,
                 //delete old,
                 //unzip downloaded one, and start it.
@@ -115,14 +118,14 @@ DEL PSStart.cmd";
 @"TASKKILL /PID " + MahouPID + @" /F
 DEL "".\Mahou.exe""
 Add-Type -A System.IO.Compression.FileSystem
-[IO.Compression.ZipFile]::ExtractToDirectory(""" + arch + @""", '.\')
+[IO.Compression.ZipFile]::ExtractToDirectory(""" + arch + @""", """+nPath+@""")
 start Mahou.exe _!_updated_!_
 DEL " + arch + @"
-DEL "".\Update.ps1""";
+DEL ""Update.ps1""";
                 //Save PS script
-                File.WriteAllText("Update.ps1", psMahouUpdate);
+                File.WriteAllText(Path.Combine(new string[] { nPath, "Update.ps1" }), psMahouUpdate);
                 ProcessStartInfo PSStart = new ProcessStartInfo();
-                PSStart.FileName = "PSStart.cmd";
+                PSStart.FileName = Path.Combine(new string[] { nPath, "PSStart.cmd" });
                 //Make PSStart hidden
                 PSStart.WindowStyle = ProcessWindowStyle.Hidden;
                 //Start updating(unzipping)
