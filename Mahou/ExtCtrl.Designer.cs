@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.cbUseLRC = new System.Windows.Forms.CheckBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnNO = new System.Windows.Forms.Button();
@@ -35,6 +36,7 @@
             this.lbRCto = new System.Windows.Forms.Label();
             this.cbLCLocalesList = new System.Windows.Forms.ComboBox();
             this.cbRCLocalesList = new System.Windows.Forms.ComboBox();
+            this.HelpTT = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // cbUseLRC
@@ -47,6 +49,7 @@
             this.cbUseLRC.Text = "Use specific layout changing by Left/Right CTRLS";
             this.cbUseLRC.UseVisualStyleBackColor = true;
             this.cbUseLRC.CheckedChanged += new System.EventHandler(this.cbUseLRC_CheckedChanged);
+            this.cbUseLRC.MouseHover += new System.EventHandler(this.cbUseLRC_MouseHover);
             // 
             // btnOK
             // 
@@ -94,6 +97,7 @@
             this.cbLCLocalesList.Name = "cbLCLocalesList";
             this.cbLCLocalesList.Size = new System.Drawing.Size(117, 21);
             this.cbLCLocalesList.TabIndex = 5;
+            this.cbLCLocalesList.MouseHover += new System.EventHandler(this.cbLCLocalesList_MouseHover);
             // 
             // cbRCLocalesList
             // 
@@ -103,6 +107,7 @@
             this.cbRCLocalesList.Name = "cbRCLocalesList";
             this.cbRCLocalesList.Size = new System.Drawing.Size(117, 21);
             this.cbRCLocalesList.TabIndex = 6;
+            this.cbRCLocalesList.MouseHover += new System.EventHandler(this.cbRCLocalesList_MouseHover);
             // 
             // ExtCtrls
             // 
@@ -139,5 +144,6 @@
         private System.Windows.Forms.Label lbRCto;
         private System.Windows.Forms.ComboBox cbLCLocalesList;
         private System.Windows.Forms.ComboBox cbRCLocalesList;
+        private System.Windows.Forms.ToolTip HelpTT;
     }
 }

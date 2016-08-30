@@ -43,7 +43,7 @@
             this.GitHubLink = new System.Windows.Forms.LinkLabel();
             this.cbAutorun = new System.Windows.Forms.CheckBox();
             this.gbSBL = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.gbHK = new System.Windows.Forms.GroupBox();
             this.cbCLineActive = new System.Windows.Forms.CheckBox();
             this.cbCSActive = new System.Windows.Forms.CheckBox();
             this.cbCLActive = new System.Windows.Forms.CheckBox();
@@ -61,8 +61,9 @@
             this.cbResel = new System.Windows.Forms.CheckBox();
             this.cbELSType = new System.Windows.Forms.ComboBox();
             this.btnDDD = new System.Windows.Forms.Button();
+            this.btnLangChange = new System.Windows.Forms.Button();
             this.gbSBL.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.gbHK.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOK
@@ -105,7 +106,6 @@
             // 
             // lbl1lng
             // 
-            this.lbl1lng.AutoSize = true;
             this.lbl1lng.BackColor = System.Drawing.Color.Transparent;
             this.lbl1lng.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lbl1lng.Location = new System.Drawing.Point(6, 23);
@@ -113,17 +113,18 @@
             this.lbl1lng.Size = new System.Drawing.Size(70, 13);
             this.lbl1lng.TabIndex = 3;
             this.lbl1lng.Text = "Language 1:";
+            this.lbl1lng.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lbl2lng
             // 
-            this.lbl2lng.AutoSize = true;
             this.lbl2lng.BackColor = System.Drawing.Color.Transparent;
             this.lbl2lng.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbl2lng.Location = new System.Drawing.Point(6, 48);
+            this.lbl2lng.Location = new System.Drawing.Point(6, 49);
             this.lbl2lng.Name = "lbl2lng";
             this.lbl2lng.Size = new System.Drawing.Size(70, 13);
             this.lbl2lng.TabIndex = 4;
             this.lbl2lng.Text = "Language 2:";
+            this.lbl2lng.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // cbLangOne
             // 
@@ -216,7 +217,7 @@
             // 
             this.cbAutorun.AutoSize = true;
             this.cbAutorun.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.cbAutorun.Location = new System.Drawing.Point(117, 9);
+            this.cbAutorun.Location = new System.Drawing.Point(110, 9);
             this.cbAutorun.Name = "cbAutorun";
             this.cbAutorun.Size = new System.Drawing.Size(152, 17);
             this.cbAutorun.TabIndex = 17;
@@ -239,21 +240,21 @@
             this.gbSBL.Text = "Switch between layouts";
             this.gbSBL.MouseHover += new System.EventHandler(this.gbSBL_MouseHover);
             // 
-            // groupBox2
+            // gbHK
             // 
-            this.groupBox2.Controls.Add(this.cbCLineActive);
-            this.groupBox2.Controls.Add(this.cbCSActive);
-            this.groupBox2.Controls.Add(this.cbCLActive);
-            this.groupBox2.Controls.Add(this.tbCLineHK);
-            this.groupBox2.Controls.Add(this.tbCLHK);
-            this.groupBox2.Controls.Add(this.tbCSHK);
-            this.groupBox2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.groupBox2.Location = new System.Drawing.Point(6, 31);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(318, 93);
-            this.groupBox2.TabIndex = 20;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "HotKeys";
+            this.gbHK.Controls.Add(this.tbCLHK);
+            this.gbHK.Controls.Add(this.cbCLineActive);
+            this.gbHK.Controls.Add(this.cbCSActive);
+            this.gbHK.Controls.Add(this.cbCLActive);
+            this.gbHK.Controls.Add(this.tbCLineHK);
+            this.gbHK.Controls.Add(this.tbCSHK);
+            this.gbHK.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.gbHK.Location = new System.Drawing.Point(6, 31);
+            this.gbHK.Name = "gbHK";
+            this.gbHK.Size = new System.Drawing.Size(318, 93);
+            this.gbHK.TabIndex = 20;
+            this.gbHK.TabStop = false;
+            this.gbHK.Text = "HotKeys";
             // 
             // cbCLineActive
             // 
@@ -262,9 +263,9 @@
             this.cbCLineActive.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbCLineActive.Location = new System.Drawing.Point(6, 65);
             this.cbCLineActive.Name = "cbCLineActive";
-            this.cbCLineActive.Size = new System.Drawing.Size(93, 17);
+            this.cbCLineActive.Size = new System.Drawing.Size(91, 17);
             this.cbCLineActive.TabIndex = 17;
-            this.cbCLineActive.Text = "Convert Line:";
+            this.cbCLineActive.Text = "Convert line:";
             this.cbCLineActive.UseVisualStyleBackColor = true;
             this.cbCLineActive.CheckedChanged += new System.EventHandler(this.cbCLineActive_CheckedChanged);
             // 
@@ -276,9 +277,9 @@
             this.cbCSActive.Cursor = System.Windows.Forms.Cursors.Default;
             this.cbCSActive.Location = new System.Drawing.Point(6, 40);
             this.cbCSActive.Name = "cbCSActive";
-            this.cbCSActive.Size = new System.Drawing.Size(119, 17);
+            this.cbCSActive.Size = new System.Drawing.Size(118, 17);
             this.cbCSActive.TabIndex = 16;
-            this.cbCSActive.Text = "Convert Selection:";
+            this.cbCSActive.Text = "Convert selection:";
             this.cbCSActive.UseVisualStyleBackColor = true;
             this.cbCSActive.CheckedChanged += new System.EventHandler(this.cbCSActive_CheckedChanged);
             // 
@@ -290,9 +291,9 @@
             this.cbCLActive.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbCLActive.Location = new System.Drawing.Point(6, 15);
             this.cbCLActive.Name = "cbCLActive";
-            this.cbCLActive.Size = new System.Drawing.Size(124, 17);
+            this.cbCLActive.Size = new System.Drawing.Size(120, 17);
             this.cbCLActive.TabIndex = 15;
-            this.cbCLActive.Text = "Convert Last Word:";
+            this.cbCLActive.Text = "Convert last word:";
             this.cbCLActive.UseVisualStyleBackColor = false;
             this.cbCLActive.CheckedChanged += new System.EventHandler(this.cbCLActive_CheckedChanged);
             // 
@@ -335,9 +336,9 @@
             // btnUpd
             // 
             this.btnUpd.FlatAppearance.BorderColor = System.Drawing.SystemColors.MenuText;
-            this.btnUpd.Location = new System.Drawing.Point(265, 7);
+            this.btnUpd.Location = new System.Drawing.Point(261, 6);
             this.btnUpd.Name = "btnUpd";
-            this.btnUpd.Size = new System.Drawing.Size(59, 24);
+            this.btnUpd.Size = new System.Drawing.Size(64, 24);
             this.btnUpd.TabIndex = 23;
             this.btnUpd.Text = "Update";
             this.btnUpd.UseVisualStyleBackColor = true;
@@ -377,7 +378,7 @@
             // 
             this.lbswithlayout.AutoSize = true;
             this.lbswithlayout.BackColor = System.Drawing.Color.Transparent;
-            this.lbswithlayout.Location = new System.Drawing.Point(202, 131);
+            this.lbswithlayout.Location = new System.Drawing.Point(189, 131);
             this.lbswithlayout.Name = "lbswithlayout";
             this.lbswithlayout.Size = new System.Drawing.Size(114, 13);
             this.lbswithlayout.TabIndex = 25;
@@ -468,11 +469,23 @@
             this.btnDDD.UseVisualStyleBackColor = true;
             this.btnDDD.Click += new System.EventHandler(this.btnDDD_Click);
             // 
+            // btnLangChange
+            // 
+            this.btnLangChange.Location = new System.Drawing.Point(294, 206);
+            this.btnLangChange.Name = "btnLangChange";
+            this.btnLangChange.Size = new System.Drawing.Size(30, 23);
+            this.btnLangChange.TabIndex = 32;
+            this.btnLangChange.Text = "RU";
+            this.btnLangChange.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnLangChange.UseVisualStyleBackColor = true;
+            this.btnLangChange.Click += new System.EventHandler(this.btnLangChange_Click);
+            // 
             // MahouForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(330, 278);
+            this.Controls.Add(this.btnLangChange);
             this.Controls.Add(this.btnDDD);
             this.Controls.Add(this.gbSBL);
             this.Controls.Add(this.btnCancel);
@@ -487,7 +500,7 @@
             this.Controls.Add(this.lbswithlayout);
             this.Controls.Add(this.btnUpd);
             this.Controls.Add(this.cbCycleMode);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.gbHK);
             this.Controls.Add(this.cbAutorun);
             this.Controls.Add(this.GitHubLink);
             this.Controls.Add(this.btnHelp);
@@ -508,9 +521,8 @@
             this.Load += new System.EventHandler(this.MahouForm_Load);
             this.VisibleChanged += new System.EventHandler(this.MahouForm_VisibleChanged);
             this.gbSBL.ResumeLayout(false);
-            this.gbSBL.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.gbHK.ResumeLayout(false);
+            this.gbHK.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -532,7 +544,7 @@
         private System.Windows.Forms.LinkLabel GitHubLink;
         private System.Windows.Forms.CheckBox cbAutorun;
         private System.Windows.Forms.GroupBox gbSBL;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox gbHK;
         private System.Windows.Forms.ToolTip HelpTT;
         private System.Windows.Forms.CheckBox cbCycleMode;
         private System.Windows.Forms.TextBox tbCLineHK;
@@ -550,5 +562,6 @@
         private System.Windows.Forms.CheckBox cbResel;
         private System.Windows.Forms.ComboBox cbELSType;
         private System.Windows.Forms.Button btnDDD;
+        private System.Windows.Forms.Button btnLangChange;
     }
 }

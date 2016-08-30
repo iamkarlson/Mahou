@@ -16,6 +16,7 @@ namespace Mahou
             RefreshLocales();
             DisEna();
             load();
+            RefreshLanguage();
         }
         private void ExtCtrls_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -91,12 +92,36 @@ namespace Mahou
             }
             catch
             {
-                MessageBox.Show("You have removed selected locales,reselect.", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(MMain.Msgs[9], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 RefreshLocales();
                 cbLCLocalesList.SelectedIndex = 0;
                 cbRCLocalesList.SelectedIndex = 1;
             }
             cbUseLRC.Checked = MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls");
         }
+        private void RefreshLanguage()
+        {
+            cbUseLRC.Text = MMain.UI[36];
+            lbLCto.Text = MMain.UI[37];
+            lbRCto.Text = MMain.UI[38];
+            this.Text = MMain.UI[39];
+        }
+        #region Tooltips
+        private void cbLCLocalesList_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = cbLCLocalesList.Text;
+            HelpTT.Show(MMain.TTips[16], cbLCLocalesList);
+        }
+        private void cbRCLocalesList_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = cbRCLocalesList.Text;
+            HelpTT.Show(MMain.TTips[17], cbRCLocalesList);
+        }
+        private void cbUseLRC_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = cbUseLRC.Text;
+            HelpTT.Show(MMain.TTips[18], cbUseLRC);
+        }
+        #endregion
     }
 }

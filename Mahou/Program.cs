@@ -26,20 +26,21 @@ namespace Mahou
         public static Configs MyConfs = new Configs();
         public static MahouForm mahou = new MahouForm();
         public static List<string> lcnmid = new List<string>();
+        public static string[] UI = new string[] { };
+        public static string[] TTips = new string[] { };
+        public static string[] Msgs = new string[] { };
         #endregion
         [STAThread] //DO NOT REMOVE THIS
         public static void Main(string[] args)
         {
+            InitLanguage();
             Application.EnableVisualStyles(); // Huh i did not noticed that it was missing... '~'
-            try
-            {
+            if (args.Length != 0)
                 if (args[0] == "_!_updated_!_")
                 {
                     mahou.ToggleVisibility();
-                    MessageBox.Show("Mahou successfully updated!", "Update complete!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(Msgs[0], Msgs[1], MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-            }
-            catch { }
             using (var mutex = new Mutex(false, "Global\\" + appGUid))
             {
                 if (!mutex.WaitOne(0, false))
@@ -66,6 +67,21 @@ namespace Mahou
                     StopHook();
                 }
             }
+        }
+        public static void InitLanguage()
+        {
+            if (MyConfs.Read("Locales", "LANGUAGE") == "RU")
+            {
+                UI = Translation.UIRU;
+                TTips = Translation.ToolTipsRU;
+                Msgs = Translation.MessagesRU;
+            }
+            else if (MyConfs.Read("Locales", "LANGUAGE") == "EN")
+            {
+                UI = Translation.UIEN;
+                TTips = Translation.ToolTipsEN;
+                Msgs = Translation.MessagesEN;
+            }   
         }
         #region Actions with hooks
         public static void StartHook()

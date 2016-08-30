@@ -128,6 +128,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Mahou Update";
+            this.Load += new System.EventHandler(this.Update_Load);
             this.gpRTitle.ResumeLayout(false);
             this.gpRTitle.PerformLayout();
             this.ResumeLayout(false);

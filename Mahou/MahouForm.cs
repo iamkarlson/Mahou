@@ -74,6 +74,7 @@ namespace Mahou
                 cbELSType.Enabled = true;
             }
             RemoveAddCtrls();
+            RefreshLanguage();
         }
         private void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -287,7 +288,7 @@ namespace Mahou
         private void btnHelp_Click(object sender, EventArgs e)
         {
             messagebox = true;
-            MessageBox.Show("Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\nPress Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), pressing \"Pause\" will switch typed text to Language 1.\n\n**If you have problems with symbols conversion(selection) try \"switching languages (1=>2 & 2=>1)\" or \"CS-Switch\" option.\n\nHover on any control of main window for more info about it.\n\n************WINDOWS 10 USERS WHO USE METRO APPS************\nEnable \"Cycle Mode\", \"Emu\" and set Emu type to \"Win+Space\" these settings work better for Metro apps.\n\nRegards.", "****Attention****", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(MMain.Msgs[2], MMain.Msgs[3], MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -300,6 +301,21 @@ namespace Mahou
         private void btnDDD_Click(object sender, EventArgs e)
         {
             ExtendedCTRLs.ShowDialog();
+        }
+        private void btnLangChange_Click(object sender, EventArgs e)
+        {
+            if (MMain.MyConfs.Read("Locales", "LANGUAGE") == "RU")
+            {
+                MMain.MyConfs.Write("Locales", "LANGUAGE", "EN");
+                btnLangChange.Text = "EN";
+            }
+            else if (MMain.MyConfs.Read("Locales", "LANGUAGE") == "EN")
+            {
+                MMain.MyConfs.Write("Locales", "LANGUAGE", "RU");
+                btnLangChange.Text = "RU";
+            }
+            MMain.InitLanguage();
+            RefreshLanguage();
         }
         #endregion
         #region Tray Events
@@ -558,7 +574,7 @@ namespace Mahou
                 if (tempCLineKey == tempCLKey && tempCLMods == tempCLineMods)
                 {
                     messagebox = true;
-                    MessageBox.Show("You have assigned same hotkeys for Convert Last & Convert Line, that is impossible!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(MMain.Msgs[4], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     hkclinenotready = true;
                     hkclnotready = true;
                 }
@@ -580,7 +596,7 @@ namespace Mahou
             {
                 hkclnotready = true;
                 messagebox = true;
-                MessageBox.Show("You have pressed just modifiers for Convert Last hotkey!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(MMain.Msgs[6], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             if (!string.IsNullOrEmpty(tempCSMods) && tempCSKey != 0)
             {
@@ -595,7 +611,7 @@ namespace Mahou
             {
                 hkcsnotready = true;
                 messagebox = true;
-                MessageBox.Show("You have pressed just modifiers for Convert Selection hotkey!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(MMain.Msgs[7], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             if (!string.IsNullOrEmpty(tempCLineMods) && tempCLineKey != 0)
             {
@@ -610,7 +626,7 @@ namespace Mahou
             {
                 hkclinenotready = true;
                 messagebox = true;
-                MessageBox.Show("You have pressed just modifiers for Convert Line hotkey!!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(MMain.Msgs[8], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             if (tempAutoR)
             {
@@ -739,6 +755,7 @@ namespace Mahou
             cbCLineActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLineEnabled");
             cbCSActive.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled");
             cbELSType.SelectedIndex = MMain.MyConfs.ReadInt("Functions", "ELSType");
+            btnLangChange.Text = MMain.MyConfs.Read("Locales", "LANGUAGE");
             if (!messagebox)
             {
                 tbCLHK.Text = OemReadable((MMain.MyConfs.Read("Hotkeys", "HKCLMods").Replace(",", " +") +
@@ -773,11 +790,37 @@ namespace Mahou
             }
             catch
             {
-                MessageBox.Show("You have removed selected locales,reselect.", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(MMain.Msgs[9], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 LocalesRefresh();
                 cbLangOne.SelectedIndex = 0;
                 cbLangTwo.SelectedIndex = 1;
             }
+        }
+        private void RefreshLanguage()
+        {
+            GitHubLink.Text = MMain.UI[0];
+            cbAutorun.Text = MMain.UI[1];
+            btnUpd.Text = MMain.UI[2];
+            gbHK.Text = MMain.UI[3];
+            cbCLActive.Text = MMain.UI[4] + ":";
+            cbCSActive.Text = MMain.UI[5] + ":";
+            cbCLineActive.Text = MMain.UI[6] + ":";
+            cbCSSwitch.Text = MMain.UI[7];
+            cbRePress.Text = MMain.UI[8];
+            cbResel.Text = MMain.UI[9];
+            lbswithlayout.Text = MMain.UI[10];
+            cbBlockC.Text = MMain.UI[11];
+            TrayIconCheckBox.Text = MMain.UI[12];
+            cbCycleMode.Text = MMain.UI[13];
+            cbUseEmulate.Text = MMain.UI[14];
+            gbSBL.Text = MMain.UI[15];
+            lbl1lng.Text = MMain.UI[16] + " 1:";
+            lbl2lng.Text = MMain.UI[16] + " 2:";
+            btnApply.Text = MMain.UI[17];
+            btnOK.Text = MMain.UI[18];
+            btnCancel.Text = MMain.UI[19];
+            btnHelp.Text = MMain.UI[20];
+            icon.RefreshText(MMain.UI[42], MMain.UI[40], MMain.UI[41]);
         }
         private void RefreshIconVisibility()
         {
@@ -825,83 +868,83 @@ namespace Mahou
         private void cbCycleMode_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbCycleMode.Text;
-            HelpTT.Show("While this option enabled, [Convert Last] and [Convert Line] and [Convert Selection with \"CS-Switch\" enabled]\nwill just cycle between all locales instead of switching between selected in settings.\nThis mode works for almost all programs.\nIf there is program in which [Convert Last] or [Convert Line] or [Convert Selection with \"CS-Switch\" enabled] not work,\ntry with this option enabled.\nIf you have just 2 layouts(input languages) it is HIGHLY RECOMMENDED to turn it ON, and \"Emu\" too to ON.", cbCycleMode);
+            HelpTT.Show(MMain.TTips[0], cbCycleMode);
         }
         private void tbCLHK_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = tbCLHK.Text;
-            HelpTT.Show("This is current hotkey for \"Convert Last\" action.\nPress any key to assign it, or key with modifiers(ALT,CTRL,SHIFT).", tbCLHK);
+            HelpTT.Show(MMain.TTips[1], tbCLHK);
         }
         private void tbCSHK_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = tbCSHK.Text;
-            HelpTT.Show("This is current hotkey for Convert Selection action.\nPress any key to assign it, or key with modifiers(ALT,CTRL,SHIFT).", tbCSHK);
+            HelpTT.Show(MMain.TTips[2], tbCSHK);
         }
         private void GitHubLink_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = GitHubLink.Text;
-            HelpTT.Show("Go to GitHub repository to view source or report issue.", GitHubLink);
+            HelpTT.Show(MMain.TTips[3], GitHubLink);
         }
         private void TrayIconCheckBox_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = TrayIconCheckBox.Text;
-            HelpTT.Show("Toggles visibility of icon in a tray.\nIf it is hidden, to show configs window hit CTRL+ALT+SHIFT+INSERT or just run Mahou.exe again.", TrayIconCheckBox);
+            HelpTT.Show(MMain.TTips[4], TrayIconCheckBox);
         }
         private void btnUpd_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = btnUpd.Text;
-            HelpTT.Show("Check for updates, and download if needed.", btnUpd);
+            HelpTT.Show(MMain.TTips[5], btnUpd);
         }
         private void tbCLineHK_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = tbCLineHK.Text;
-            HelpTT.Show("This is current hotkey for Convert Line action.\nPress any key to assign it, or key with modifiers(ALT,CTRL,SHIFT)", tbCLineHK);
+            HelpTT.Show(MMain.TTips[6], tbCLineHK);
         }
         private void cbBlockAC_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbBlockC.Text;
-            HelpTT.Show("Blocks hotkeys that use Control,\nwhen \"Switch layout by key\" is set to Left/Right Control.", cbBlockC);
+            HelpTT.Show(MMain.TTips[7], cbBlockC);
         }
         private void cbSwitchLayoutKeys_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbSwitchLayoutKeys.Text;
-            HelpTT.Show("This option works depending on \"Enable cycle mode\" & \"Use Alt+Shift in CM\" options.", cbSwitchLayoutKeys);
+            HelpTT.Show(MMain.TTips[8], cbSwitchLayoutKeys);
         }
         private void cbUseEmulate_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbUseEmulate.Text;
-            HelpTT.Show("If this option enabled, CycleMode will use Emulation of Alt+Shift/Win+Space instead \"sending window message\" that changes layout.", cbUseEmulate);
+            HelpTT.Show(MMain.TTips[9], cbUseEmulate);
         }
         private void cbUseCycleForCS_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbCSSwitch.Text;
-            HelpTT.Show("If this option enabled, Covert Selection will use layout switching.\nAll characters will be rewriten as they must.(no problems with symbols)", cbCSSwitch);
+            HelpTT.Show(MMain.TTips[10], cbCSSwitch);
         }
         private void gbSBL_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = gbSBL.Text;
-            HelpTT.Show("Only works when cycle mode is OFF.", gbSBL);
+            HelpTT.Show(MMain.TTips[11], gbSBL);
         }
         private void cbRePress_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbRePress.Text;
-            HelpTT.Show("If enabled, modifiers will be repressed after conversion.\nBUT if you able to release it before conversion done, modifiers will stuck.\nUse at own risk (not recommenden).", cbRePress);
+            HelpTT.Show(MMain.TTips[12], cbRePress);
         }
         private void cbEatOneSpace_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbEatOneSpace.Text;
-            HelpTT.Show("If enabled, pressing ONE space AFTER word will not clear last word.", cbEatOneSpace);
+            HelpTT.Show(MMain.TTips[13], cbEatOneSpace);
 
         }
         private void cbResel_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbResel.Text;
-            HelpTT.Show("Enabling this, will reselect text after \"Convert Selection\".", cbResel);
+            HelpTT.Show(MMain.TTips[14], cbResel);
         }
         private void cbELSType_MouseHover(object sender, EventArgs e)
         {
-            HelpTT.ToolTipTitle = "Emu Type";
-            HelpTT.Show("Select type for Emulate change layout.\nWin+Space works only in Windows 10!!\nWin+Space also will work better in Metro apps.", cbELSType);
+            HelpTT.ToolTipTitle = MMain.TTips[19];
+            HelpTT.Show(MMain.TTips[15], cbELSType);
         }
         #endregion
     }

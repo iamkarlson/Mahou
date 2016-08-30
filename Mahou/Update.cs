@@ -26,7 +26,7 @@ namespace Mahou
             old.Interval = 7500;
             old.Tick += (_, __) => //Toggles every 7.5 sec
                 {
-                    Console.WriteLine(isold);
+                    //Console.WriteLine(isold);
                     if (isold)
                         isold = false;
                     else
@@ -34,6 +34,12 @@ namespace Mahou
                 };
             InitializeComponent();
         }
+
+        private void Update_Load(object sender, EventArgs e)
+        {
+            RefreshLanguage();
+        }
+
         private void btDMahou_Click(object sender, EventArgs e)
         {
             if (!updating)
@@ -47,7 +53,7 @@ namespace Mahou
                     var BDMText = btDMahou.Text;
                     var fn = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
                     wc.DownloadFileAsync(new System.Uri(UpdInfo[3]), Path.Combine(new string[]{nPath,fn}));
-                    lbDownloading.Text = "Downloading " + fn;
+                    lbDownloading.Text = MMain.UI[29]+ " " + fn;
                     animate.Tick += (_, __) =>
                         {
                             lbDownloading.Text += ".";
@@ -68,7 +74,7 @@ namespace Mahou
                             pbStatus.Value = progress = _progress = 0;
                             wc.CancelAsync();
                             updating = false;
-                            btDMahou.Text = "Timed out...";
+                            btDMahou.Text = MMain.UI[30];
                             tmr.Tick += (o, oo) =>
                             {
                                 btDMahou.Text = BDMText;
@@ -98,7 +104,6 @@ namespace Mahou
             if (e.ProgressPercentage == 100 && !was)
             {
                 int MahouPID = Process.GetCurrentProcess().Id;
-                Console.WriteLine(nPath);
                 //Downloaded archive 
                 var arch = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
                 MahouForm.icon.Hide();
@@ -136,7 +141,7 @@ DEL ""Update.ps1""";
 
         async private void btnCheck_Click(object sender, EventArgs e)
         {
-            btnCheck.Text = "Checking...";
+            btnCheck.Text = MMain.UI[23];
             await Task.Run(async () =>
             {
                 List<string> Info = new List<string>(); // Update info
@@ -178,25 +183,25 @@ DEL ""Update.ps1""";
                 }
                 catch (WebException)
                 {
-                    Info = new List<string> { "Error", "Failed to get Update info, can't connent to 'github.com', check your internet connection", "Error" };
+                    Info = new List<string> { MMain.UI[31], MMain.UI[35], MMain.UI[31]};
                 }
                 UpdInfo = Info.ToArray();
             });
             tmr.Tick += (_, __) =>
             {
-                btnCheck.Text = "Check for Updates";
+                btnCheck.Text = MMain.UI[22];
                 tmr.Stop();
             };
-            if (UpdInfo[2] == "Error")
+            if (UpdInfo[2] == MMain.UI[31])
             {
-                btnCheck.Text = "Error occured during check...";
+                btnCheck.Text = MMain.UI[34];
                 tmr.Start();
                 SetUInfo();
                 tmr.Tick += (_, __) =>
                 {
-                    gpRTitle.Text = "Release Title";
-                    lbRDesc.Text = "Release Description";
-                    lbVer.Text = "Release Version:";
+                    lbVer.Text = MMain.UI[25];
+                    gpRTitle.Text = MMain.UI[26];
+                    lbRDesc.Text = MMain.UI[27];
                     tmr.Stop();
                 };
                 tmr.Start();
@@ -206,27 +211,39 @@ DEL ""Update.ps1""";
                 if (flVersion("v" + Application.ProductVersion) <
                     flVersion(UpdInfo[2]))
                 {
-                    btnCheck.Text = "I think you need to update...";
+                    btnCheck.Text = MMain.UI[33];
                     tmr.Start();
                     SetUInfo();
-                    btDMahou.Text = "Update Mahou to " + UpdInfo[2];
+                    btDMahou.Text = MMain.UI[28] + UpdInfo[2];
                     btDMahou.Enabled = true;
                     pbStatus.Enabled = true;
                 }
                 else
                 {
-                    btnCheck.Text = "You have latest version.";
+                    btnCheck.Text = MMain.UI[32];
                     tmr.Start();
                     SetUInfo();
                 }
             }
         }
+
         void SetUInfo()
         {
             gpRTitle.Text = UpdInfo[0];
             lbRDesc.Text = UpdInfo[1];
             lbVer.Text = UpdInfo[2];
         }
+
+        private void RefreshLanguage()
+        {
+            this.Text = MMain.UI[21];
+            btnCheck.Text = MMain.UI[22];
+            btDMahou.Text = MMain.UI[28].Remove(MMain.UI[28].Length-3,2);
+            lbVer.Text = MMain.UI[25];
+            gpRTitle.Text = MMain.UI[26];
+            lbRDesc.Text = MMain.UI[27];
+        }
+
         public float flVersion(string ver) // converts "Mahou version type" to float
         {
             var justdigs = Regex.Replace(ver, "\\D", "");

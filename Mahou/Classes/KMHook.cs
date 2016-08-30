@@ -58,13 +58,13 @@ namespace Mahou
             Keys Key = (Keys)vkCode; // "Key" will further be used instead of "(Keys)vkCode"
             #region Checks modifiers that are down
             if (Key == Keys.LShiftKey || Key == Keys.RShiftKey || Key == Keys.ShiftKey)
-            { shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
+                shift = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false;
             if (Key == Keys.RControlKey || Key == Keys.LControlKey || Key == Keys.ControlKey)
-            { ctrl = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
+                ctrl = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false;
             if (Key == Keys.RMenu || Key == Keys.LMenu || Key == Keys.Menu)
-            { alt = (wParam == (IntPtr)KMMessages.WM_SYSKEYDOWN) ? true : false; }
+                alt = (wParam == (IntPtr)KMMessages.WM_SYSKEYDOWN) ? true : false;
             if (Key == Keys.RWin || Key == Keys.LWin) // Checks if win is down
-            { win = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false; }
+                win = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false;
             #endregion
             #region Release Re-Pressed keys
             if (MahouForm.hotkeywithmodsfired && wParam == (IntPtr)KMMessages.WM_KEYUP && !self &&
@@ -216,7 +216,7 @@ namespace Mahou
             {
                 MMain.c_word.Add(new YuKey() { yukey = Key, altnum = true });
                 MMain.c_line.Add(new YuKey() { yukey = Key, altnum = true });
-                Console.WriteLine("Added the " + Key);
+                //Console.WriteLine("Added the " + Key);
                 //foreach (var cha in MMain.c_word)
                 //{
                 //    Console.Write(cha.yukey + "/" + cha.altnum);
@@ -527,26 +527,6 @@ namespace Mahou
             public bool upper;
             public bool altnum;
         }
-        //private static void Refocus() // No more needed since Win+Space exist...
-        //{
-        //    //Another fix for metro apps(if 3 or more languages)
-        //    //if all 5 times GetCurrentLocale() == nowLocale & 3 CycleSwitch()'es failed,
-        //    //then it is must be metro app, in which GetCurrentLocale() will not return properly id, *
-        //    //the only way to fix it is to re-focus app.                                             **
-        //    IntPtr lastwindow = Locales.ActiveWindow();
-        //    Form f = new Form();
-        //    f.ShowInTaskbar = false;
-        //    f.TopMost = true;
-        //    f.Opacity = 0;
-        //    f.Show();
-        //    SetForegroundWindow(f.Handle);
-        //    //Works perfect :)
-        //    //Time has been reduced to 0.1 sec seperately
-        //    Thread.Sleep(50);
-        //    f.Hide();
-        //    SetForegroundWindow(lastwindow);
-        //    Thread.Sleep(50);
-        //}
         #endregion
         #region DLL imports
         [DllImport("user32.dll")]
