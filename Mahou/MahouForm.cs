@@ -880,25 +880,25 @@ namespace Mahou
             HelpTT.ToolTipTitle = tbCSHK.Text;
             HelpTT.Show(MMain.TTips[2], tbCSHK);
         }
+        private void tbCLineHK_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = tbCLineHK.Text;
+            HelpTT.Show(MMain.TTips[3], tbCLineHK);
+        }
         private void GitHubLink_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = GitHubLink.Text;
-            HelpTT.Show(MMain.TTips[3], GitHubLink);
+            HelpTT.Show(MMain.TTips[4], GitHubLink);
         }
         private void TrayIconCheckBox_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = TrayIconCheckBox.Text;
-            HelpTT.Show(MMain.TTips[4], TrayIconCheckBox);
+            HelpTT.Show(MMain.TTips[5], TrayIconCheckBox);
         }
         private void btnUpd_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = btnUpd.Text;
-            HelpTT.Show(MMain.TTips[5], btnUpd);
-        }
-        private void tbCLineHK_MouseHover(object sender, EventArgs e)
-        {
-            HelpTT.ToolTipTitle = tbCLineHK.Text;
-            HelpTT.Show(MMain.TTips[6], tbCLineHK);
+            HelpTT.Show(MMain.TTips[6], btnUpd);
         }
         private void cbBlockAC_MouseHover(object sender, EventArgs e)
         {
