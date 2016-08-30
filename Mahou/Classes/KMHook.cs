@@ -30,7 +30,7 @@ namespace Mahou
         }
         public static bool self, win, alt, ctrl, shift,
                            shiftRP, ctrlRP, altRP, //RP = Re-Press
-                           awas, swas, cwas, afterEOS; //*was = alt/shift/ctrl was
+                           awas, swas, cwas, afterEOS, keyAfterCTRL; //*was = alt/shift/ctrl was
         public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
         #region Keyboard & Mouse hooks events
@@ -138,7 +138,10 @@ namespace Mahou
             }
             #endregion
             #region By Ctrls switch
-            if (!self && MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls") && wParam == (IntPtr)KMMessages.WM_KEYUP)
+            if (!self && wParam == (IntPtr)KMMessages.WM_KEYUP && ctrl)
+                keyAfterCTRL = true;
+            Console.WriteLine(keyAfterCTRL);
+            if (!self && MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls") && wParam == (IntPtr)KMMessages.WM_KEYUP && !keyAfterCTRL)
             {
                 if (Key == Keys.RControlKey)
                 {
@@ -149,6 +152,9 @@ namespace Mahou
                     PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, (uint)MMain.MyConfs.ReadInt("ExtCtrls", "LCLocale"));
                 }
             }
+            if (!self && wParam == (IntPtr)KMMessages.WM_KEYUP && (
+                Key == Keys.LControlKey || Key == Keys.RControlKey))
+                keyAfterCTRL = false;
             #endregion
             #region Other, when KeyDown
             if (nCode >= 0 && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
