@@ -58,8 +58,12 @@ Even selected text switches just between **selected** layouts, though if you lik
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>Insert</kbd> - To toggle configs windows visibility.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F12</kbd> - To exit Mahou.
 
+### Wiki
+Check out [Mahou Wiki](https://github.com/BladeMight/Mahou/wiki).
+
 ### License
 Mahou is under GPL v2+
+
 
 ### Contact
 If you found an issue write [here](https://github.com/BladeMight/Mahou/issues)
@@ -124,6 +128,9 @@ Mahou работает совершенно по другому в отличи�
 - <kbd>Scroll</kbd> - Конверт выделения.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>Insert</kbd> - Показать/скрыть главное окно.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F12</kbd> - Завершить Mahou.
+
+### Wiki
+Ознакомьтесь с [Mahou Wiki](https://github.com/BladeMight/Mahou/wiki).
 
 ### Лицензия
 Mahou находится под GPL v2+.
