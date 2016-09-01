@@ -22,8 +22,8 @@ namespace Mahou
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         public static TrayIcon icon;
-        static Form update = new Update();
-        static Form ExtendedCTRLs = new ExtCtrls();
+        public Update update = new Update();
+        ExtCtrls ExtendedCTRLs = new ExtCtrls();
         #endregion
         public MahouForm()
         {
@@ -56,6 +56,8 @@ namespace Mahou
             HKCLine.Register();
             HKCLineReg = true;
             }
+            System.Threading.Thread uche = new System.Threading.Thread(() => update.StartupCheck());
+            uche.Start();
         }
         #region Form Events
         private void MahouForm_Load(object sender, EventArgs e)

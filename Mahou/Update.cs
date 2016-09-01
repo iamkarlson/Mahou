@@ -14,7 +14,7 @@ namespace Mahou
         //Path to now Mahou
         static string nPath = AppDomain.CurrentDomain.BaseDirectory;
         static string[] UpdInfo;
-        static bool updating, was, isold = true;
+        static bool updating, was, isold = true, fromStartup;
         static Timer tmr = new Timer();
         static Timer old = new Timer();
         static Timer animate = new Timer();
@@ -52,8 +52,8 @@ namespace Mahou
                     // Gets filename from url
                     var BDMText = btDMahou.Text;
                     var fn = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
-                    wc.DownloadFileAsync(new System.Uri(UpdInfo[3]), Path.Combine(new string[]{nPath,fn}));
-                    lbDownloading.Text = MMain.UI[29]+ " " + fn;
+                    wc.DownloadFileAsync(new System.Uri(UpdInfo[3]), Path.Combine(new string[] { nPath, fn }));
+                    lbDownloading.Text = MMain.UI[29] + " " + fn;
                     animate.Tick += (_, __) =>
                         {
                             lbDownloading.Text += ".";
@@ -123,7 +123,7 @@ DEL PSStart.cmd";
 @"TASKKILL /PID " + MahouPID + @" /F
 DEL "".\Mahou.exe""
 Add-Type -A System.IO.Compression.FileSystem
-[IO.Compression.ZipFile]::ExtractToDirectory(""" + arch + @""", """+nPath+@""")
+[IO.Compression.ZipFile]::ExtractToDirectory(""" + arch + @""", """ + nPath + @""")
 start Mahou.exe _!_updated_!_
 DEL " + arch + @"
 DEL ""Update.ps1""";
@@ -139,54 +139,10 @@ DEL ""Update.ps1""";
             }
         }
 
-        async private void btnCheck_Click(object sender, EventArgs e)
+        private async void btnCheck_Click(object sender, EventArgs e)
         {
             btnCheck.Text = MMain.UI[23];
-            await Task.Run(async () =>
-            {
-                List<string> Info = new List<string>(); // Update info
-                try
-                {
-                    // Latest Mahou release url
-                    const string url = "https://github.com/BladeMight/Mahou/releases/latest";
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                    request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
-                    var response = (HttpWebResponse)await Task.Factory
-                        .FromAsync<WebResponse>(request.BeginGetResponse,
-                        request.EndGetResponse,
-                        null);
-                    //Console.WriteLine(response.StatusCode)
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        var data = new StreamReader(response.GetResponseStream(), true).ReadToEnd();
-                        response.Close();
-                        // Below are REGEX HTML PARSES!!
-                        // I'm not kidding...
-                        // They really works :)
-                        var Title = Regex.Match(data,
-                            "<h1 class=\"release-title\">\n.*<a href=\".*\">(.*)</a>").Groups[1].Value;
-                        var Description = Regex.Replace(Regex.Match(data,
-                            "<div class=\"markdown-body\">\n        (.*)\n      </div>",
-                            RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, "<[^>]*>", "");
-                        var Version = Regex.Match(data, "<span class=\"css-truncate-target\">(.*)</span>").Groups[1].Value;
-                        var Link = "https://github.com" + Regex.Match(data,
-                            "<ul class=\"release-downloads\">\n.*<li>\n.+href=\"(/.*\\.\\w{3})").Groups[1].Value;
-                        Info.Add(Title);
-                        Info.Add(Regex.Replace(Description, "\n", "\r\n")); // Regex needed to properly display new lines.
-                        Info.Add(Version);
-                        Info.Add(Link);
-                    }
-                    else
-                    {
-                        response.Close();
-                    }
-                }
-                catch (WebException)
-                {
-                    Info = new List<string> { MMain.UI[31], MMain.UI[35], MMain.UI[31]};
-                }
-                UpdInfo = Info.ToArray();
-            });
+            await GetUpdateInfo();
             tmr.Tick += (_, __) =>
             {
                 btnCheck.Text = MMain.UI[22];
@@ -227,6 +183,71 @@ DEL ""Update.ps1""";
             }
         }
 
+        private async Task GetUpdateInfo()
+        {
+            List<string> Info = new List<string>(); // Update info
+            try
+            {
+                // Latest Mahou release url
+                const string url = "https://github.com/BladeMight/Mahou/releases/latest";
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
+                var response = (HttpWebResponse)await Task.Factory
+                    .FromAsync<WebResponse>(request.BeginGetResponse,
+                    request.EndGetResponse,
+                    null);
+                //Console.WriteLine(response.StatusCode)
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var data = new StreamReader(response.GetResponseStream(), true).ReadToEnd();
+                    response.Close();
+                    // Below are REGEX HTML PARSES!!
+                    // I'm not kidding...
+                    // They really works :)
+                    var Title = Regex.Match(data,
+                        "<h1 class=\"release-title\">\n.*<a href=\".*\">(.*)</a>").Groups[1].Value;
+                    var Description = Regex.Replace(Regex.Match(data,
+                        "<div class=\"markdown-body\">\n        (.*)\n      </div>",
+                        RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, "<[^>]*>", "");
+                    var Version = Regex.Match(data, "<span class=\"css-truncate-target\">(.*)</span>").Groups[1].Value;
+                    var Link = "https://github.com" + Regex.Match(data,
+                        "<ul class=\"release-downloads\">\n.*<li>\n.+href=\"(/.*\\.\\w{3})").Groups[1].Value;
+                    Info.Add(Title);
+                    Info.Add(Regex.Replace(Description, "\n", "\r\n")); // Regex needed to properly display new lines.
+                    Info.Add(Version);
+                    Info.Add(Link);
+                }
+                else
+                {
+                    response.Close();
+                }
+            }
+            catch (WebException)
+            {
+                Info = new List<string> { MMain.UI[31], MMain.UI[35], MMain.UI[31] };
+            }
+            UpdInfo = Info.ToArray();
+        }
+
+        public async void StartupCheck()
+        {
+            await GetUpdateInfo();
+            try
+            {
+                if (flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2]))
+                {
+                    if (MessageBox.Show(UpdInfo[0] + '\n' + UpdInfo[1], "Mahou - " + MMain.UI[33], MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK)
+                    {
+                        MMain.mahou.update.StartPosition = FormStartPosition.CenterScreen;
+                        fromStartup = true;
+                        MMain.mahou.update.ShowDialog();
+                        MMain.mahou.update.StartPosition = FormStartPosition.CenterParent;
+                    }
+                }
+            }
+            catch { }
+        }
+
         void SetUInfo()
         {
             gpRTitle.Text = UpdInfo[0];
@@ -238,16 +259,30 @@ DEL ""Update.ps1""";
         {
             this.Text = MMain.UI[21];
             btnCheck.Text = MMain.UI[22];
-            btDMahou.Text = MMain.UI[28].Remove(MMain.UI[28].Length-3,2);
+            btDMahou.Text = MMain.UI[28].Remove(MMain.UI[28].Length - 3, 2);
             lbVer.Text = MMain.UI[25];
             gpRTitle.Text = MMain.UI[26];
             lbRDesc.Text = MMain.UI[27];
         }
 
-        public float flVersion(string ver) // converts "Mahou version type" to float
+        public static float flVersion(string ver) // converts "Mahou version type" to float
         {
             var justdigs = Regex.Replace(ver, "\\D", "");
             return float.Parse(justdigs[0] + "." + justdigs.Substring(1), CultureInfo.InvariantCulture);
+        }
+
+        private void Update_VisibleChanged(object sender, EventArgs e)
+        {
+            if (UpdInfo != null)
+            {
+                SetUInfo();
+                btDMahou.Enabled = true;
+                if (fromStartup)
+                {
+                    btDMahou.PerformClick();
+                    fromStartup = false;
+                }
+            }
         }
     }
 }
