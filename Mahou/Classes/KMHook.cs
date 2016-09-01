@@ -96,7 +96,7 @@ namespace Mahou
                 ChangeLayout();
                 self = false;
             }
-            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" && 
+            if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
                 Key == Keys.CapsLock && wParam == (IntPtr)KMMessages.WM_KEYDOWN)
             {
                 self = true;
@@ -140,7 +140,6 @@ namespace Mahou
             #region By Ctrls switch
             if (!self && wParam == (IntPtr)KMMessages.WM_KEYUP && ctrl)
                 keyAfterCTRL = true;
-            Console.WriteLine(keyAfterCTRL);
             if (!self && MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls") && wParam == (IntPtr)KMMessages.WM_KEYUP && !keyAfterCTRL)
             {
                 if (Key == Keys.RControlKey)
@@ -340,13 +339,16 @@ namespace Mahou
                 {
                     var l1 = (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
                     var l2 = (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId");
-                    result = InAnother(ClipStr, l2, l1);
-                    //if same first time try switching locales
-                    //Without Regex.Replace "==" will fail
-                    if (Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n") == Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
+                    var index = 0;
+                    foreach (char c in ClipStr.ToCharArray())
                     {
-                        result = InAnother(ClipStr, l1, l2);
-
+                        var T = InAnother(c, l2, l1);
+                        if (T == "")
+                            T = InAnother(c, l1, l2);
+                        if (T == "")
+                            T = ClipStr[index].ToString();
+                        result += T;
+                        index++;
                     }
                     result = Regex.Replace(result, "\r\\D\n?|\n\\D\r?", "\n");
                     //Inputs converted text
@@ -491,35 +493,28 @@ namespace Mahou
                 //Use PostMessage to switch to next layout
                 PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, KInputs.HKL_NEXT);
         }
-        public static string InAnother(string input, uint uID1, uint uID2)
+        public static string InAnother(char c, uint uID1, uint uID2)
         {
-            var result = "";
-            var index = 0;
-            foreach (char c in input.ToCharArray())
+            var upper = false;
+            var cc = c;
+            var chsc = VkKeyScanEx(cc, (IntPtr)uID1);
+            var state = (chsc >> 8) & 0xff;
+            //Checks if 'chsc' have upper state
+            if (state == 1)
+                upper = true;
+            byte[] byt = new byte[256];
+            //it needs just 1 but,anyway let it be 10, i think that's better
+            StringBuilder s = new StringBuilder(10);
+            if (upper)
             {
-                var upper = false;
-                var cc = c;
-                var chsc = VkKeyScanEx(cc, (IntPtr)uID1);
-                var state = (chsc >> 8) & 0xff;
-                //Checks if 'chsc' have upper state
-                if (state == 1)
-                    upper = true;
-                byte[] byt = new byte[256];
-                //it needs just 1 but,anyway let it be 10, i think that's better
-                StringBuilder s = new StringBuilder(10);
-                if (upper)
-                {
-                    byt[(int)Keys.ShiftKey] = 0xFF;
-                }
-                //"Convert magick✩" is the string below
-                var ant = ToUnicodeEx((uint)chsc, (uint)chsc, byt, s, s.Capacity, 0, (IntPtr)uID2);
-                if (chsc != -1)
-                    result += s;
-                else
-                    result += input[index];
-                index++;
+                byt[(int)Keys.ShiftKey] = 0xFF;
             }
-            return result;
+            //"Convert magick✩" is the string below
+            var ant = ToUnicodeEx((uint)chsc, (uint)chsc, byt, s, s.Capacity, 0, (IntPtr)uID2);
+            if (chsc != -1)
+                return s.ToString();
+            else
+                return "";
         }
         public static void KeybdEvent(Keys key, int flags) // Simplified keybd_event with exteded recongize feature
         {
