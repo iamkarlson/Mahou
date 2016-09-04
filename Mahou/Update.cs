@@ -273,10 +273,12 @@ DEL ""Update.ps1""";
 
         private void Update_VisibleChanged(object sender, EventArgs e)
         {
+            this.ActiveControl = lbVer;
             if (UpdInfo != null)
             {
                 SetUInfo();
-                btDMahou.Enabled = true;
+                if (flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2]))
+                    btDMahou.Enabled = true;
                 if (fromStartup)
                 {
                     btDMahou.PerformClick();
