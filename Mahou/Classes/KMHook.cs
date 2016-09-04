@@ -460,12 +460,12 @@ namespace Mahou
                         if (YuKeys[i].upper && YuKeys[i].yukey == Keys.Oemcomma)
                             KInputs.MakeInput(KInputs.AddString("<"));
                         if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.Oemcomma)
-                            KInputs.MakeInput(KInputs.AddString("."));
+                            KInputs.MakeInput(KInputs.AddString(","));
 
                         if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemPeriod)
-                            KInputs.MakeInput(KInputs.AddString("."));
-                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemPeriod)
                             KInputs.MakeInput(KInputs.AddString(">"));
+                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemPeriod)
+                            KInputs.MakeInput(KInputs.AddString("."));
 
                         if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemQuestion)
                             KInputs.MakeInput(KInputs.AddString("?"));
