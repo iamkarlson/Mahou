@@ -9,16 +9,16 @@ namespace Mahou
     public partial class MahouForm : Form
     {
         #region Variables
-        public static HotkeyHandler Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine; // Hotkeys, HKC => HotKey Convert
-        static bool HKCLReg = false, HKCSReg = false, HKCLineReg = false; // These to prevent re-registering of same HotKey
-        bool shift = false, alt = false, ctrl = false, messagebox = false;
+        public static HotkeyHandler Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine, SymIgnHK; // Hotkeys, HKC => HotKey Convert
+        static bool HKCLReg, HKCSReg, HKCLineReg; // These to prevent re-registering of same HotKey
+        bool shift, alt, ctrl, messagebox;
         static string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None", // Temporary modifiers
             tempcbOnlyKey = "None";
         static int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0, tempELST = 0; // Temporary keys 
         static bool tempTrayI, tempCycleM, tempAutoR, tempBlockCTRL,
             tempCLEnabled, tempCSEnabled, tempCLineEnabled, tempSLinCS,
             tempUseEmulate, tempRePress, tempEOSpace, tempResel;//Temporary checkboxes values
-        public static bool hotkeywithmodsfired = false;
+        public static bool hotkeywithmodsfired, SymbolIgnore;
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         public static TrayIcon icon;
@@ -35,6 +35,8 @@ namespace Mahou
             Mainhk.Register();
             ExitHk = new HotkeyHandler(Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT, Keys.F12, this);
             ExitHk.Register();
+            SymIgnHK = new HotkeyHandler(Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT, Keys.F11, this);
+            SymIgnHK.Register();
             HKCLast = new HotkeyHandler(CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCLMods")),
                 (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey"), this);
             if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled"))
@@ -398,12 +400,21 @@ namespace Mahou
                 }
                 //these are global, so they don't need to be stoped when window is visible.
                 if (Key == Keys.Insert && Modifs == Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT)
-                {
                     ToggleVisibility();
-                }
                 if (Key == Keys.F12 && Modifs == Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT)
-                {
                     ExitProgram();
+                if (Key == Keys.F11 && Modifs == Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT)
+                {
+                    if (SymbolIgnore)
+                    {
+                        SymbolIgnore = false;
+                        this.Icon = icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
+                    }
+                    else
+                    {
+                        SymbolIgnore = true;
+                        this.Icon = icon.trIcon.Icon = Properties.Resources.MahouSymbolIgnoreMode;
+                    }
                 }
             }
             if (m.Msg == Mahou.MMain.ao) // ao = Already Opened

@@ -121,4 +121,10 @@
   <data name="Mahou" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Mahou.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="MahouSymbolIgnoreMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MahouSymbolIgnoreMode.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MahouTrayHD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MahouTrayHD.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

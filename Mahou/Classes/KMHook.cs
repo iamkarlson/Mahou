@@ -30,7 +30,8 @@ namespace Mahou
         }
         public static bool self, win, alt, ctrl, shift,
                            shiftRP, ctrlRP, altRP, //RP = Re-Press
-                           awas, swas, cwas, afterEOS, keyAfterCTRL; //*was = alt/shift/ctrl was
+                           awas, swas, cwas, afterEOS, //*was = alt/shift/ctrl was
+                           keyAfterCTRL;
         public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
         #endregion
         #region Keyboard & Mouse hooks events
@@ -411,7 +412,9 @@ namespace Mahou
             YuKey[] YuKeys = c_.ToArray();
             {
                 self = true;
+                var wasLocale = Locales.GetCurrentLocale();
                 ChangeLayout();
+                //Console.WriteLine(wasLocale + "|" + Locales.GetCurrentLocale());
                 for (int e = 0; e < YuKeys.Length; e++)
                 {
                     KInputs.MakeInput(new KInputs.INPUT[] 
@@ -419,21 +422,66 @@ namespace Mahou
                           KInputs.AddKey(Keys.Back,false) 
                         });
                 }
-                List<KInputs.INPUT> yuInpt = new List<KInputs.INPUT>();
                 for (int i = 0; i < YuKeys.Length; i++)
                 {
                     if (YuKeys[i].upper)
-                        yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, true));
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, true) });
                     if (YuKeys[i].altnum)
-                        yuInpt.Add(KInputs.AddKey(Keys.LMenu, true));
-                    yuInpt.Add(KInputs.AddKey(YuKeys[i].yukey, true));
-                    yuInpt.Add(KInputs.AddKey(YuKeys[i].yukey, false));
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LMenu, true) });
+                    if (MahouForm.SymbolIgnore && (wasLocale == 1033 || wasLocale == 1041) && Locales.AllList().Length < 3 &&
+                        (   YuKeys[i].yukey == Keys.OemOpenBrackets ||
+                            YuKeys[i].yukey == Keys.OemCloseBrackets ||
+                            YuKeys[i].yukey == Keys.OemSemicolon ||
+                            YuKeys[i].yukey == Keys.OemQuotes ||
+                            YuKeys[i].yukey == Keys.Oemcomma ||
+                            YuKeys[i].yukey == Keys.OemPeriod ||
+                            YuKeys[i].yukey == Keys.OemQuestion ) )
+                    {
+                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemOpenBrackets)
+                                KInputs.MakeInput(KInputs.AddString("{"));
+                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemOpenBrackets)
+                                KInputs.MakeInput(KInputs.AddString("["));
+
+                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemCloseBrackets)
+                            KInputs.MakeInput(KInputs.AddString("}"));
+                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemCloseBrackets)
+                            KInputs.MakeInput(KInputs.AddString("]"));
+
+                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemSemicolon)
+                            KInputs.MakeInput(KInputs.AddString(":"));
+                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemSemicolon)
+                            KInputs.MakeInput(KInputs.AddString(";"));
+
+                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemQuotes)
+                            KInputs.MakeInput(KInputs.AddString("\""));
+                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemQuotes)
+                            KInputs.MakeInput(KInputs.AddString("'"));
+
+                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.Oemcomma)
+                            KInputs.MakeInput(KInputs.AddString("<"));
+                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.Oemcomma)
+                            KInputs.MakeInput(KInputs.AddString("."));
+
+                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemPeriod)
+                            KInputs.MakeInput(KInputs.AddString("."));
+                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemPeriod)
+                            KInputs.MakeInput(KInputs.AddString(">"));
+
+                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemQuestion)
+                            KInputs.MakeInput(KInputs.AddString("?"));
+                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemQuestion)
+                            KInputs.MakeInput(KInputs.AddString("/"));
+                    }
+                    else
+                    {
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(YuKeys[i].yukey, true) });
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(YuKeys[i].yukey, false) });
+                    }
                     if (YuKeys[i].upper)
-                        yuInpt.Add(KInputs.AddKey(Keys.LShiftKey, false));
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, false) });
                     if (YuKeys[i].altnum)
-                        yuInpt.Add(KInputs.AddKey(Keys.LMenu, false));
+                        KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LMenu, false) });
                 }
-                KInputs.MakeInput(yuInpt.ToArray());
                 RePress();
                 self = false;
             }

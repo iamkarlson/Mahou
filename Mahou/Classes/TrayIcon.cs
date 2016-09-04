@@ -7,14 +7,14 @@ namespace Mahou
     {
         public event EventHandler<EventArgs> Exit;
         public event EventHandler<EventArgs> ShowHide;
-        private NotifyIcon trIcon;
+        public NotifyIcon trIcon;
         private ContextMenu cMenu;
         private MenuItem Exi, ShHi;
         public TrayIcon(bool? visible = true)
         {
             trIcon = new NotifyIcon();
             cMenu = new ContextMenu();
-            trIcon.Icon = Properties.Resources.Mahou;
+            trIcon.Icon = Properties.Resources.MahouTrayHD;
             trIcon.Visible = visible == true;
             Exi = new MenuItem("Exit", ExitHandler);
             ShHi = new MenuItem("Show/Hide", ShowHideHandler);

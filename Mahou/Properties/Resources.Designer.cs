@@ -69,5 +69,25 @@ namespace Mahou.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        /// </summary>
+        public static System.Drawing.Icon MahouSymbolIgnoreMode {
+            get {
+                object obj = ResourceManager.GetObject("MahouSymbolIgnoreMode", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        /// </summary>
+        public static System.Drawing.Icon MahouTrayHD {
+            get {
+                object obj = ResourceManager.GetObject("MahouTrayHD", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }
