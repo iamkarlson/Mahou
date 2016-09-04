@@ -108,12 +108,12 @@ namespace Mahou
                 var arch = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
                 MahouForm.icon.Hide();
                 //Batch script to run powershell script
-                const string batPSStart =
+                var batPSStart =
 @"@ECHO OFF
-SET ThisScriptsDirectory=%~dp0
-SET PowerShellScriptPath=%ThisScriptsDirectory%Update.ps1
-PowerShell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command ""& '%PowerShellScriptPath%'""
-DEL PSStart.cmd";
+SET MAHOUDIR="+nPath+ @"
+SET PSSCRIPT=%MAHOUDIR%Update.ps1
+PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command ""& '%PSSCRIPT%'""
+DEL %MAHOUDIR%PSStart.cmd";
                 //Save Batch script
                 File.WriteAllText(Path.Combine(new string[] { nPath, "PSStart.cmd" }), batPSStart);
                 //Powershell script to shutdown running Mahou,
@@ -121,12 +121,12 @@ DEL PSStart.cmd";
                 //unzip downloaded one, and start it.
                 var psMahouUpdate =
 @"TASKKILL /PID " + MahouPID + @" /F
-DEL "".\Mahou.exe""
+DEL """+nPath+@"Mahou.exe""
 Add-Type -A System.IO.Compression.FileSystem
-[IO.Compression.ZipFile]::ExtractToDirectory(""" + arch + @""", """ + nPath + @""")
-start Mahou.exe _!_updated_!_
-DEL " + arch + @"
-DEL ""Update.ps1""";
+[IO.Compression.ZipFile]::ExtractToDirectory(""" + nPath + arch + @""", """ + nPath + @""")
+start """ + nPath + @"Mahou.exe"" ""_!_updated_!_""
+DEL """ + nPath + arch + @"""
+DEL """ + nPath + @"Update.ps1""";
                 //Save PS script
                 File.WriteAllText(Path.Combine(new string[] { nPath, "Update.ps1" }), psMahouUpdate);
                 ProcessStartInfo PSStart = new ProcessStartInfo();
