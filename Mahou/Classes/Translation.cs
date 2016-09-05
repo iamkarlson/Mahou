@@ -19,11 +19,12 @@ namespace Mahou
           /*29-32*/"Downloading","Timed out...","Error","You have latest version.",
           /*33-34*/"I think you need to update...","Error occured during check...",
           /*35-35*/"Failed to get Update info, can't connent to 'github.com', check your internet connection.",
-          /////////////////ExtCtrls UI\\\\\\\\\\\\\\\\\
+          /////////////////MoreConfigs UI\\\\\\\\\\\\\\\\\
           /*36-36*/"Use specific layout changing by Left/Right CTRLS",
-          /*37-39*/"Left Control switches to:","Right Control switches to:","Extended CTRLs configuration",
+          /*37-39*/"LCtrl switches to:","RCtrl switches to:","More configs",
+          /*40-40*/"Symbol Ignore:",
           /////////////////Tray Icon\\\\\\\\\\\\\\\\\
-          /*40-42*/"Show/Hide","Exit","Mahou (魔法)\nA magical layout switcher." };
+          /*41-43*/"Show/Hide","Exit","Mahou (魔法)\nA magical layout switcher." };
         public static string[] ToolTipsEN = new string[] {
           /////////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"While this option enabled, [Convert word] and [Convert line] and [Convert selection with \"CS-Switch\" enabled]\n"+
@@ -45,12 +46,14 @@ namespace Mahou
           /*13*/"If enabled, pressing ONE space AFTER word will not clear last word.",
           /*14*/"Enabling this, will reselect text after \"Convert selection\".",
           /*15*/"Select type for Emulate change layout.\nWin+Space works only in Windows 10!!\nWin+Space also will work better in Metro apps.",
-          /////////////////ExtCtrls TT\\\\\\\\\\\\\\\\\
+          /////////////////MoreConfigs TT\\\\\\\\\\\\\\\\\
           /*16*/"Pressing LCtrl will switch layout to selected.",
           /*17*/"Pressing RCtrl will switch layout to selected.",
           /*18*/"Enabling this will disable LCtrl/RCtrl from \"Switch layout by key\".\nWhile this enabled pressing LCtrl/RCtrl will switch to specified layout.", 
           ///BACK TO MAIN
-          /*19*/"Emu Type"};
+          /*19*/"Emu Type",
+          ///BACK TO MoreConfigs
+          /*20*/"If enabled, symbols []{};':\",./<>? will be ignored and will not be converted.\nWorks in Convert word, Convert line, Convert selection with Cylce Mode enabled.\nWon't work if you have >2 layouts an Cycle Mode enabled!"};
         public static string[] MessagesEN = new string[] {
           /*0-1*/"Mahou successfully updated!", "Update complete!",
           /*002*/"Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\n"+
@@ -76,11 +79,12 @@ namespace Mahou
           /*29-32*/"Загружаю","Превышено время ожидания...","Ошибка","У вас последняя версия.",
           /*33-34*/"Я думаю следует обновиться...","Произошла ошибка при проверке...",
           /*35-35*/"Не получилось получить информацию о обновлениях, не могу соединится с 'github.com', проверьте ваше соединение с интернетом.",
-          /////////////////ExtCtrls UI\\\\\\\\\\\\\\\\\
+          /////////////////MoreConfigs UI\\\\\\\\\\\\\\\\\
           /*36-36*/"Использовать спец. переключение по L/R CTRL",
-          /*37-39*/"Left Control переключает в:","Right Control переключает в:","Расширенная настройка CTRL'ов",
+          /*37-39*/"LCtrl переключает в:","RCtrl переключает в:","Дополнительные настройки",
+          /*40-40*/"Игнор. символов:",
           /////////////////Tray Icon\\\\\\\\\\\\\\\\\
-          /*40-42*/"Показать/Скрыть","Выход","Mahou (魔法)\nВолшебный переключатель раскладок." };
+          /*41-43*/"Показать/Скрыть","Выход","Mahou (魔法)\nВолшебный переключатель раскладок." };
         public static string[] ToolTipsRU = new string[] {
           /////////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"Пока включена, [Конверт слова] and [Конверт линии] and [Конверт выделения с \"КВ-Ключ\" включенной]\n"+
@@ -102,11 +106,13 @@ namespace Mahou
           /*13*/"Если включена, нажатие ОДНОГО Space ПОСЛЕ слова не очистит полседнее слово.",
           /*14*/"Если включена, текст будет снова выделен после \"Конверт выделения\".",
           /*15*/"Выберите тип эмуляции переключения раскладки.\nWin+Space работает только в Windows 10!!\nWin+Space также в Metro приложениях работает лучше чем Alt+Shift.",
-          /////////////////ExtCtrls TT\\\\\\\\\\\\\\\\\
+          /////////////////MoreConfigs TT\\\\\\\\\\\\\\\\\
           /*16*/"Нажатие LCtrl переключит раскладку в выбраную.",
           /*17*/"Pressing RCtrl переключит раскладку в выбраную.",
           /*18*/"Включение этой функции отключает LCtrl/RCtrl из \"Сменить язык клавишой\".\nПока включена, нажатие LCtrl/RCtrl будет переключать раскладку в выдбраную.", 
-          /*19*/"Тип эмуляции"};
+          /*19*/"Тип эмуляции",
+          ///BACK TO MoreConfigs
+          /*20*/"Если включен, символы []{};':\",./<>? будут игнорироваться и не будут конвертированы.\nРаботает в Конверт слова, Конверт линии, Конверт выделения с Циклч. режим включенным.\nНе будет работатб если у вас >2 раскладок и Циклч. режим включен!"};
         public static string[] MessagesRU = new string[] {
           /*0-1*/"Mahou успешно обновлен!", "Обновление завершено!",
           /*002*/"Нажмите Pause(по умолчанию) для конвертации последнего введенного слова.\nНажмите Scroll(по умолчанию) пока выделенный текс в фокусе чтобы конвертивровать его.\nНажмите Shift+Pause(по умолчанию) для конвертации последней введенной линии.\n"+

@@ -9,8 +9,8 @@ namespace Mahou
     public partial class MahouForm : Form
     {
         #region Variables
-        public static HotkeyHandler Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine, SymIgnHK; // Hotkeys, HKC => HotKey Convert
-        static bool HKCLReg, HKCSReg, HKCLineReg; // These to prevent re-registering of same HotKey
+        public HotkeyHandler Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine, HKSymIgn; // Hotkeys, HKC => HotKey Convert
+        public bool HKCLReg, HKCSReg, HKCLineReg, HKSIReg; // These to prevent re-registering of same HotKey
         bool shift, alt, ctrl, messagebox;
         static string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None", // Temporary modifiers
             tempcbOnlyKey = "None";
@@ -18,12 +18,13 @@ namespace Mahou
         static bool tempTrayI, tempCycleM, tempAutoR, tempBlockCTRL,
             tempCLEnabled, tempCSEnabled, tempCLineEnabled, tempSLinCS,
             tempUseEmulate, tempRePress, tempEOSpace, tempResel;//Temporary checkboxes values
-        public static bool hotkeywithmodsfired, SymbolIgnore;
+        public static bool hotkeywithmodsfired;
+        
         static Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                               tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         public static TrayIcon icon;
         public Update update = new Update();
-        ExtCtrls ExtendedCTRLs = new ExtCtrls();
+        MoreConfigs moreConfigs = new MoreConfigs();
         #endregion
         public MahouForm()
         {
@@ -31,12 +32,18 @@ namespace Mahou
             icon = new TrayIcon(MMain.MyConfs.ReadBool("Functions", "IconVisibility"));
             icon.Exit += exitToolStripMenuItem_Click;
             icon.ShowHide += showHideToolStripMenuItem_Click;
+            RefreshIconAll();
             Mainhk = new HotkeyHandler(Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT, Keys.Insert, this);
             Mainhk.Register();
             ExitHk = new HotkeyHandler(Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT, Keys.F12, this);
             ExitHk.Register();
-            SymIgnHK = new HotkeyHandler(Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT, Keys.F11, this);
-            SymIgnHK.Register();
+            HKSymIgn = new HotkeyHandler(CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods")),
+                (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey"), this);
+            if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled") )
+            {
+                HKSymIgn.Register();
+                HKSIReg = true;
+            }
             HKCLast = new HotkeyHandler(CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCLMods")),
                 (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey"), this);
             if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled"))
@@ -304,7 +311,7 @@ namespace Mahou
         }
         private void btnDDD_Click(object sender, EventArgs e)
         {
-            ExtendedCTRLs.ShowDialog();
+            moreConfigs.ShowDialog();
         }
         private void btnLangChange_Click(object sender, EventArgs e)
         {
@@ -403,16 +410,17 @@ namespace Mahou
                     ToggleVisibility();
                 if (Key == Keys.F12 && Modifs == Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT)
                     ExitProgram();
-                if (Key == Keys.F11 && Modifs == Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT)
+                Console.WriteLine(Key + " an " + Modifs);
+                if (Key == (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey") && Modifs == CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods")))
                 {
-                    if (SymbolIgnore)
+                    if (MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled"))
                     {
-                        SymbolIgnore = false;
+                        MMain.MyConfs.Write("Functions", "SymIgnModeEnabled", "false");
                         this.Icon = icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
                     }
                     else
                     {
-                        SymbolIgnore = true;
+                        MMain.MyConfs.Write("Functions", "SymIgnModeEnabled", "true");
                         this.Icon = icon.trIcon.Icon = Properties.Resources.MahouSymbolIgnoreMode;
                     }
                 }
@@ -493,25 +501,21 @@ namespace Mahou
         public static string Remake(Keys k) //Make readable some special keys
         {
             if (k >= Keys.D0 && k <= Keys.D9)
-            {
                 return k.ToString().Replace("D", "");
-            }
+
             if (k == Keys.ShiftKey ||
                 k == Keys.Menu ||
                 k == Keys.ControlKey ||
                 k == Keys.LWin ||
                 k == Keys.RWin)
-            {
                 return "";
-            }
+
             if (k == Keys.Scroll)
-            {
                 return k.ToString().Replace("Cancel", "Scroll");
-            }
+
             if (k == Keys.Cancel)
-            {
                 return k.ToString().Replace("Cancel", "Pause");
-            }
+
             return k.ToString();
         }
         public static string OemReadable(string inpt)//Make readable Oem Keys
@@ -564,7 +568,7 @@ namespace Mahou
             //This creates(silently) new config file if existed one disappeared o_O
             catch { MMain.MyConfs = new Configs(); tempRestore(); }
         }
-        public static void RegisterEnabled()
+        public void RegisterEnabled()
         {
             if (!MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled"))
                 HKCLast.Unregister();
@@ -591,15 +595,14 @@ namespace Mahou
                     hkclinenotready = true;
                     hkclnotready = true;
                 }
+
                 else
-                {
                     messagebox = false;
-                }
             }
+
             if (!string.IsNullOrEmpty(tempCLMods) && tempCLKey != 0)
-            {
                 MMain.MyConfs.Write("Hotkeys", "HKCLMods", tempCLMods);
-            }
+
             if (tempCLKey != 0)
             {
                 MMain.MyConfs.Write("Hotkeys", "HKCLKey", tempCLKey.ToString());
@@ -611,10 +614,10 @@ namespace Mahou
                 messagebox = true;
                 MessageBox.Show(MMain.Msgs[6], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+
             if (!string.IsNullOrEmpty(tempCSMods) && tempCSKey != 0)
-            {
                 MMain.MyConfs.Write("Hotkeys", "HKCSMods", tempCSMods);
-            }
+
             if (tempCSKey != 0)
             {
                 MMain.MyConfs.Write("Hotkeys", "HKCSKey", tempCSKey.ToString());
@@ -626,10 +629,10 @@ namespace Mahou
                 messagebox = true;
                 MessageBox.Show(MMain.Msgs[7], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+
             if (!string.IsNullOrEmpty(tempCLineMods) && tempCLineKey != 0)
-            {
                 MMain.MyConfs.Write("Hotkeys", "HKCLineMods", tempCLineMods);
-            }
+
             if (tempCLineKey != 0)
             {
                 MMain.MyConfs.Write("Hotkeys", "HKCLineKey", tempCLineKey.ToString());
@@ -691,7 +694,6 @@ namespace Mahou
                     HKCSelection.Unregister();
                     HKCSReg = false;
                 }
-                
                 HKCSelection = new HotkeyHandler(CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCSMods")),
                     (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey"), this);
                 HKCSelection.Register();
@@ -704,7 +706,6 @@ namespace Mahou
                     HKCLine.Unregister();
                     HKCLineReg = false;
                 }
-                
                 HKCLine = new HotkeyHandler(CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")),
                     (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCLineKey"), this);
                 HKCLine.Register();
@@ -716,7 +717,7 @@ namespace Mahou
         {
             if (this.Visible != false)
             {
-                this.Visible = ExtendedCTRLs.Visible = update.Visible = false;
+                this.Visible = moreConfigs.Visible = update.Visible = false;
             }
             else
             {
@@ -754,7 +755,7 @@ namespace Mahou
         private void RefreshControlsData()
         {
             LocalesRefresh();
-            RefreshIconVisibility();
+            RefreshIconAll();
             cbSwitchLayoutKeys.Text = MMain.MyConfs.Read("Hotkeys", "OnlyKeyLayoutSwicth");
             TrayIconCheckBox.Checked = MMain.MyConfs.ReadBool("Functions", "IconVisibility");
             cbCycleMode.Checked = MMain.MyConfs.ReadBool("Functions", "CycleMode");
@@ -833,10 +834,14 @@ namespace Mahou
             btnOK.Text = MMain.UI[18];
             btnCancel.Text = MMain.UI[19];
             btnHelp.Text = MMain.UI[20];
-            icon.RefreshText(MMain.UI[42], MMain.UI[40], MMain.UI[41]);
+            icon.RefreshText(MMain.UI[43], MMain.UI[41], MMain.UI[42]);
         }
-        private void RefreshIconVisibility()
+        public void RefreshIconAll()
         {
+            if (MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled") && MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled"))
+                this.Icon = icon.trIcon.Icon = Properties.Resources.MahouSymbolIgnoreMode;
+            else
+                this.Icon = icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
             if (MMain.MyConfs.ReadBool("Functions", "IconVisibility"))
             {
                 icon.Show();

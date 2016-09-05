@@ -312,12 +312,11 @@
             // 
             // HelpTT
             // 
-            this.HelpTT.AutomaticDelay = 0;
-            this.HelpTT.AutoPopDelay = 0;
+            this.HelpTT.AutoPopDelay = 25000;
             this.HelpTT.BackColor = System.Drawing.Color.Empty;
             this.HelpTT.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.HelpTT.InitialDelay = 0;
-            this.HelpTT.ReshowDelay = 1;
+            this.HelpTT.InitialDelay = 500;
+            this.HelpTT.ReshowDelay = 100;
             this.HelpTT.UseAnimation = false;
             // 
             // cbCycleMode

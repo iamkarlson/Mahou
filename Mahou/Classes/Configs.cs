@@ -42,6 +42,12 @@ namespace Mahou
             if (String.IsNullOrEmpty(this.Read("Hotkeys", "OnlyKeyLayoutSwicth")))
                 this.Write("Hotkeys", "OnlyKeyLayoutSwicth", "CapsLock"); //One key to switch layout
 
+            if (!Int32.TryParse(this.Read("Hotkeys", "HKSymIgnKey"), out it))
+                this.Write("Hotkeys", "HKSymIgnKey", "122"); //Hotkey Symbol ignore mode
+
+            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKSymIgnMods"))) //Hotkey Symbol ignore mode modifiers
+                this.Write("Hotkeys", "HKSymIgnMods", "Shift + Control + Alt");
+
             //Locales section
             if (!UInt32.TryParse(this.Read("Locales", "locale1uId"), out uit))
                 this.Write("Locales", "locale1uId", ""); //Locale 1 id
@@ -86,6 +92,9 @@ namespace Mahou
             if (!Boolean.TryParse(this.Read("Functions", "ReSelect"), out bt))
                 this.Write("Functions", "ReSelect", "true");
 
+            if (!Boolean.TryParse(this.Read("Functions", "SymIgnModeEnabled"), out bt))
+                this.Write("Functions", "SymIgnModeEnabled", "false");
+
             //EnabledHotkeys section
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCLEnabled", "true"); //Hotkey convert last word enabled
@@ -95,6 +104,9 @@ namespace Mahou
 
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLineEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCLineEnabled", "true"); //Hotkey convert line enabled
+
+            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKSymIgnEnabled"), out bt))
+                this.Write("EnabledHotkeys", "HKSymIgnEnabled", "true"); //Hotkey symbol ignore enabled
 
             //ExtCtrls section
             if (!Boolean.TryParse(this.Read("ExtCtrls", "UseExtCtrls"), out bt))

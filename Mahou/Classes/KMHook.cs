@@ -297,6 +297,7 @@ namespace Mahou
                 {
                     var nowLocale = Locales.GetCurrentLocale();
                     self = true;
+                    var wasLocale = Locales.GetCurrentLocale();
                     ChangeLayout();
                     // Don't even think "Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n")" can't be used as variable...
                     foreach (char c in Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n"))
@@ -333,12 +334,15 @@ namespace Mahou
                         }
                         else
                         {
-                            if (yk.upper)
-                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, true) });
-                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true) });
-                            KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, false) });
-                            if (yk.upper)
-                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, false) });
+                            if (!SymbolIgnoreRules(yk.yukey, yk.upper, wasLocale))
+                            {
+                                if (yk.upper)
+                                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, true) });
+                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, true) });
+                                KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(yk.yukey, false) });
+                                if (yk.upper)
+                                    KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, false) });
+                            }
                         }
                     }
                 }
@@ -382,7 +386,7 @@ namespace Mahou
                 NativeClipboard.RestoreData(datas);
             }
             self = false;
-            MahouForm.HKCSelection.Register(); //Restores CS hotkey ability
+            MMain.mahou.HKCSelection.Register(); //Restores CS hotkey ability
         }
         public static void RePress() //Re-presses modifiers you hold when hotkey fired(due to SendModsUp())
         {
@@ -428,51 +432,7 @@ namespace Mahou
                         KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LShiftKey, true) });
                     if (YuKeys[i].altnum)
                         KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(Keys.LMenu, true) });
-                    if (MahouForm.SymbolIgnore && (wasLocale == 1033 || wasLocale == 1041) && Locales.AllList().Length < 3 &&
-                        (   YuKeys[i].yukey == Keys.OemOpenBrackets ||
-                            YuKeys[i].yukey == Keys.OemCloseBrackets ||
-                            YuKeys[i].yukey == Keys.OemSemicolon ||
-                            YuKeys[i].yukey == Keys.OemQuotes ||
-                            YuKeys[i].yukey == Keys.Oemcomma ||
-                            YuKeys[i].yukey == Keys.OemPeriod ||
-                            YuKeys[i].yukey == Keys.OemQuestion ) )
-                    {
-                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemOpenBrackets)
-                                KInputs.MakeInput(KInputs.AddString("{"));
-                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemOpenBrackets)
-                                KInputs.MakeInput(KInputs.AddString("["));
-
-                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemCloseBrackets)
-                            KInputs.MakeInput(KInputs.AddString("}"));
-                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemCloseBrackets)
-                            KInputs.MakeInput(KInputs.AddString("]"));
-
-                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemSemicolon)
-                            KInputs.MakeInput(KInputs.AddString(":"));
-                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemSemicolon)
-                            KInputs.MakeInput(KInputs.AddString(";"));
-
-                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemQuotes)
-                            KInputs.MakeInput(KInputs.AddString("\""));
-                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemQuotes)
-                            KInputs.MakeInput(KInputs.AddString("'"));
-
-                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.Oemcomma)
-                            KInputs.MakeInput(KInputs.AddString("<"));
-                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.Oemcomma)
-                            KInputs.MakeInput(KInputs.AddString(","));
-
-                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemPeriod)
-                            KInputs.MakeInput(KInputs.AddString(">"));
-                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemPeriod)
-                            KInputs.MakeInput(KInputs.AddString("."));
-
-                        if (YuKeys[i].upper && YuKeys[i].yukey == Keys.OemQuestion)
-                            KInputs.MakeInput(KInputs.AddString("?"));
-                        if (!YuKeys[i].upper && YuKeys[i].yukey == Keys.OemQuestion)
-                            KInputs.MakeInput(KInputs.AddString("/"));
-                    }
-                    else
+                    if (!SymbolIgnoreRules(YuKeys[i].yukey, YuKeys[i].upper, wasLocale))
                     {
                         KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(YuKeys[i].yukey, true) });
                         KInputs.MakeInput(new KInputs.INPUT[] { KInputs.AddKey(YuKeys[i].yukey, false) });
@@ -486,9 +446,62 @@ namespace Mahou
                 self = false;
             }
             if (type)
-                MahouForm.HKCLast.Register(); //Restores CL hotkey ability
+                MMain.mahou.HKCLast.Register(); //Restores CL hotkey ability
             else
-                MahouForm.HKCLine.Register(); //Resorest CLine hotkey ability
+                MMain.mahou.HKCLine.Register(); //Resorest CLine hotkey ability
+        }
+        private static bool SymbolIgnoreRules(Keys key, bool upper, uint wasLocale)
+        {
+            if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled") &&
+                MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled") &&
+                (wasLocale == 1033 || wasLocale == 1041) &&
+                (Locales.AllList().Length < 3 && MMain.MyConfs.ReadBool("Functions", "CycleMode")) && (
+                key == Keys.OemOpenBrackets ||
+                key == Keys.OemCloseBrackets ||
+                key == Keys.OemSemicolon ||
+                key == Keys.OemQuotes ||
+                key == Keys.Oemcomma ||
+                key == Keys.OemPeriod ||
+                key == Keys.OemQuestion))
+            {
+                if (upper && key == Keys.OemOpenBrackets)
+                    KInputs.MakeInput(KInputs.AddString("{"));
+                if (!upper && key == Keys.OemOpenBrackets)
+                    KInputs.MakeInput(KInputs.AddString("["));
+
+                if (upper && key == Keys.OemCloseBrackets)
+                    KInputs.MakeInput(KInputs.AddString("}"));
+                if (!upper && key == Keys.OemCloseBrackets)
+                    KInputs.MakeInput(KInputs.AddString("]"));
+
+                if (upper && key == Keys.OemSemicolon)
+                    KInputs.MakeInput(KInputs.AddString(":"));
+                if (!upper && key == Keys.OemSemicolon)
+                    KInputs.MakeInput(KInputs.AddString(";"));
+
+                if (upper && key == Keys.OemQuotes)
+                    KInputs.MakeInput(KInputs.AddString("\""));
+                if (!upper && key == Keys.OemQuotes)
+                    KInputs.MakeInput(KInputs.AddString("'"));
+
+                if (upper && key == Keys.Oemcomma)
+                    KInputs.MakeInput(KInputs.AddString("<"));
+                if (!upper && key == Keys.Oemcomma)
+                    KInputs.MakeInput(KInputs.AddString(","));
+
+                if (upper && key == Keys.OemPeriod)
+                    KInputs.MakeInput(KInputs.AddString(">"));
+                if (!upper && key == Keys.OemPeriod)
+                    KInputs.MakeInput(KInputs.AddString("."));
+
+                if (upper && key == Keys.OemQuestion)
+                    KInputs.MakeInput(KInputs.AddString("?"));
+                if (!upper && key == Keys.OemQuestion)
+                    KInputs.MakeInput(KInputs.AddString("/"));
+
+                return true;
+            }
+            else return false;
         }
         private static void ChangeLayout() //Changes current layout
         {
