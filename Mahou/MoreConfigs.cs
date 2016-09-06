@@ -15,7 +15,7 @@ namespace Mahou
         {
             InitializeComponent();
         }
-        private void ExtCtrl_Load(object sender, EventArgs e)
+        private void MoreConfigs_Load(object sender, EventArgs e)
         {
             RefreshLocales();
             DisEna();
@@ -25,9 +25,18 @@ namespace Mahou
             tbHKSymIgn.Text = MahouForm.OemReadable((MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods").ToString().Replace(",", " +") + " + " +
                 MahouForm.Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey")).Replace("None + ", "")));
         }
-        private void ExtCtrls_FormClosing(object sender, FormClosingEventArgs e)
+        private void MoreConfigs_FormClosing(object sender, FormClosingEventArgs e)
         {
             Close(e);
+        }
+        private void MoreConfigs_Activated(object sender, EventArgs e)
+        {
+            MMain.mahou.HKSymIgn.Unregister();
+        }
+        private void MoreConfigs_Deactivate(object sender, EventArgs e)
+        {
+            if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled"))
+                MMain.mahou.HKSymIgn.Register();
         }
         private void btnOK_Click(object sender, EventArgs e)
         {
@@ -208,22 +217,11 @@ namespace Mahou
             HelpTT.ToolTipTitle = cbUseLRC.Text;
             HelpTT.Show(MMain.TTips[18], cbUseLRC);
         }
-        #endregion
-
-        private void MoreConfigs_Activated(object sender, EventArgs e)
-        {
-            MMain.mahou.HKSymIgn.Unregister();
-        }
-        private void MoreConfigs_Deactivate(object sender, EventArgs e)
-        {
-            if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled"))
-                MMain.mahou.HKSymIgn.Register();
-        }
-
         private void cbSymIgn_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbSymIgn.Text;
             HelpTT.Show(MMain.TTips[20], cbSymIgn);
         }
+        #endregion
     }
 }
