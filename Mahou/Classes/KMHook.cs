@@ -273,7 +273,7 @@ namespace Mahou
             //This prevents from converting text that alredy exist in Clipboard
             //by pressing "Convert Selection hotkey" without selected text.
             NativeClipboard.Clear();
-            for (int i = 0; i != 200; i++) 
+            for (int i = 0; i != 6; i++) 
             {
                 KInputs.MakeInput(new KInputs.INPUT[] {
                 KInputs.AddKey(Keys.RControlKey,true),
