@@ -35,6 +35,7 @@
             this.btnCheck = new System.Windows.Forms.Button();
             this.btDMahou = new System.Windows.Forms.Button();
             this.lbDownloading = new System.Windows.Forms.Label();
+            this.lbChecking = new System.Windows.Forms.Label();
             this.gpRTitle.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,6 +76,7 @@
             this.lbRDesc.ReadOnly = true;
             this.lbRDesc.Size = new System.Drawing.Size(247, 113);
             this.lbRDesc.TabIndex = 0;
+            this.lbRDesc.TabStop = false;
             this.lbRDesc.Text = "Release Description";
             // 
             // btnCheck
@@ -108,11 +110,22 @@
             this.lbDownloading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lbDownloading.Visible = false;
             // 
+            // lbChecking
+            // 
+            this.lbChecking.Location = new System.Drawing.Point(16, 15);
+            this.lbChecking.Name = "lbChecking";
+            this.lbChecking.Size = new System.Drawing.Size(256, 13);
+            this.lbChecking.TabIndex = 6;
+            this.lbChecking.Text = "Checking...";
+            this.lbChecking.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbChecking.Visible = false;
+            // 
             // Update
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.lbChecking);
             this.Controls.Add(this.lbDownloading);
             this.Controls.Add(this.btDMahou);
             this.Controls.Add(this.btnCheck);
@@ -145,5 +158,6 @@
         private System.Windows.Forms.Button btDMahou;
         private System.Windows.Forms.TextBox lbRDesc;
         private System.Windows.Forms.Label lbDownloading;
+        private System.Windows.Forms.Label lbChecking;
     }
 }

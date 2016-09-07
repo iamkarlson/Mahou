@@ -22,8 +22,8 @@ namespace Mahou
             load();
             RefreshLanguage();
             tmpRestore();
-            tbHKSymIgn.Text = MahouForm.OemReadable((MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods").ToString().Replace(",", " +") + " + " +
-                MahouForm.Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey")).Replace("None + ", "")));
+            tbHKSymIgn.Text = MMain.mahou.OemReadable((MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods").ToString().Replace(",", " +") + " + " +
+                MMain.mahou.Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey")).Replace("None + ", "")));
         }
         private void MoreConfigs_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -31,7 +31,8 @@ namespace Mahou
         }
         private void MoreConfigs_Activated(object sender, EventArgs e)
         {
-            MMain.mahou.HKSymIgn.Unregister();
+            if (MMain.mahou.HKSIReg)
+                MMain.mahou.HKSymIgn.Unregister();
         }
         private void MoreConfigs_Deactivate(object sender, EventArgs e)
         {
@@ -53,8 +54,8 @@ namespace Mahou
         }
         private void tbHKSymIgn_KeyDown(object sender, KeyEventArgs e)
         {
-            tbHKSymIgn.Text = MahouForm.OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " +
-                MahouForm.Remake(e.KeyCode)).Replace("None + ", ""));
+            tbHKSymIgn.Text = MMain.mahou.OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " +
+                MMain.mahou.Remake(e.KeyCode)).Replace("None + ", ""));
             tmpSIMods = e.Modifiers.ToString().Replace(",", " +");
             switch ((int)e.KeyCode)
             {
@@ -70,20 +71,6 @@ namespace Mahou
         }
         #endregion
         #region Functions
-        private void RefreshLocales() // Refreshes locales in comboboxes
-        {
-            Locales.IfLessThan2();
-            MMain.locales = Locales.AllList();
-            cbLCLocalesList.Items.Clear();
-            cbRCLocalesList.Items.Clear();
-            MMain.lcnmid.Clear();
-            foreach (Locales.Locale lc in MMain.locales)
-            {
-                cbLCLocalesList.Items.Add(lc.Lang + "(" + lc.uId + ")");
-                cbRCLocalesList.Items.Add(lc.Lang + "(" + lc.uId + ")");
-                MMain.lcnmid.Add(lc.Lang + "(" + lc.uId + ")");
-            }
-        }
         private void Close(FormClosingEventArgs e) // Closes window without destruction
         {
             if (e.CloseReason == CloseReason.UserClosing)
@@ -111,6 +98,8 @@ namespace Mahou
             MMain.MyConfs.Write("ExtCtrls", "RCLocale", getUID.Match(cbRCLocalesList.Text).Groups[1].Value);
             MMain.MyConfs.Write("ExtCtrls", "UseExtCtrls", cbUseLRC.Checked.ToString());
             MMain.MyConfs.Write("EnabledHotkeys", "HKSymIgnEnabled", cbSymIgn.Checked.ToString());
+            MMain.MyConfs.Write("Functions", "MoreTries", cbMoreTries.Checked.ToString());
+            MMain.MyConfs.Write("Functions", "TriesCount", nudMTCount.Value.ToString());
             bool hksymignnotready = false;
             if (tmpSIKey != 0)
             {
@@ -185,8 +174,29 @@ namespace Mahou
             }
             cbUseLRC.Checked = MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls");
             cbSymIgn.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled");
+            cbMoreTries.Checked = MMain.MyConfs.ReadBool("Functions", "MoreTries");
+            nudMTCount.Value = MMain.MyConfs.ReadInt("Functions", "TriesCount");
         }
-        private void RefreshLanguage()
+        private void tmpRestore() // Restores temporaries
+        {
+            tmpSIKey = MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey");
+            tmpSIMods = MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods");
+        }
+        private void RefreshLocales() // Refreshes locales in comboboxes
+        {
+            Locales.IfLessThan2();
+            MMain.locales = Locales.AllList();
+            cbLCLocalesList.Items.Clear();
+            cbRCLocalesList.Items.Clear();
+            MMain.lcnmid.Clear();
+            foreach (Locales.Locale lc in MMain.locales)
+            {
+                cbLCLocalesList.Items.Add(lc.Lang + "(" + lc.uId + ")");
+                cbRCLocalesList.Items.Add(lc.Lang + "(" + lc.uId + ")");
+                MMain.lcnmid.Add(lc.Lang + "(" + lc.uId + ")");
+            }
+        }
+        private void RefreshLanguage() // Refreshes controls text
         {
             cbUseLRC.Text = MMain.UI[36];
             lbLCto.Text = MMain.UI[37];
@@ -194,11 +204,7 @@ namespace Mahou
             this.Text = MMain.UI[39];
             cbSymIgn.Text = MMain.UI[40];
             btnNO.Text = MMain.UI[19];
-        }
-        private void tmpRestore()
-        {
-            tmpSIKey = MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey");
-            tmpSIMods = MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods");
+            cbMoreTries.Text = MMain.UI[41];
         }
         #endregion
         #region Tooltips
@@ -221,6 +227,11 @@ namespace Mahou
         {
             HelpTT.ToolTipTitle = cbSymIgn.Text;
             HelpTT.Show(MMain.TTips[20], cbSymIgn);
+        }
+        private void cbMoreTries_MouseHover(object sender, EventArgs e)
+        {
+            HelpTT.ToolTipTitle = cbMoreTries.Text;
+            HelpTT.Show(MMain.TTips[21], cbMoreTries);
         }
         #endregion
     }

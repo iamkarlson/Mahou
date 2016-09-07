@@ -35,6 +35,22 @@ namespace Mahou
             InitializeComponent();
         }
 
+        private void Update_VisibleChanged(object sender, EventArgs e)
+        {
+            this.ActiveControl = lbVer;
+            if (UpdInfo != null)
+            {
+                SetUInfo();
+                if (flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2]))
+                    btDMahou.Enabled = true;
+                if (fromStartup)
+                {
+                    btDMahou.PerformClick();
+                    fromStartup = false;
+                }
+            }
+        }
+
         private void Update_Load(object sender, EventArgs e)
         {
             RefreshLanguage();
@@ -107,7 +123,7 @@ namespace Mahou
                 //Downloaded archive 
                 var arch = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
                 //This prevent Mahou icon from stucking in tray
-                MahouForm.icon.Hide();
+                MMain.mahou.icon.Hide();
                 //Batch script to create other script o.0,
                 //which shutdown running Mahou,
                 //delete old version,
@@ -143,16 +159,20 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 
         private async void btnCheck_Click(object sender, EventArgs e)
         {
-            btnCheck.Text = MMain.UI[23];
+            btnCheck.Visible = false;
+            lbChecking.Visible = true;
+            lbChecking.Text = MMain.UI[23];
             await GetUpdateInfo();
             tmr.Tick += (_, __) =>
             {
                 btnCheck.Text = MMain.UI[22];
+                lbChecking.Visible = false;
+                btnCheck.Visible = true;
                 tmr.Stop();
             };
             if (UpdInfo[2] == MMain.UI[31])
             {
-                btnCheck.Text = MMain.UI[34];
+                lbChecking.Text = MMain.UI[34];
                 tmr.Start();
                 SetUInfo();
                 tmr.Tick += (_, __) =>
@@ -160,6 +180,8 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
                     lbVer.Text = MMain.UI[25];
                     gpRTitle.Text = MMain.UI[26];
                     lbRDesc.Text = MMain.UI[27];
+                    lbChecking.Visible = false;
+                    btnCheck.Visible = true;
                     tmr.Stop();
                 };
                 tmr.Start();
@@ -169,7 +191,7 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
                 if (flVersion("v" + Application.ProductVersion) <
                     flVersion(UpdInfo[2]))
                 {
-                    btnCheck.Text = MMain.UI[33];
+                    lbChecking.Text = MMain.UI[33];
                     tmr.Start();
                     SetUInfo();
                     btDMahou.Text = MMain.UI[28] + UpdInfo[2];
@@ -178,7 +200,7 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
                 }
                 else
                 {
-                    btnCheck.Text = MMain.UI[32];
+                    lbChecking.Text = MMain.UI[32];
                     tmr.Start();
                     SetUInfo();
                 }
@@ -276,22 +298,6 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
         {
             var justdigs = Regex.Replace(ver, "\\D", "");
             return float.Parse(justdigs[0] + "." + justdigs.Substring(1), CultureInfo.InvariantCulture);
-        }
-
-        private void Update_VisibleChanged(object sender, EventArgs e)
-        {
-            this.ActiveControl = lbVer;
-            if (UpdInfo != null)
-            {
-                SetUInfo();
-                if (flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2]))
-                    btDMahou.Enabled = true;
-                if (fromStartup)
-                {
-                    btDMahou.PerformClick();
-                    fromStartup = false;
-                }
-            }
         }
     }
 }

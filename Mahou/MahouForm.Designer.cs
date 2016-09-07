@@ -38,7 +38,7 @@
             this.cbLangTwo = new System.Windows.Forms.ComboBox();
             this.tbCLHK = new System.Windows.Forms.TextBox();
             this.tbCSHK = new System.Windows.Forms.TextBox();
-            this.TrayIconCheckBox = new System.Windows.Forms.CheckBox();
+            this.cbTrayIcon = new System.Windows.Forms.CheckBox();
             this.btnHelp = new System.Windows.Forms.Button();
             this.GitHubLink = new System.Windows.Forms.LinkLabel();
             this.cbAutorun = new System.Windows.Forms.CheckBox();
@@ -174,19 +174,18 @@
             this.tbCSHK.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbCSHK_KeyDown);
             this.tbCSHK.MouseHover += new System.EventHandler(this.tbCSHK_MouseHover);
             // 
-            // TrayIconCheckBox
+            // cbTrayIcon
             // 
-            this.TrayIconCheckBox.AutoSize = true;
-            this.TrayIconCheckBox.BackColor = System.Drawing.Color.Transparent;
-            this.TrayIconCheckBox.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TrayIconCheckBox.Location = new System.Drawing.Point(201, 193);
-            this.TrayIconCheckBox.Name = "TrayIconCheckBox";
-            this.TrayIconCheckBox.Size = new System.Drawing.Size(102, 17);
-            this.TrayIconCheckBox.TabIndex = 14;
-            this.TrayIconCheckBox.Text = "Show tray icon";
-            this.TrayIconCheckBox.UseVisualStyleBackColor = false;
-            this.TrayIconCheckBox.CheckedChanged += new System.EventHandler(this.TrayIconCheckBox_CheckedChanged);
-            this.TrayIconCheckBox.MouseHover += new System.EventHandler(this.TrayIconCheckBox_MouseHover);
+            this.cbTrayIcon.AutoSize = true;
+            this.cbTrayIcon.BackColor = System.Drawing.Color.Transparent;
+            this.cbTrayIcon.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cbTrayIcon.Location = new System.Drawing.Point(201, 193);
+            this.cbTrayIcon.Name = "cbTrayIcon";
+            this.cbTrayIcon.Size = new System.Drawing.Size(102, 17);
+            this.cbTrayIcon.TabIndex = 14;
+            this.cbTrayIcon.Text = "Show tray icon";
+            this.cbTrayIcon.UseVisualStyleBackColor = false;
+            this.cbTrayIcon.MouseHover += new System.EventHandler(this.TrayIconCheckBox_MouseHover);
             // 
             // btnHelp
             // 
@@ -223,7 +222,6 @@
             this.cbAutorun.TabIndex = 17;
             this.cbAutorun.Text = "Autostart with Windows";
             this.cbAutorun.UseVisualStyleBackColor = true;
-            this.cbAutorun.CheckedChanged += new System.EventHandler(this.cbAutorun_CheckedChanged);
             // 
             // gbSBL
             // 
@@ -359,7 +357,6 @@
             this.cbSwitchLayoutKeys.Size = new System.Drawing.Size(93, 21);
             this.cbSwitchLayoutKeys.TabIndex = 24;
             this.cbSwitchLayoutKeys.ValueMember = "0";
-            this.cbSwitchLayoutKeys.SelectedIndexChanged += new System.EventHandler(this.cbSwitchLayoutKeys_SelectedIndexChanged);
             this.cbSwitchLayoutKeys.MouseHover += new System.EventHandler(this.cbSwitchLayoutKeys_MouseHover);
             // 
             // cbBlockC
@@ -370,7 +367,6 @@
             this.cbBlockC.TabIndex = 0;
             this.cbBlockC.Text = "Block CTRL";
             this.cbBlockC.UseVisualStyleBackColor = true;
-            this.cbBlockC.CheckedChanged += new System.EventHandler(this.cbBlockC_CheckedChanged);
             this.cbBlockC.MouseHover += new System.EventHandler(this.cbBlockAC_MouseHover);
             // 
             // lbswithlayout
@@ -392,7 +388,6 @@
             this.cbCSSwitch.TabIndex = 7;
             this.cbCSSwitch.Text = "CS-Switch";
             this.cbCSSwitch.UseVisualStyleBackColor = true;
-            this.cbCSSwitch.CheckedChanged += new System.EventHandler(this.cbCSSwitch_CheckedChanged);
             this.cbCSSwitch.MouseHover += new System.EventHandler(this.cbUseCycleForCS_MouseHover);
             // 
             // cbUseEmulate
@@ -416,7 +411,6 @@
             this.cbRePress.TabIndex = 27;
             this.cbRePress.Text = "Re-Press";
             this.cbRePress.UseVisualStyleBackColor = true;
-            this.cbRePress.CheckedChanged += new System.EventHandler(this.cbRePress_CheckedChanged);
             this.cbRePress.MouseHover += new System.EventHandler(this.cbRePress_MouseHover);
             // 
             // cbEatOneSpace
@@ -428,7 +422,6 @@
             this.cbEatOneSpace.TabIndex = 28;
             this.cbEatOneSpace.Text = "\" \" ←";
             this.cbEatOneSpace.UseVisualStyleBackColor = true;
-            this.cbEatOneSpace.CheckedChanged += new System.EventHandler(this.cbEatOneSpace_CheckedChanged);
             this.cbEatOneSpace.MouseHover += new System.EventHandler(this.cbEatOneSpace_MouseHover);
             // 
             // cbResel
@@ -440,7 +433,6 @@
             this.cbResel.TabIndex = 29;
             this.cbResel.Text = "Re-Select";
             this.cbResel.UseVisualStyleBackColor = true;
-            this.cbResel.CheckedChanged += new System.EventHandler(this.cbResel_CheckedChanged);
             this.cbResel.MouseHover += new System.EventHandler(this.cbResel_MouseHover);
             // 
             // cbELSType
@@ -455,7 +447,6 @@
             this.cbELSType.Name = "cbELSType";
             this.cbELSType.Size = new System.Drawing.Size(73, 21);
             this.cbELSType.TabIndex = 30;
-            this.cbELSType.SelectedIndexChanged += new System.EventHandler(this.cbELSType_SelectedIndexChanged);
             this.cbELSType.MouseHover += new System.EventHandler(this.cbELSType_MouseHover);
             // 
             // btnDDD
@@ -503,7 +494,7 @@
             this.Controls.Add(this.cbAutorun);
             this.Controls.Add(this.GitHubLink);
             this.Controls.Add(this.btnHelp);
-            this.Controls.Add(this.TrayIconCheckBox);
+            this.Controls.Add(this.cbTrayIcon);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.btnOK);
             this.DoubleBuffered = true;
@@ -538,7 +529,7 @@
         private System.Windows.Forms.ComboBox cbLangTwo;
         private System.Windows.Forms.TextBox tbCLHK;
         private System.Windows.Forms.TextBox tbCSHK;
-        private System.Windows.Forms.CheckBox TrayIconCheckBox;
+        private System.Windows.Forms.CheckBox cbTrayIcon;
         private System.Windows.Forms.Button btnHelp;
         private System.Windows.Forms.LinkLabel GitHubLink;
         private System.Windows.Forms.CheckBox cbAutorun;

@@ -39,6 +39,9 @@
             this.HelpTT = new System.Windows.Forms.ToolTip(this.components);
             this.tbHKSymIgn = new System.Windows.Forms.TextBox();
             this.cbSymIgn = new System.Windows.Forms.CheckBox();
+            this.cbMoreTries = new System.Windows.Forms.CheckBox();
+            this.nudMTCount = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).BeginInit();
             this.SuspendLayout();
             // 
             // cbUseLRC
@@ -55,7 +58,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(10, 110);
+            this.btnOK.Location = new System.Drawing.Point(10, 130);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 1;
@@ -65,7 +68,7 @@
             // 
             // btnNO
             // 
-            this.btnNO.Location = new System.Drawing.Point(192, 110);
+            this.btnNO.Location = new System.Drawing.Point(192, 132);
             this.btnNO.Name = "btnNO";
             this.btnNO.Size = new System.Drawing.Size(75, 23);
             this.btnNO.TabIndex = 2;
@@ -137,11 +140,31 @@
             this.cbSymIgn.UseVisualStyleBackColor = true;
             this.cbSymIgn.MouseHover += new System.EventHandler(this.cbSymIgn_MouseHover);
             // 
+            // cbMoreTries
+            // 
+            this.cbMoreTries.AutoSize = true;
+            this.cbMoreTries.Location = new System.Drawing.Point(10, 102);
+            this.cbMoreTries.Name = "cbMoreTries";
+            this.cbMoreTries.Size = new System.Drawing.Size(79, 17);
+            this.cbMoreTries.TabIndex = 9;
+            this.cbMoreTries.Text = "More Tries:";
+            this.cbMoreTries.UseVisualStyleBackColor = true;
+            this.cbMoreTries.MouseHover += new System.EventHandler(this.cbMoreTries_MouseHover);
+            // 
+            // nudMTCount
+            // 
+            this.nudMTCount.Location = new System.Drawing.Point(127, 99);
+            this.nudMTCount.Name = "nudMTCount";
+            this.nudMTCount.Size = new System.Drawing.Size(141, 20);
+            this.nudMTCount.TabIndex = 10;
+            // 
             // MoreConfigs
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(279, 144);
+            this.ClientSize = new System.Drawing.Size(279, 164);
+            this.Controls.Add(this.nudMTCount);
+            this.Controls.Add(this.cbMoreTries);
             this.Controls.Add(this.cbSymIgn);
             this.Controls.Add(this.tbHKSymIgn);
             this.Controls.Add(this.cbRCLocalesList);
@@ -162,6 +185,7 @@
             this.Deactivate += new System.EventHandler(this.MoreConfigs_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MoreConfigs_FormClosing);
             this.Load += new System.EventHandler(this.MoreConfigs_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -179,5 +203,7 @@
         private System.Windows.Forms.ToolTip HelpTT;
         private System.Windows.Forms.TextBox tbHKSymIgn;
         private System.Windows.Forms.CheckBox cbSymIgn;
+        private System.Windows.Forms.CheckBox cbMoreTries;
+        private System.Windows.Forms.NumericUpDown nudMTCount;
     }
 }

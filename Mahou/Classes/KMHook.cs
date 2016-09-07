@@ -68,10 +68,10 @@ namespace Mahou
                 win = (wParam == (IntPtr)KMMessages.WM_KEYDOWN) ? true : false;
             #endregion
             #region Release Re-Pressed keys
-            if (MahouForm.hotkeywithmodsfired && wParam == (IntPtr)KMMessages.WM_KEYUP && !self &&
+            if (MMain.mahou.hotkeywithmodsfired && wParam == (IntPtr)KMMessages.WM_KEYUP && !self &&
                 (Key == Keys.LShiftKey || Key == Keys.LMenu || Key == Keys.LControlKey))
             {
-                MahouForm.hotkeywithmodsfired = false;
+                MMain.mahou.hotkeywithmodsfired = false;
                 if (swas)
                 {
                     swas = false;
@@ -177,12 +177,9 @@ namespace Mahou
                 {
                     MMain.c_word.Clear();
                     MMain.c_line.Clear();
-                    //altinline = false;
-                    //altinword = false;
                 }
                 if (Key == Keys.Space && !self)
                 {
-                    //altinword = false;
                     if (MMain.MyConfs.ReadBool("Functions", "EatOneSpace") && MMain.c_word.Count != 0 && MMain.c_word[MMain.c_word.Count - 1].yukey != Keys.Space)
                     {
                         MMain.c_word.Add(new YuKey() { yukey = Keys.Space, upper = false });
@@ -273,19 +270,15 @@ namespace Mahou
             //This prevents from converting text that alredy exist in Clipboard
             //by pressing "Convert Selection hotkey" without selected text.
             NativeClipboard.Clear();
-            for (int i = 0; i != 6; i++) 
-            {
-                KInputs.MakeInput(new KInputs.INPUT[] {
-                KInputs.AddKey(Keys.RControlKey,true),
-                KInputs.AddKey(Keys.Insert, true),
-                KInputs.AddKey(Keys.Insert,false),
-                KInputs.AddKey(Keys.RControlKey, false)});
-                Thread.Sleep(30);
-                ClipStr = NativeClipboard.GetText();
-                //Console.WriteLine(ClipStr + " - EMPTY = " + String.IsNullOrEmpty(ClipStr));
-                if (!String.IsNullOrEmpty(ClipStr))
-                    break;
-            }
+            if (MMain.MyConfs.ReadBool("Functions", "MoreTries"))
+                for (int i = 0; i != MMain.MyConfs.ReadInt("Functions", "TriesCount"); i++)
+                {
+                    ClipStr = MakeCopy();
+                    if (!String.IsNullOrEmpty(ClipStr))
+                        break;
+                }
+            else
+                ClipStr = MakeCopy();
             if (!String.IsNullOrEmpty(ClipStr))
             {
                 KInputs.MakeInput(new KInputs.INPUT[] {
@@ -388,7 +381,17 @@ namespace Mahou
             self = false;
             MMain.mahou.HKCSelection.Register(); //Restores CS hotkey ability
         }
-        public static void RePress() //Re-presses modifiers you hold when hotkey fired(due to SendModsUp())
+        private static string MakeCopy() //Gets text from selection
+        {
+            KInputs.MakeInput(new KInputs.INPUT[] {
+                KInputs.AddKey(Keys.RControlKey,true),
+                KInputs.AddKey(Keys.Insert, true),
+                KInputs.AddKey(Keys.Insert,false),
+                KInputs.AddKey(Keys.RControlKey, false)});
+            Thread.Sleep(30);
+            return NativeClipboard.GetText();
+        }
+        private static void RePress() //Re-presses modifiers you hold when hotkey fired(due to SendModsUp())
         {
             //Repress's modifiers by Press Again variables
             if (shiftRP)
@@ -450,7 +453,7 @@ namespace Mahou
             else
                 MMain.mahou.HKCLine.Register(); //Resorest CLine hotkey ability
         }
-        private static bool SymbolIgnoreRules(Keys key, bool upper, uint wasLocale)
+        private static bool SymbolIgnoreRules(Keys key, bool upper, uint wasLocale) //Rules to ignore symbols
         {
             if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled") &&
                 MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled") &&
@@ -560,7 +563,7 @@ namespace Mahou
                 //Use PostMessage to switch to next layout
                 PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, KInputs.HKL_NEXT);
         }
-        public static string InAnother(char c, uint uID1, uint uID2)
+        private static string InAnother(char c, uint uID1, uint uID2) //Remakes c from uID1  to uID2
         {
             var upper = false;
             var cc = c;

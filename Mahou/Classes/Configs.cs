@@ -95,6 +95,12 @@ namespace Mahou
             if (!Boolean.TryParse(this.Read("Functions", "SymIgnModeEnabled"), out bt))
                 this.Write("Functions", "SymIgnModeEnabled", "false");
 
+            if (!Boolean.TryParse(this.Read("Functions", "MoreTries"), out bt))
+                this.Write("Functions", "MoreTries", "true");
+
+            if (!Int32.TryParse(this.Read("Functions", "TriesCount"), out it))
+                this.Write("Functions", "TriesCount", "5");
+
             //EnabledHotkeys section
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCLEnabled", "true"); //Hotkey convert last word enabled
