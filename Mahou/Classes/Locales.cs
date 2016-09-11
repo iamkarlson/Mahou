@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Mahou
 {
-    class Locales
+    static class Locales
     {
         public static uint GetCurrentLocale() //Gets current locale in active window
         {
@@ -17,7 +17,7 @@ namespace Mahou
         public static IntPtr ActiveWindow() //Gets active windows(focused) or foreground
         {
             IntPtr awHandle = IntPtr.Zero;
-            GUITHREADINFO gui = new GUITHREADINFO();
+            var gui = new GUITHREADINFO();
             gui.cbSize = Marshal.SizeOf(gui);
             GetGUIThreadInfo(GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero), ref gui);
 
@@ -31,7 +31,7 @@ namespace Mahou
         public static Locale[] AllList() //Gets list of all awaible layouts
         {
             int count = 0;
-            List<Locale> locs = new List<Locale>();
+            var locs = new List<Locale>();
             foreach (InputLanguage lang in InputLanguage.InstalledInputLanguages)
             {
                 count++;

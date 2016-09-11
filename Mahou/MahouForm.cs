@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Reflection;
 using IWshRuntimeLibrary;
@@ -12,10 +11,10 @@ namespace Mahou
         public HotkeyHandler Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine, HKSymIgn; // Hotkeys, HKC => HotKey Convert
         public bool HKCLReg, HKCSReg, HKCLineReg, HKSIReg; // These to prevent re-registering of same HotKey
         bool shift, alt, ctrl, messagebox;
-        private string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None"; // Temporary modifiers
-        private int tempCLKey = 0, tempCSKey = 0, tempCLineKey = 0; // Temporary keys
+        string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None"; // Temporary modifiers
+        int tempCLKey, tempCSKey, tempCLineKey; // Temporary keys
         public bool hotkeywithmodsfired;
-        private Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
+        Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
                                tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         public TrayIcon icon;
         public Update update = new Update();
@@ -30,20 +29,21 @@ namespace Mahou
             RefreshIconAll();
             InitializeHotkeys();
             //Background startup check for updates
-            System.Threading.Thread uche = new System.Threading.Thread(() => update.StartupCheck());
+            var uche = new System.Threading.Thread(update.StartupCheck);
+            uche.Name = "Startup Check";
             uche.Start();
         }
         #region Form Events
-        private void MahouForm_Load(object sender, EventArgs e)
+        void MahouForm_Load(object sender, EventArgs e)
         {
-            this.Text += " " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Text += " " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
             tempRestore();
             RefreshControlsData();
             EnableIF();
             RemoveAddCtrls();
             RefreshLanguage();
         }
-        private void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
+        void MahouForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
             {
@@ -52,11 +52,11 @@ namespace Mahou
             }
             tempRestore();
         }
-        private void MahouForm_VisibleChanged(object sender, EventArgs e)
+        void MahouForm_VisibleChanged(object sender, EventArgs e)
         {
             RefreshControlsData();
         }
-        private void MahouForm_Activated(object sender, EventArgs e)
+        void MahouForm_Activated(object sender, EventArgs e)
         {
             if (HKCSReg)
                 HKCSelection.Unregister();
@@ -67,7 +67,7 @@ namespace Mahou
             MMain.StopHook();
             RefreshLocales();
         }
-        private void MahouForm_Deactivate(object sender, EventArgs e)
+        void MahouForm_Deactivate(object sender, EventArgs e)
         {
             MMain.StartHook();
             RefreshLocales();
@@ -75,7 +75,7 @@ namespace Mahou
         }
         #endregion
         #region Textboxes(Hotkeyboxes)
-        private void tbCLHK_KeyDown(object sender, KeyEventArgs e)// Catch hotkey for Convert Last action
+        void tbCLHK_KeyDown(object sender, KeyEventArgs e)// Catch hotkey for Convert Last action
         {
             tbCLHK.Text = OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " +
                             Remake(e.KeyCode)).Replace("None + ", ""));
@@ -92,7 +92,7 @@ namespace Mahou
                     break;
             }
         }
-        private void tbCLineHK_KeyDown(object sender, KeyEventArgs e) // Catch hotkey for Convert Line action
+        void tbCLineHK_KeyDown(object sender, KeyEventArgs e) // Catch hotkey for Convert Line action
         {
             tbCLineHK.Text = OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " +
                                Remake(e.KeyCode)).Replace("None + ", ""));
@@ -109,7 +109,7 @@ namespace Mahou
                     break;
             }
         }
-        private void tbCSHK_KeyDown(object sender, KeyEventArgs e)// Catch hotkey for Convert Selection action
+        void tbCSHK_KeyDown(object sender, KeyEventArgs e)// Catch hotkey for Convert Selection action
         {
             tbCSHK.Text = OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " +
                             Remake(e.KeyCode)).Replace("None + ", ""));
@@ -128,7 +128,7 @@ namespace Mahou
         }
         #endregion
         #region Comboboxes
-        private void cbLangOne_SelectedIndexChanged(object sender, EventArgs e)
+        void cbLangOne_SelectedIndexChanged(object sender, EventArgs e)
         {
             foreach (Locales.Locale lc in MMain.locales)
             {
@@ -138,7 +138,7 @@ namespace Mahou
                 }
             }
         }
-        private void cbLangTwo_SelectedIndexChanged(object sender, EventArgs e)
+        void cbLangTwo_SelectedIndexChanged(object sender, EventArgs e)
         {
             foreach (Locales.Locale lc in MMain.locales)
             {
@@ -150,70 +150,62 @@ namespace Mahou
         }
         #endregion
         #region Checkboxes
-        private void cbCycleMode_CheckedChanged(object sender, EventArgs e)
+        void cbCycleMode_CheckedChanged(object sender, EventArgs e)
         {
             EnableIF();
         }
-        private void cbCLActive_CheckedChanged(object sender, EventArgs e)
+        void cbCLActive_CheckedChanged(object sender, EventArgs e)
         {
-            if (!cbCLActive.Checked)
-            { tbCLHK.Enabled = false; }
-            else { tbCLHK.Enabled = true; }
+			tbCLHK.Enabled = cbCLActive.Checked;
         }
-        private void cbCSActive_CheckedChanged(object sender, EventArgs e)
+        void cbCSActive_CheckedChanged(object sender, EventArgs e)
         {
-            if (!cbCSActive.Checked)
-            { tbCSHK.Enabled = false; }
-            else { tbCSHK.Enabled = true; }
+			tbCSHK.Enabled = cbCSActive.Checked;
         }
-        private void cbCLineActive_CheckedChanged(object sender, EventArgs e)
+        void cbCLineActive_CheckedChanged(object sender, EventArgs e)
         {
-            if (!cbCLineActive.Checked)
-            { tbCLineHK.Enabled = false; }
-            else { tbCLineHK.Enabled = true; }
+			tbCLineHK.Enabled = cbCLineActive.Checked;
         }
-        private void cbUseEmulate_CheckedChanged(object sender, EventArgs e)
+        void cbUseEmulate_CheckedChanged(object sender, EventArgs e)
         {
-            if (!cbUseEmulate.Checked)
-            { cbELSType.Enabled = false; }
-            else { cbELSType.Enabled = true; }
+			cbELSType.Enabled = cbUseEmulate.Checked;
         }
         #endregion
         #region Buttons & link
-        private void btnApply_Click(object sender, EventArgs e)
+        void btnApply_Click(object sender, EventArgs e)
         {
             Apply();
         }
-        private void btnCancel_Click(object sender, EventArgs e)
+        void btnCancel_Click(object sender, EventArgs e)
         {
             messagebox = false;
             RefreshControlsData();
             tempRestore();
             ToggleVisibility();
         }
-        private void btnOK_Click(object sender, EventArgs e)
+        void btnOK_Click(object sender, EventArgs e)
         {
             Apply();
             ToggleVisibility();
         }
-        private void btnHelp_Click(object sender, EventArgs e)
+        void btnHelp_Click(object sender, EventArgs e)
         {
             messagebox = true;
             MessageBox.Show(MMain.Msgs[2], MMain.Msgs[3], MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        private void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/BladeMight/Mahou");
         }
-        private void btnUpd_Click(object sender, EventArgs e)
+        void btnUpd_Click(object sender, EventArgs e)
         {
             update.ShowDialog();
         }
-        private void btnDDD_Click(object sender, EventArgs e)
+        void btnDDD_Click(object sender, EventArgs e)
         {
             moreConfigs.ShowDialog();
         }
-        private void btnLangChange_Click(object sender, EventArgs e)
+        void btnLangChange_Click(object sender, EventArgs e)
         {
             if (MMain.MyConfs.Read("Locales", "LANGUAGE") == "RU")
             {
@@ -230,15 +222,15 @@ namespace Mahou
         }
         #endregion
         #region Tray Events
-        private void mhouIcon_DoubleClick(object sender, EventArgs e)
+        void mhouIcon_DoubleClick(object sender, EventArgs e)
         {
             ToggleVisibility();
         }
-        private void showHideToolStripMenuItem_Click(object sender, EventArgs e)
+        void showHideToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ToggleVisibility();
         }
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExitProgram();
         }
@@ -248,10 +240,10 @@ namespace Mahou
         {
             if (m.Msg == Modifiers.WM_HOTKEY_MSG_ID)
             {
-                Keys Key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
+                var Key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
                 int Modifs = (int)m.LParam & 0xFFFF;
                 //This stops hotkeys when main window is visible
-                if (!this.Focused)
+                if (!Focused)
                 {
                     if (Key == (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey") && Modifs == CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCSMods")))
                     {
@@ -269,7 +261,7 @@ namespace Mahou
                             SendModsUp(GetHKMods(MMain.MyConfs.Read("Hotkeys", "HKCSMods")));
                             //Prevents queue converting
                             HKCSelection.Unregister(); //Stops hotkey ability
-                            Task t = new Task(KMHook.ConvertSelection);
+                            var t = new Task(KMHook.ConvertSelection);
                             t.RunSynchronously();
                         }
                     }
@@ -289,7 +281,7 @@ namespace Mahou
                             SendModsUp(GetHKMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods")));
                             //String below prevents queue converting
                             HKCLast.Unregister(); //Stops hotkey ability
-                            Task t = new Task(new Action(() => KMHook.ConvertLast(MMain.c_word, true)));
+                            var t = new Task(new Action(() => KMHook.ConvertLast(MMain.c_word, true)));
                             t.RunSynchronously();
                         }
                     }
@@ -309,7 +301,7 @@ namespace Mahou
                             SendModsUp(GetHKMods(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")));
                             //String below prevents queue converting
                             HKCLine.Unregister(); //Stops hotkey ability
-                            Task t = new Task(new Action(() => KMHook.ConvertLast(MMain.c_line, false)));
+                            var t = new Task(new Action(() => KMHook.ConvertLast(MMain.c_line, false)));
                             t.RunSynchronously();
                         }
                     }
@@ -324,12 +316,12 @@ namespace Mahou
                     if (MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled"))
                     {
                         MMain.MyConfs.Write("Functions", "SymIgnModeEnabled", "false");
-                        this.Icon = icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
+                        Icon = icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
                     }
                     else
                     {
                         MMain.MyConfs.Write("Functions", "SymIgnModeEnabled", "true");
-                        this.Icon = icon.trIcon.Icon = Properties.Resources.MahouSymbolIgnoreMode;
+                        Icon = icon.trIcon.Icon = Properties.Resources.MahouSymbolIgnoreMode;
                     }
                 }
             }
@@ -339,30 +331,17 @@ namespace Mahou
             }
             base.WndProc(ref m);
         }
-        private void RePressAfter(string where) // Sets Press Again variables for modifiers
+        void RePressAfter(string where) // Sets Press Again variables for modifiers
         {
-            if (where.Contains("Shift"))
-                KMHook.shiftRP = true;
-            else
-                KMHook.shiftRP = false;
-            if (where.Contains("Alt"))
-                KMHook.altRP = true;
-            else
-                KMHook.altRP = false;
-            if (where.Contains("Control"))
-                KMHook.ctrlRP = true;
-            else
-                KMHook.ctrlRP = false;
+			KMHook.shiftRP = where.Contains("Shift") ? true : false;
+			KMHook.altRP = where.Contains("Alt") ? true : false;
+			KMHook.ctrlRP = where.Contains("Control") ? true : false;
         }
-        private bool[] GetHKMods(string hkmods) //Gets awaible in hotkey modifiers
+        bool[] GetHKMods(string hkmods) //Gets awaible in hotkey modifiers
         {
-            bool alt = false, shift = false, ctrl = false;
-            if (hkmods.Contains("Control"))
-                ctrl = true;
-            if (hkmods.Contains("Alt"))
-                alt = true;
-            if (hkmods.Contains("Shift"))
-                shift = true;
+			ctrl |= hkmods.Contains("Control");
+			alt |= hkmods.Contains("Alt");
+			shift |= hkmods.Contains("Shift");
             return new bool[] { alt, shift, ctrl };
         }
         public void SendModsUp(bool[] modstoup) //Sends mods up by modstoup array
@@ -399,23 +378,31 @@ namespace Mahou
         }
         public string Remake(Keys k) //Make readable some special keys
         {
-            if (k >= Keys.D0 && k <= Keys.D9)
-                return k.ToString().Replace("D", "");
-
-            if (k == Keys.ShiftKey ||
-                k == Keys.Menu ||
-                k == Keys.ControlKey ||
-                k == Keys.LWin ||
-                k == Keys.RWin)
-                return "";
-
-            if (k == Keys.Scroll)
-                return k.ToString().Replace("Cancel", "Scroll");
-
-            if (k == Keys.Cancel)
-                return k.ToString().Replace("Cancel", "Pause");
-
-            return k.ToString();
+			switch (k) {
+				case Keys.Cancel:
+					return k.ToString().Replace("Cancel", "Pause");
+				case Keys.Scroll:
+					return k.ToString().Replace("Cancel", "Scroll");
+				case Keys.ShiftKey:
+				case Keys.Menu:
+				case Keys.ControlKey:
+				case Keys.LWin:
+				case Keys.RWin:
+					return "";
+				case Keys.D0:
+				case Keys.D1:
+				case Keys.D2:
+				case Keys.D3:
+				case Keys.D4:
+				case Keys.D5:
+				case Keys.D6:
+				case Keys.D7:
+				case Keys.D8:
+				case Keys.D9:				
+					return k.ToString().Replace("D", "");
+				default:
+					return k.ToString();
+			}
         }
         public string OemReadable(string inpt) //Make readable Oem Keys
         {
@@ -436,7 +423,7 @@ namespace Mahou
                   .Replace("Oemcomma", ",")
                   .Replace("OemQuestion", "/");
         }
-        private void tempRestore() //Restores temporary variables from settings
+        void tempRestore() //Restores temporary variables from settings
         {
             try
             {
@@ -452,7 +439,7 @@ namespace Mahou
             //This creates(silently) new config file if existed one disappeared o_O
             catch { MMain.MyConfs = new Configs(); tempRestore(); }
         }
-        private void InitializeHotkeys() //Initializes all hotkeys
+        void InitializeHotkeys() //Initializes all hotkeys
         {
             Mainhk = new HotkeyHandler(Modifiers.ALT + Modifiers.CTRL + Modifiers.SHIFT, Keys.Insert, this);
             Mainhk.Register();
@@ -487,7 +474,7 @@ namespace Mahou
                 HKCLineReg = true;
             }
         }
-        private void RegisterEnabled() //Registers enabled hotkeys
+        void RegisterEnabled() //Registers enabled hotkeys
         {
             if (!MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled"))
                 HKCLast.Unregister();
@@ -502,7 +489,7 @@ namespace Mahou
             else
                 HKCLine.Register();
         }
-        private void Apply() //Saves current selections to settings
+        void Apply() //Saves current selections to settings
         {
             bool hkcsnotready = false, hkclnotready = false, hkclinenotready = false;
             if (tempCLKey != 0 && tempCLineKey != 0)
@@ -632,7 +619,7 @@ namespace Mahou
             }
             RefreshControlsData();
         }
-        private void EnableIF() //Enables controls IF...
+        void EnableIF() //Enables controls IF...
         {
             if (!cbCycleMode.Checked)
             {
@@ -643,23 +630,19 @@ namespace Mahou
             {
                 gbSBL.Enabled = false;
                 cbUseEmulate.Enabled = true;
-                if (!cbUseEmulate.Checked)
-                    cbELSType.Enabled = false;
+				cbELSType.Enabled &= cbUseEmulate.Checked;
             }
         }
         public void ToggleVisibility() //Toggles visibility of main window
         {
-            if (this.Visible != false)
-            {
-                this.Visible = moreConfigs.Visible = update.Visible = false;
-            }
-            else
-            {
-                this.TopMost = true;
-                this.Visible = true;
-                System.Threading.Thread.Sleep(5);
-                this.TopMost = false;
-            }
+			if (Visible != false)
+				Visible = moreConfigs.Visible = update.Visible = false;
+			else {
+				TopMost = true;
+				Visible = true;
+				System.Threading.Thread.Sleep(5);
+				TopMost = false;
+			}
             Refresh();
         }
         public void RemoveAddCtrls() //Removes or adds ctrls to "Switch layout by key" items
@@ -680,7 +663,7 @@ namespace Mahou
                 cbSwitchLayoutKeys.Items.Add("None");
             }
         }
-        private void RefreshControlsData() //Refresh all controls state from configs
+        void RefreshControlsData() //Refresh all controls state from configs
         {
             RefreshLocales();
             RefreshIconAll();
@@ -712,7 +695,7 @@ namespace Mahou
                 "Mahou.lnk")) ? true : false;
             RefreshLocales();
         }
-        private void RefreshLocales() //Re-adds existed locales to select boxes
+        void RefreshLocales() //Re-adds existed locales to select boxes
         {
             Locales.IfLessThan2();
             MMain.locales = Locales.AllList();
@@ -738,7 +721,7 @@ namespace Mahou
                 cbLangTwo.SelectedIndex = 1;
             }
         }
-        private void RefreshLanguage() //Refreshed in realtime all controls text
+        void RefreshLanguage() //Refreshed in realtime all controls text
         {
             GitHubLink.Text = MMain.UI[0];
             cbAutorun.Text = MMain.UI[1];
@@ -767,9 +750,9 @@ namespace Mahou
         public void RefreshIconAll() //Refreshes icon's icon and visibility
         {
             if (MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled") && MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled"))
-                this.Icon = icon.trIcon.Icon = Properties.Resources.MahouSymbolIgnoreMode;
+                Icon = icon.trIcon.Icon = Properties.Resources.MahouSymbolIgnoreMode;
             else
-                this.Icon = icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
+                Icon = icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
             if (MMain.MyConfs.ReadBool("Functions", "IconVisibility"))
             {
                 icon.Show();
@@ -781,7 +764,7 @@ namespace Mahou
                 Refresh();
             }
         }
-        private void CreateShortcut() //Creates startup shortcut
+        void CreateShortcut() //Creates startup shortcut
         {
             var currentPath = Assembly.GetExecutingAssembly().Location;
             var shortcutLocation = System.IO.Path.Combine(
@@ -792,13 +775,13 @@ namespace Mahou
             {
                 return;
             }
-            WshShell shell = new WshShell();
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
+            var shell = new WshShell();
+            var shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
             shortcut.Description = description;
             shortcut.TargetPath = currentPath;
             shortcut.Save();
         }
-        private void DeleteShortcut() //Deletes startup shortcut
+        void DeleteShortcut() //Deletes startup shortcut
         {
             if (System.IO.File.Exists(System.IO.Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Startup),
@@ -817,83 +800,83 @@ namespace Mahou
         }
         #endregion
         #region TOOLTIPS!!!
-        private void cbCycleMode_MouseHover(object sender, EventArgs e)
+        void cbCycleMode_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbCycleMode.Text;
             HelpTT.Show(MMain.TTips[0], cbCycleMode);
         }
-        private void tbCLHK_MouseHover(object sender, EventArgs e)
+        void tbCLHK_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = tbCLHK.Text;
             HelpTT.Show(MMain.TTips[1], tbCLHK);
         }
-        private void tbCSHK_MouseHover(object sender, EventArgs e)
+        void tbCSHK_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = tbCSHK.Text;
             HelpTT.Show(MMain.TTips[2], tbCSHK);
         }
-        private void tbCLineHK_MouseHover(object sender, EventArgs e)
+        void tbCLineHK_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = tbCLineHK.Text;
             HelpTT.Show(MMain.TTips[3], tbCLineHK);
         }
-        private void GitHubLink_MouseHover(object sender, EventArgs e)
+        void GitHubLink_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = GitHubLink.Text;
             HelpTT.Show(MMain.TTips[4], GitHubLink);
         }
-        private void TrayIconCheckBox_MouseHover(object sender, EventArgs e)
+        void TrayIconCheckBox_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbTrayIcon.Text;
             HelpTT.Show(MMain.TTips[5], cbTrayIcon);
         }
-        private void btnUpd_MouseHover(object sender, EventArgs e)
+        void btnUpd_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = btnUpd.Text;
             HelpTT.Show(MMain.TTips[6], btnUpd);
         }
-        private void cbBlockAC_MouseHover(object sender, EventArgs e)
+        void cbBlockAC_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbBlockC.Text;
             HelpTT.Show(MMain.TTips[7], cbBlockC);
         }
-        private void cbSwitchLayoutKeys_MouseHover(object sender, EventArgs e)
+        void cbSwitchLayoutKeys_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbSwitchLayoutKeys.Text;
             HelpTT.Show(MMain.TTips[8], cbSwitchLayoutKeys);
         }
-        private void cbUseEmulate_MouseHover(object sender, EventArgs e)
+        void cbUseEmulate_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbUseEmulate.Text;
             HelpTT.Show(MMain.TTips[9], cbUseEmulate);
         }
-        private void cbUseCycleForCS_MouseHover(object sender, EventArgs e)
+        void cbUseCycleForCS_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbCSSwitch.Text;
             HelpTT.Show(MMain.TTips[10], cbCSSwitch);
         }
-        private void gbSBL_MouseHover(object sender, EventArgs e)
+        void gbSBL_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = gbSBL.Text;
             HelpTT.Show(MMain.TTips[11], gbSBL);
         }
-        private void cbRePress_MouseHover(object sender, EventArgs e)
+        void cbRePress_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbRePress.Text;
             HelpTT.Show(MMain.TTips[12], cbRePress);
         }
-        private void cbEatOneSpace_MouseHover(object sender, EventArgs e)
+        void cbEatOneSpace_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbEatOneSpace.Text;
             HelpTT.Show(MMain.TTips[13], cbEatOneSpace);
 
         }
-        private void cbResel_MouseHover(object sender, EventArgs e)
+        void cbResel_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = cbResel.Text;
             HelpTT.Show(MMain.TTips[14], cbResel);
         }
-        private void cbELSType_MouseHover(object sender, EventArgs e)
+        void cbELSType_MouseHover(object sender, EventArgs e)
         {
             HelpTT.ToolTipTitle = MMain.TTips[19];
             HelpTT.Show(MMain.TTips[15], cbELSType);

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 namespace Mahou
 {
     public static class NativeClipboard
@@ -93,10 +93,10 @@ namespace Mahou
                 IntPtr gLock = GlobalLock(pos);
                 //Console.WriteLine(fmt + " is awaible in clipboard!!");
                 byte[] data;
-                if ((int)lenght > 0)
+                if ((uint)lenght > 0)
                 {
                     //Init a buffer which will contain the clipboard data
-                    data = new byte[(int)lenght];
+                    data = new byte[(uint)lenght];
                     //Console.WriteLine(lenght);
                     int l = Convert.ToInt32(lenght.ToString());
                     //Copy data from clipboard to our byte[] buffer

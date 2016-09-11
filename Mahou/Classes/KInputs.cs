@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-class KInputs
+static class KInputs
 {
     #region Native Win32
     public const int INPUT_KEYBOARD = 1;
@@ -57,8 +57,8 @@ class KInputs
     #region Add Inputs & Make Input & check
     public static INPUT AddKey(Keys key, bool down) //Returns INPUT down or up
     {
-        UInt16 vk = (UInt16)key;
-        INPUT input = new INPUT
+        var vk = (UInt16)key;
+        var input = new INPUT
         {
             Type = INPUT_KEYBOARD,
             Data =
@@ -77,35 +77,33 @@ class KInputs
     }
     public static bool IsExtended(Keys key) //Check for extended keys
     {
-        if (key == Keys.Menu ||
-            key == Keys.LMenu ||
-            key == Keys.RMenu ||
-            key == Keys.Control ||
-            key == Keys.RControlKey ||
-            key == Keys.Insert ||
-            key == Keys.Delete ||
-            key == Keys.Home ||
-            key == Keys.End ||
-            key == Keys.Prior ||
-            key == Keys.Next ||
-            key == Keys.Right ||
-            key == Keys.Up ||
-            key == Keys.Left ||
-            key == Keys.Down ||
-            key == Keys.NumLock ||
-            key == Keys.Cancel ||
-            key == Keys.Snapshot ||
-            key == Keys.Divide)
-        { return true; }
-        else { return false; }
+		return key == Keys.Menu ||
+			key == Keys.LMenu ||
+			key == Keys.RMenu ||
+			key == Keys.Control ||
+			key == Keys.RControlKey ||
+			key == Keys.Insert ||
+			key == Keys.Delete ||
+			key == Keys.Home ||
+			key == Keys.End || 
+			key == Keys.Prior ||
+			key == Keys.Next || 
+			key == Keys.Right ||
+			key == Keys.Up || 
+			key == Keys.Left ||
+			key == Keys.Down || 
+			key == Keys.NumLock || 
+			key == Keys.Cancel ||
+			key == Keys.Snapshot || 
+			key == Keys.Divide;
     }
     public static INPUT[] AddString(string str) //Returns all string chars with down & up INPUT as INPUT[]
     {
-        List<INPUT> result = new List<INPUT>();
+        var result = new List<INPUT>();
         char[] inputs = str.ToCharArray();
         foreach (var s in inputs)
         {
-            INPUT down = new INPUT
+            var down = new INPUT
             {
                 Type = INPUT_KEYBOARD,
                 Data =
@@ -120,7 +118,7 @@ class KInputs
                     }
                 }
             };
-            INPUT up = new INPUT
+            var up = new INPUT
             {
                 Type = INPUT_KEYBOARD,
                 Data =

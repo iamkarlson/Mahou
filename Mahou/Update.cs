@@ -27,22 +27,18 @@ namespace Mahou
             old.Tick += (_, __) => //Toggles every 7.5 sec
                 {
                     //Console.WriteLine(isold);
-                    if (isold)
-                        isold = false;
-                    else
-                        isold = true;
+				isold = !isold;
                 };
             InitializeComponent();
         }
 
-        private void Update_VisibleChanged(object sender, EventArgs e)
+        void Update_VisibleChanged(object sender, EventArgs e)
         {
-            this.ActiveControl = lbVer;
+            ActiveControl = lbVer;
             if (UpdInfo != null)
             {
                 SetUInfo();
-                if (flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2]))
-                    btDMahou.Enabled = true;
+				btDMahou.Enabled |= flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2]);
                 if (fromStartup)
                 {
                     btDMahou.PerformClick();
@@ -51,18 +47,18 @@ namespace Mahou
             }
         }
 
-        private void Update_Load(object sender, EventArgs e)
+        void Update_Load(object sender, EventArgs e)
         {
             RefreshLanguage();
         }
 
-        private void btDMahou_Click(object sender, EventArgs e)
+        void btDMahou_Click(object sender, EventArgs e)
         {
             if (!updating)
             {
                 updating = true;
                 //Downloads latest Mahou
-                using (WebClient wc = new WebClient())
+                using (var wc = new WebClient())
                 {
                     wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                     // Gets filename from url
@@ -147,7 +143,7 @@ DEL ""%MAHOUDIR%unzip.vbs""
 DEL ""%MAHOUDIR%UpdateMahou.cmd""";
                 //Save Batch script
                 File.WriteAllText(Path.Combine(new string[] { nPath, "UpdateMahou.cmd" }), UpdateMahou);
-                ProcessStartInfo piUpdateMahou = new ProcessStartInfo();
+                var piUpdateMahou = new ProcessStartInfo();
                 piUpdateMahou.FileName = Path.Combine(new string[] { nPath, "UpdateMahou.cmd" });
                 //Make UpdateMahou.cmd's startup hidden
                 piUpdateMahou.WindowStyle = ProcessWindowStyle.Hidden;
@@ -157,7 +153,7 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
             }
         }
 
-        private async void btnCheck_Click(object sender, EventArgs e)
+        async void btnCheck_Click(object sender, EventArgs e)
         {
             btnCheck.Visible = false;
             lbChecking.Visible = true;
@@ -207,14 +203,14 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
             }
         }
 
-        private async Task GetUpdateInfo()
+        async Task GetUpdateInfo()
         {
-            List<string> Info = new List<string>(); // Update info
+            var Info = new List<string>(); // Update info
             try
             {
                 // Latest Mahou release url
                 const string url = "https://github.com/BladeMight/Mahou/releases/latest";
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                var request = (HttpWebRequest)WebRequest.Create(url);
                 request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
                 var response = (HttpWebResponse)await Task.Factory
                     .FromAsync<WebResponse>(request.BeginGetResponse,
@@ -260,18 +256,16 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
             {
                 if (flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2]))
                 {
-                    MMain.mahou.Invoke((MethodInvoker)delegate
-                    {
-                        if (MessageBox.Show(new Form() { TopMost = true },
-                            UpdInfo[0] + '\n' + UpdInfo[1], "Mahou - " + MMain.UI[33],
-                            MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK)
-                        {
-                            MMain.mahou.update.StartPosition = FormStartPosition.CenterScreen;
-                            fromStartup = true;
-                            MMain.mahou.update.ShowDialog();
-                            MMain.mahou.update.StartPosition = FormStartPosition.CenterParent;
-                        }
-                    });
+					MMain.mahou.Invoke((MethodInvoker)delegate {
+						if (MessageBox.Show(new Form() { TopMost = true },
+							    UpdInfo[0] + '\n' + UpdInfo[1], "Mahou - " + MMain.UI[33],
+							    MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK) {
+							MMain.mahou.update.StartPosition = FormStartPosition.CenterScreen;
+							fromStartup = true;
+							MMain.mahou.update.ShowDialog();
+							MMain.mahou.update.StartPosition = FormStartPosition.CenterParent;
+						}
+					});
                 }
             }
             catch { }
@@ -284,9 +278,9 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
             lbVer.Text = UpdInfo[2];
         }
 
-        private void RefreshLanguage()
+        void RefreshLanguage()
         {
-            this.Text = MMain.UI[21];
+            Text = MMain.UI[21];
             btnCheck.Text = MMain.UI[22];
             btDMahou.Text = MMain.UI[28].Remove(MMain.UI[28].Length - 3, 2);
             lbVer.Text = MMain.UI[25];

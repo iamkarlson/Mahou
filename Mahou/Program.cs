@@ -12,7 +12,7 @@ namespace Mahou
         public static extern uint RegisterWindowMessage(string message);
         #endregion
         #region Prevent another instance variables
-        private const string appGUid = "ec511418-1d57-4dbe-a0c3-c6022b33735b";
+        const string appGUid = "ec511418-1d57-4dbe-a0c3-c6022b33735b";
         public static uint ao = RegisterWindowMessage("AlderyOpenedMahou!");
         #endregion
         #region All Main variables, arrays etc.
@@ -26,9 +26,9 @@ namespace Mahou
         public static Configs MyConfs = new Configs();
         public static MahouForm mahou = new MahouForm();
         public static List<string> lcnmid = new List<string>();
-        public static string[] UI = new string[] { };
-        public static string[] TTips = new string[] { };
-        public static string[] Msgs = new string[] { };
+        public static string[] UI = { };
+        public static string[] TTips = { };
+        public static string[] Msgs = { };
         #endregion
         [STAThread] //DO NOT REMOVE THIS
         public static void Main(string[] args)

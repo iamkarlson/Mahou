@@ -8,8 +8,8 @@ namespace Mahou
         public event EventHandler<EventArgs> Exit;
         public event EventHandler<EventArgs> ShowHide;
         public NotifyIcon trIcon;
-        private ContextMenu cMenu;
-        private MenuItem Exi, ShHi;
+        ContextMenu cMenu;
+        MenuItem Exi, ShHi;
         public TrayIcon(bool? visible = true)
         {
             trIcon = new NotifyIcon();
@@ -25,14 +25,14 @@ namespace Mahou
             trIcon.MouseDoubleClick += ShowHideHandler;
             trIcon.BalloonTipClicked += ExitHandler;
         }
-        private void ExitHandler(object sender, EventArgs e)
+        void ExitHandler(object sender, EventArgs e)
         {
             if (Exit != null)
             {
                 Exit(this, null);
             }
         }
-        private void ShowHideHandler(object sender, EventArgs e)
+        void ShowHideHandler(object sender, EventArgs e)
         {
             if (ShowHide != null)
             {

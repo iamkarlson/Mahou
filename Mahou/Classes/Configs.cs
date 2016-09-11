@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Mahou
 {
     class Configs
     {
         //Path where Mahou is now + Mahou.ini
-        private string filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mahou.ini");
+        readonly string filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mahou.ini");
         public Configs()//Initializes settings, if some of elements or settinhs file, not exists it creates them with default value
         {
             if (!File.Exists(filePath)) //Create an UTF-16 configuration file
@@ -133,24 +133,24 @@ namespace Mahou
         }
         public void Write(string section, string key, string value) //Writes "value" to "key" in "section"
         {
-            WritePrivateProfileString(section, key, value, this.filePath);
+            WritePrivateProfileString(section, key, value, filePath);
         }
         public string Read(string section, string key) //Returns "key" value in "section" as string
         {
-            StringBuilder SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, this.filePath);
+            var SB = new StringBuilder(255);
+            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
             return SB.ToString();
         }
         public int ReadInt(string section, string key) //Returns "key" value in "section" as int
         {
-            StringBuilder SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, this.filePath);
+            var SB = new StringBuilder(255);
+            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
             return Int32.Parse(SB.ToString());
         }
         public bool ReadBool(string section, string key) //Returns "key" value in "section" as bool
         {
-            StringBuilder SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, this.filePath);
+            var SB = new StringBuilder(255);
+            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
             return Boolean.Parse(SB.ToString().ToLower());
         }
         #region Dll imports
