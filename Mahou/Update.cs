@@ -12,7 +12,7 @@ namespace Mahou
     public partial class Update : Form
     {
         //Path to now Mahou
-        static string nPath = AppDomain.CurrentDomain.BaseDirectory;
+        public static string nPath = AppDomain.CurrentDomain.BaseDirectory;
         static string[] UpdInfo;
         static bool updating, was, isold = true, fromStartup;
         static Timer tmr = new Timer();
@@ -35,8 +35,13 @@ namespace Mahou
         void Update_VisibleChanged(object sender, EventArgs e)
         {
             ActiveControl = lbVer;
-            if (UpdInfo != null)
-            {
+//            Console.WriteLine(UpdInfo == null);
+//            Console.WriteLine(UpdInfo.Length);
+//            foreach (var i in UpdInfo) {
+//            	Console.WriteLine(i);
+//            }
+            try {
+            if (UpdInfo != null) {
                 SetUInfo();
 				btDMahou.Enabled |= flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2]);
                 if (fromStartup)
@@ -44,6 +49,10 @@ namespace Mahou
                     btDMahou.PerformClick();
                     fromStartup = false;
                 }
+            }       
+            }
+            catch {
+            SetUInfo();
             }
         }
 

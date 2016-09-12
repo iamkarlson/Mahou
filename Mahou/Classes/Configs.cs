@@ -101,6 +101,18 @@ namespace Mahou
             if (!Int32.TryParse(this.Read("Functions", "TriesCount"), out it))
                 this.Write("Functions", "TriesCount", "5");
 
+            if (!Boolean.TryParse(this.Read("Functions", "DisplayLang"), out bt))
+                this.Write("Functions", "DisplayLang", "false");
+
+            if (!Int32.TryParse(this.Read("Functions", "DLRefreshRate"), out it))
+                this.Write("Functions", "DLRefreshRate", "50");
+            
+            if (String.IsNullOrEmpty(this.Read("Functions", "DLForeColor")))
+                this.Write("Functions", "DLForeColor", "#FFFFFF");
+
+            if (String.IsNullOrEmpty(this.Read("Functions", "DLBackColor")))
+                this.Write("Functions", "DLBackColor", "#000000");
+
             //EnabledHotkeys section
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCLEnabled", "true"); //Hotkey convert last word enabled

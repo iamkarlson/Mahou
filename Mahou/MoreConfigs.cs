@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -9,6 +10,7 @@ namespace Mahou
         #region Varibales
         int tmpSIKey = 0;
         string tmpSIMods = "None";
+		ColorDialog clrd = new ColorDialog();
         #endregion
         #region Button/Form/etc. events
         public MoreConfigs()
@@ -48,6 +50,16 @@ namespace Mahou
         {
             Close();
         }
+		void BtCol1Click(object sender, EventArgs e)
+		{
+			if (clrd.ShowDialog() == DialogResult.OK)
+				btCol1.BackColor = clrd.Color;
+		}
+		void BtCol2Click(object sender, EventArgs e)
+		{
+			if (clrd.ShowDialog() == DialogResult.OK)
+				btCol2.BackColor = clrd.Color;
+		}
         private void cbUseLRC_CheckedChanged(object sender, EventArgs e)
         {
             DisEna();
@@ -76,20 +88,23 @@ namespace Mahou
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
-                this.Visible = false;
+                Visible = false;
             }
             DisEna();
         }
         private void DisEna() // Disables or Enables some controls
         {
+        	MMain.mahou.IfNotExist();
             if (cbUseLRC.Checked)
                 lbLCto.Enabled = lbRCto.Enabled = cbLCLocalesList.Enabled = cbRCLocalesList.Enabled = true;
             else
                 lbLCto.Enabled = lbRCto.Enabled = cbLCLocalesList.Enabled = cbRCLocalesList.Enabled = false;
+            nudRefreshRate.Enabled = lblRefRate.Enabled = cbDisplayLang.Checked;
             MMain.mahou.RemoveAddCtrls();
         } 
         private void Save() // Saves configurations
         {
+        	MMain.mahou.IfNotExist();
             Regex getname = new Regex("\\w+");
             Regex getUID = new Regex("\\w+\\W(\\d+)");
             MMain.MyConfs.Write("ExtCtrls", "LCLocaleName", getname.Match(cbLCLocalesList.Text).Value);
@@ -100,6 +115,12 @@ namespace Mahou
             MMain.MyConfs.Write("EnabledHotkeys", "HKSymIgnEnabled", cbSymIgn.Checked.ToString());
             MMain.MyConfs.Write("Functions", "MoreTries", cbMoreTries.Checked.ToString());
             MMain.MyConfs.Write("Functions", "TriesCount", nudMTCount.Value.ToString());
+            MMain.MyConfs.Write("Functions", "DLRefreshRate", nudRefreshRate.Value.ToString());
+            MMain.MyConfs.Write("Functions", "DisplayLang", cbDisplayLang.Checked.ToString());
+            MMain.MyConfs.Write("Functions", "DLForeColor", ColorTranslator.ToHtml(btCol1.BackColor));
+            MMain.MyConfs.Write("Functions", "DLBackColor", ColorTranslator.ToHtml(btCol2.BackColor));
+            MMain.mahou.langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLForeColor")),
+                                     ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLBackColor")));
             bool hksymignnotready = false;
             if (tmpSIKey != 0)
             {
@@ -148,12 +169,16 @@ namespace Mahou
                 MMain.mahou.HKSymIgn.Unregister();
                 MMain.mahou.HKSIReg = false;
             }
+            if (MMain.MyConfs.ReadBool("Functions", "DisplayLang"))
+            	MMain.mahou.ICheck.Start();
+            else
+            	MMain.mahou.ICheck.Stop();
             MMain.mahou.RefreshIconAll();
 
         }
         private void load() // Loads configurations
         {
-            Console.WriteLine(MMain.mahou.HKSIReg);
+        	MMain.mahou.IfNotExist();
             try
             {
                 if (String.IsNullOrEmpty(MMain.MyConfs.Read("ExtCtrls", "LCLocaleName")))
@@ -176,9 +201,14 @@ namespace Mahou
             cbSymIgn.Checked = MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled");
             cbMoreTries.Checked = MMain.MyConfs.ReadBool("Functions", "MoreTries");
             nudMTCount.Value = MMain.MyConfs.ReadInt("Functions", "TriesCount");
+            nudRefreshRate.Value = MMain.MyConfs.ReadInt("Functions", "DLRefreshRate");
+            cbDisplayLang.Checked = MMain.MyConfs.ReadBool("Functions", "DisplayLang");
+        	btCol1.BackColor = ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLForeColor"));
+        	btCol2.BackColor = ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLBackColor"));
         }
         private void tmpRestore() // Restores temporaries
         {
+        	MMain.mahou.IfNotExist();
             tmpSIKey = MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey");
             tmpSIMods = MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods");
         }
@@ -201,10 +231,13 @@ namespace Mahou
             cbUseLRC.Text = MMain.UI[36];
             lbLCto.Text = MMain.UI[37];
             lbRCto.Text = MMain.UI[38];
-            this.Text = MMain.UI[39];
+            Text = MMain.UI[39];
             cbSymIgn.Text = MMain.UI[40];
-            btnNO.Text = MMain.UI[19];
             cbMoreTries.Text = MMain.UI[41];
+            btnNO.Text = MMain.UI[19];
+            cbDisplayLang.Text = MMain.UI[45];
+            lblRefRate.Text = MMain.UI[46];
+            lbColors.Text = MMain.UI[47];
         }
         #endregion
         #region Tooltips
@@ -233,6 +266,22 @@ namespace Mahou
             HelpTT.ToolTipTitle = cbMoreTries.Text;
             HelpTT.Show(MMain.TTips[21], cbMoreTries);
         }
+		void CbDisplayLangMouseHover(object sender, EventArgs e)
+		{
+            HelpTT.ToolTipTitle = cbDisplayLang.Text;
+            HelpTT.Show(MMain.TTips[22], cbDisplayLang);
+		}
+		void LblRefRateMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = lblRefRate.Text;
+            HelpTT.Show(MMain.TTips[23], lblRefRate);
+		}
+		void LbColorsMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = lbColors.Text;
+            HelpTT.Show(MMain.TTips[24], lbColors);
+	
+		}
         #endregion
     }
 }

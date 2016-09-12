@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\HotkeyHandler.cs" />
+    <Compile Include="Classes\ICheckings.cs" />
     <Compile Include="Classes\KMHook.cs" />
     <Compile Include="Classes\KInputs.cs" />
     <Compile Include="Classes\Locales.cs" />
@@ -115,6 +116,10 @@
     <Compile Include="Classes\Translation.cs" />
     <Compile Include="Classes\TrayIcon.cs" />
     <Compile Include="Classes\Configs.cs" />
+    <Compile Include="LangDisplay.cs" />
+    <Compile Include="LangDisplay.Designer.cs">
+      <DependentUpon>LangDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="MoreConfigs.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,6 +140,9 @@
     <Compile Include="Update.Designer.cs">
       <DependentUpon>Update.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="LangDisplay.resx">
+      <DependentUpon>LangDisplay.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MoreConfigs.resx">
       <DependentUpon>MoreConfigs.cs</DependentUpon>
     </EmbeddedResource>

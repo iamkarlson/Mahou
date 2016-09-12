@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
 using IWshRuntimeLibrary;
@@ -18,11 +19,34 @@ namespace Mahou
                                tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 }; // Temporary locales
         public TrayIcon icon;
         public Update update = new Update();
+        public Timer ICheck = new Timer();
+        public LangDisplay langDisplay = new LangDisplay();
         MoreConfigs moreConfigs = new MoreConfigs();
         #endregion
         public MahouForm()
         {
             InitializeComponent();
+            ICheck.Tick += (_,__) => 
+            {
+            	langDisplay.Visible = ICheckings.IsICursor();
+				langDisplay.Location = new System.Drawing.Point(Cursor.Position.X + 8, Cursor.Position.Y - 8);
+				switch (Locales.GetCurrentLocale()) {
+					case 1041:
+						langDisplay.ChangeLD("JP");
+						break;
+					case 1049:
+						langDisplay.ChangeLD("RU");
+						break;
+					case 1033:
+						langDisplay.ChangeLD("EN");
+						break;
+				}
+            };
+            langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLForeColor")),
+                                     ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLBackColor")));
+            ICheck.Interval = MMain.MyConfs.ReadInt("Functions", "DLRefreshRate");
+            if (MMain.MyConfs.ReadBool("Functions", "DisplayLang"))
+            	ICheck.Start();
             icon = new TrayIcon(MMain.MyConfs.ReadBool("Functions", "IconVisibility"));
             icon.Exit += exitToolStripMenuItem_Click;
             icon.ShowHide += showHideToolStripMenuItem_Click;
@@ -54,7 +78,8 @@ namespace Mahou
         }
         void MahouForm_VisibleChanged(object sender, EventArgs e)
         {
-            RefreshControlsData();
+        	IfNotExist();
+        	RefreshControlsData();
         }
         void MahouForm_Activated(object sender, EventArgs e)
         {
@@ -245,6 +270,7 @@ namespace Mahou
                 //This stops hotkeys when main window is visible
                 if (!Focused)
                 {
+                	IfNotExist();
                     if (Key == (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey") && Modifs == CheckNGetModifiers(MMain.MyConfs.Read("Hotkeys", "HKCSMods")))
                     {
                         if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") && MMain.MyConfs.Read("Hotkeys", "HKCSMods").Contains("Control")) { }
@@ -331,6 +357,7 @@ namespace Mahou
             }
             base.WndProc(ref m);
         }
+
         void RePressAfter(string where) // Sets Press Again variables for modifiers
         {
 			KMHook.shiftRP = where.Contains("Shift") ? true : false;
@@ -425,19 +452,16 @@ namespace Mahou
         }
         void tempRestore() //Restores temporary variables from settings
         {
-            try
-            {
-                // Restores temps
-                tempCLKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey");
-                tempCSKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey");
-                tempCLineKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCLineKey");
-                tempCLMods = MMain.MyConfs.Read("Hotkeys", "HKCLMods");
-                tempCSMods = MMain.MyConfs.Read("Hotkeys", "HKCSMods");
-                tempCLineMods = MMain.MyConfs.Read("Hotkeys", "HKCLineMods");
-                tempLoc1 = tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 };
-            }
             //This creates(silently) new config file if existed one disappeared o_O
-            catch { MMain.MyConfs = new Configs(); tempRestore(); }
+            IfNotExist();
+            // Restores temps
+            tempCLKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey");
+            tempCSKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey");
+            tempCLineKey = MMain.MyConfs.ReadInt("Hotkeys", "HKCLineKey");
+            tempCLMods = MMain.MyConfs.Read("Hotkeys", "HKCLMods");
+            tempCSMods = MMain.MyConfs.Read("Hotkeys", "HKCSMods");
+            tempCLineMods = MMain.MyConfs.Read("Hotkeys", "HKCLineMods");
+            tempLoc1 = tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0 };
         }
         void InitializeHotkeys() //Initializes all hotkeys
         {
@@ -489,8 +513,17 @@ namespace Mahou
             else
                 HKCLine.Register();
         }
+        public void IfNotExist()
+        {
+        	if (!System.IO.File.Exists(System.IO.Path.Combine(Mahou.Update.nPath, "Mahou.ini")))
+        	    {
+        	    	MMain.MyConfs = new Configs();
+        	    	tempRestore();
+        	    }
+        }
         void Apply() //Saves current selections to settings
         {
+        	IfNotExist();
             bool hkcsnotready = false, hkclnotready = false, hkclinenotready = false;
             if (tempCLKey != 0 && tempCLineKey != 0)
             {
