@@ -96,9 +96,13 @@ namespace Mahou
         {
         	MMain.mahou.IfNotExist();
             if (cbUseLRC.Checked)
-                lbLCto.Enabled = lbRCto.Enabled = cbLCLocalesList.Enabled = cbRCLocalesList.Enabled = true;
+                lbLCto.Enabled = lbRCto.Enabled = lbColors.Enabled =
+            		cbLCLocalesList.Enabled = cbRCLocalesList.Enabled =
+					btCol1.Enabled = btCol2.Enabled = true;
             else
-                lbLCto.Enabled = lbRCto.Enabled = cbLCLocalesList.Enabled = cbRCLocalesList.Enabled = false;
+                lbLCto.Enabled = lbRCto.Enabled = lbColors.Enabled = 
+            		cbLCLocalesList.Enabled = cbRCLocalesList.Enabled =
+					btCol1.Enabled = btCol2.Enabled = false;
             nudRefreshRate.Enabled = lblRefRate.Enabled = cbDisplayLang.Checked;
             MMain.mahou.RemoveAddCtrls();
         } 
