@@ -51,6 +51,9 @@ Mahou работает совершенно по другому в отличи�
 **v1.1.2.0**<br/>
 - Добавлен движок язков и русский язык.
 
+**v1.1.5.6**<br/>
+- Добавлена маленькая подсказка текущего языка при наведении мыши на текст.
+
 ### Горячие клавиши
 - <kbd>Pause</kbd> - Конверт последнего слова.
 - <kbd>Shift</kbd>+<kbd>Pause</kbd> - Конверт линии.
@@ -122,6 +125,9 @@ Even selected text switches just between **selected** layouts, though if you lik
 
 **v1.1.2.0**<br/>
 - Added language engine and Russian language.
+
+**v1.1.5.6**<br/>
+- Added small tip which displays current layout, when hovering text with mouse.
 
 ### Hotkeys
 - <kbd>Pause</kbd> - Convert last input.
