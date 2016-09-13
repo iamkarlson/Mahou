@@ -220,6 +220,11 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
                 // Latest Mahou release url
                 const string url = "https://github.com/BladeMight/Mahou/releases/latest";
                 var request = (HttpWebRequest)WebRequest.Create(url);
+//                Console.WriteLine("Proxy = " + Environment.GetEnvironmentVariable(textBox1.Text));
+//                try
+//                {
+//                request.Proxy = new WebProxy(Environment.GetEnvironmentVariable(textBox1.Text));
+//                }catch{Console.WriteLine("Wrong proxy variable, skipping proxy...");}
                 request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
                 var response = (HttpWebResponse)await Task.Factory
                     .FromAsync<WebResponse>(request.BeginGetResponse,
@@ -236,6 +241,7 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
                     var Title = Regex.Match(data,
                         "<h1 class=\"release-title\">\n.*<a href=\".*\">(.*)</a>").Groups[1].Value;
                     var Description = Regex.Replace(Regex.Match(data,
+                                                //These ↓↓↓↓↓↓↓↓ &&&  ↓↓↓↓↓↓ spaces looks unsafe, but really they works!
                         "<div class=\"markdown-body\">\n        (.*)\n      </div>",
                         RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, "<[^>]*>", "");
                     var Version = Regex.Match(data, "<span class=\"css-truncate-target\">(.*)</span>").Groups[1].Value;

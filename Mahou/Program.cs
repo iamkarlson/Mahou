@@ -34,6 +34,8 @@ namespace Mahou
         public static void Main(string[] args)
         {
             InitLanguage();
+            //Refreshes icon text language at startup
+            mahou.icon.RefreshText(MMain.UI[44], MMain.UI[42], MMain.UI[43]);
             Application.EnableVisualStyles(); // Huh i did not noticed that it was missing... '~'
             if (args.Length != 0)
                 if (args[0] == "_!_updated_!_")

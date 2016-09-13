@@ -167,11 +167,11 @@ namespace Mahou
         }
         #region Dll imports
         [DllImport("kernel32", CharSet = CharSet.Unicode)]
-        private static extern long WritePrivateProfileString(string section,
+        static extern long WritePrivateProfileString(string section,
         string key, string val, string filePath);
 
         [DllImport("kernel32", CharSet = CharSet.Unicode)]
-        private static extern int GetPrivateProfileString(string section,
+        static extern int GetPrivateProfileString(string section,
         string key, string def, StringBuilder retVal, int size, string filePath);
         #endregion
     }

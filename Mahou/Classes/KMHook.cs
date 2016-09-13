@@ -446,9 +446,9 @@ namespace Mahou
         }
         private static bool SymbolIgnoreRules(Keys key, bool upper, uint wasLocale) //Rules to ignore symbols
         {
-            Console.WriteLine(MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled").ToString() +
-                MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled").ToString() +
-                " ? " + key + upper.ToString() + wasLocale);
+//            Console.WriteLine(MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled").ToString() +
+//                MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled").ToString() +
+//                " ? " + key + upper.ToString() + wasLocale);
             if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled") &&
                 MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled") &&
                 (wasLocale == 1033 || wasLocale == 1041) &&

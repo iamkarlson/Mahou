@@ -125,7 +125,7 @@
         	// 
         	this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         	this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        	this.ClientSize = new System.Drawing.Size(284, 260);
+        	this.ClientSize = new System.Drawing.Size(284, 261);
         	this.Controls.Add(this.lbChecking);
         	this.Controls.Add(this.lbDownloading);
         	this.Controls.Add(this.btDMahou);
