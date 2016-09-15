@@ -26,10 +26,13 @@ namespace Mahou
         public MahouForm()
         {
             InitializeComponent();
-            ICheck.Tick += (_,__) => 
+            ICheck.Tick += (_,__) =>
             {
-            	langDisplay.Visible = ICheckings.IsICursor();
-				langDisplay.Location = new System.Drawing.Point(Cursor.Position.X + 8, Cursor.Position.Y - 8);
+            	if (ICheckings.IsICursor())
+            		langDisplay.ShowInactiveTopmost();
+            	else
+            		langDisplay.HideWnd();
+				langDisplay.Location = new Point(Cursor.Position.X + 8, Cursor.Position.Y - 8);
 				switch (Locales.GetCurrentLocale()) {
 					case 1041:
 						langDisplay.ChangeLD("JP");
@@ -425,7 +428,7 @@ namespace Mahou
 				case Keys.D6:
 				case Keys.D7:
 				case Keys.D8:
-				case Keys.D9:				
+				case Keys.D9:
 					return k.ToString().Replace("D", "");
 				default:
 					return k.ToString();

@@ -141,6 +141,13 @@ namespace Mahou
 
             if (String.IsNullOrEmpty(this.Read("ExtCtrls", "RCLocaleName")))
                 this.Write("ExtCtrls", "RCLocaleName", "");
+            //Proxy section
+            if (String.IsNullOrEmpty(this.Read("Proxy", "ServerPort")))
+                this.Write("Proxy", "ServerPort", "");
+            if (String.IsNullOrEmpty(this.Read("Proxy", "UserName")))
+                this.Write("Proxy", "UserName", "");
+            if (String.IsNullOrEmpty(this.Read("Proxy", "Password")))
+                this.Write("Proxy", "Password", "");
 
         }
         public void Write(string section, string key, string value) //Writes "value" to "key" in "section"

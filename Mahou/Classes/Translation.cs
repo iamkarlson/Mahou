@@ -18,7 +18,7 @@ namespace Mahou
           /*24-28*/"Release","Version","Title","Description","Update Mahou to ",
           /*29-32*/"Downloading","Timed out...","Error","You have latest version.",
           /*33-34*/"I think you need to update...","Error occured during check...",
-          /*35-35*/"Failed to get Update info, can't connent to 'github.com', check your internet connection.",
+          /*35-35*/"Failed to get Update info, can't connent to 'github.com', check your internet connection or proxy configuration.",
           /*///////////////MoreConfigs UI\\\\\\\\\\\\\\\\\
           /*36-36*/"Use specific layout changing by Left/Right CTRLS",
           /*37-39*/"LCtrl switches to:","RCtrl switches to:","More configs",
@@ -26,7 +26,10 @@ namespace Mahou
           /*///////////////Tray Icon\\\\\\\\\\\\\\\\\
           /*42-44*/"Show/Hide","Exit","Mahou (魔法)\nA magical layout switcher.",
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
-          /*45-47*/"Display language:","Refresh rate(ms):", "Colors:" };
+          /*45-47*/"Display language:","Refresh rate(ms):", "Colors:",
+          /*///////////////Back to Update UI\\\\\\\\\\\\\\\\\
+          /*48-51*/"Proxy","Server:port","Name/Password","Your proxy not working..."
+           };
         public static string[] ToolTipsEN = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"While this option enabled, [Convert word] and [Convert line] and [Convert selection with \"CS-Switch\" enabled]\n"+
@@ -84,7 +87,7 @@ namespace Mahou
           /*24-28*/"Релиза","Версия","Заголовок","Описание","Обновить Mahou к ",
           /*29-32*/"Загружаю","Превышено время ожидания...","Ошибка","У вас последняя версия.",
           /*33-34*/"Я думаю следует обновиться...","Произошла ошибка при проверке...",
-          /*35-35*/"Не получилось получить информацию о обновлениях, не могу соединится с 'github.com', проверьте ваше соединение с интернетом.",
+          /*35-35*/"Не получилось получить информацию о обновлениях, не могу соединится с 'github.com', проверьте ваше соединение с интернетом или настройки прокси.",
           /*///////////////MoreConfigs UI\\\\\\\\\\\\\\\
           /*36-36*/"Использовать спец. переключение по L/R CTRL",
           /*37-39*/"LCtrl переключает в:","RCtrl переключает в:","Дополнительные настройки",
@@ -92,7 +95,9 @@ namespace Mahou
           /*///////////////Tray Icon\\\\\\\\\\\\\\\
           /*42-44*/"Показать/Скрыть","Выход","Mahou (魔法)\nВолшебный переключатель раскладок.",
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
-          /*45-47*/"Отображ. язык:","Скор. обнов.(мс):", "Цвета:" };
+          /*45-47*/"Отображ. язык:","Скор. обнов.(мс):", "Цвета:",
+          /*///////////////Back to Update UI\\\\\\\\\\\\\\\\\
+          /*48-51*/"Прокси","Сервер:порт","Имя/Пароль","Ваш прокси не работает..." };
         public static string[] ToolTipsRU = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"Пока включена, [Конверт слова] and [Конверт линии] and [Конверт выделения с \"КВ-Ключ\" включенной]\n"+

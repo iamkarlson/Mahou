@@ -49,6 +49,7 @@
 			this.TopMost = true;
 			this.TransparencyKey = System.Drawing.Color.Pink;
 			this.ResumeLayout(false);
+
 		}
 	}
 }
