@@ -53,10 +53,17 @@
         	this.lbH = new System.Windows.Forms.Label();
         	this.lbW = new System.Windows.Forms.Label();
         	this.btFont = new System.Windows.Forms.Button();
+        	this.nudYpos = new System.Windows.Forms.NumericUpDown();
+        	this.lbY = new System.Windows.Forms.Label();
+        	this.nudXpos = new System.Windows.Forms.NumericUpDown();
+        	this.lbX = new System.Windows.Forms.Label();
+        	this.lbPosition = new System.Windows.Forms.Label();
         	((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudRefreshRate)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudTTWidth)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudTTHeight)).BeginInit();
+        	((System.ComponentModel.ISupportInitialize)(this.nudYpos)).BeginInit();
+        	((System.ComponentModel.ISupportInitialize)(this.nudXpos)).BeginInit();
         	this.SuspendLayout();
         	// 
         	// cbUseLRC
@@ -73,7 +80,7 @@
         	// 
         	// btnOK
         	// 
-        	this.btnOK.Location = new System.Drawing.Point(9, 205);
+        	this.btnOK.Location = new System.Drawing.Point(10, 234);
         	this.btnOK.Name = "btnOK";
         	this.btnOK.Size = new System.Drawing.Size(75, 23);
         	this.btnOK.TabIndex = 1;
@@ -83,7 +90,7 @@
         	// 
         	// btnNO
         	// 
-        	this.btnNO.Location = new System.Drawing.Point(192, 205);
+        	this.btnNO.Location = new System.Drawing.Point(193, 234);
         	this.btnNO.Name = "btnNO";
         	this.btnNO.Size = new System.Drawing.Size(75, 23);
         	this.btnNO.TabIndex = 2;
@@ -252,6 +259,7 @@
         	this.lbSize.Size = new System.Drawing.Size(30, 13);
         	this.lbSize.TabIndex = 19;
         	this.lbSize.Text = "Size:";
+        	this.lbSize.MouseHover += new System.EventHandler(this.LbSizeMouseHover);
         	// 
         	// lbH
         	// 
@@ -281,11 +289,68 @@
         	this.btFont.UseVisualStyleBackColor = true;
         	this.btFont.Click += new System.EventHandler(this.BtFontClick);
         	// 
+        	// nudYpos
+        	// 
+        	this.nudYpos.Location = new System.Drawing.Point(233, 205);
+        	this.nudYpos.Minimum = new decimal(new int[] {
+			100,
+			0,
+			0,
+			-2147483648});
+        	this.nudYpos.Name = "nudYpos";
+        	this.nudYpos.Size = new System.Drawing.Size(35, 20);
+        	this.nudYpos.TabIndex = 23;
+        	// 
+        	// lbY
+        	// 
+        	this.lbY.AutoSize = true;
+        	this.lbY.Location = new System.Drawing.Point(214, 208);
+        	this.lbY.Name = "lbY";
+        	this.lbY.Size = new System.Drawing.Size(17, 13);
+        	this.lbY.TabIndex = 27;
+        	this.lbY.Text = "Y:";
+        	// 
+        	// nudXpos
+        	// 
+        	this.nudXpos.Location = new System.Drawing.Point(178, 205);
+        	this.nudXpos.Minimum = new decimal(new int[] {
+			100,
+			0,
+			0,
+			-2147483648});
+        	this.nudXpos.Name = "nudXpos";
+        	this.nudXpos.Size = new System.Drawing.Size(35, 20);
+        	this.nudXpos.TabIndex = 24;
+        	// 
+        	// lbX
+        	// 
+        	this.lbX.AutoSize = true;
+        	this.lbX.Location = new System.Drawing.Point(162, 208);
+        	this.lbX.Name = "lbX";
+        	this.lbX.Size = new System.Drawing.Size(17, 13);
+        	this.lbX.TabIndex = 26;
+        	this.lbX.Text = "X:";
+        	// 
+        	// lbPosition
+        	// 
+        	this.lbPosition.AutoSize = true;
+        	this.lbPosition.Location = new System.Drawing.Point(114, 208);
+        	this.lbPosition.Name = "lbPosition";
+        	this.lbPosition.Size = new System.Drawing.Size(47, 13);
+        	this.lbPosition.TabIndex = 25;
+        	this.lbPosition.Text = "Position:";
+        	this.lbPosition.MouseHover += new System.EventHandler(this.LbPositionMouseHover);
+        	// 
         	// MoreConfigs
         	// 
         	this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         	this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        	this.ClientSize = new System.Drawing.Size(279, 239);
+        	this.ClientSize = new System.Drawing.Size(279, 269);
+        	this.Controls.Add(this.nudYpos);
+        	this.Controls.Add(this.lbY);
+        	this.Controls.Add(this.nudXpos);
+        	this.Controls.Add(this.lbX);
+        	this.Controls.Add(this.lbPosition);
         	this.Controls.Add(this.lblRefRate);
         	this.Controls.Add(this.cbDisplayLang);
         	this.Controls.Add(this.btFont);
@@ -324,6 +389,8 @@
         	((System.ComponentModel.ISupportInitialize)(this.nudRefreshRate)).EndInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudTTWidth)).EndInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudTTHeight)).EndInit();
+        	((System.ComponentModel.ISupportInitialize)(this.nudYpos)).EndInit();
+        	((System.ComponentModel.ISupportInitialize)(this.nudXpos)).EndInit();
         	this.ResumeLayout(false);
         	this.PerformLayout();
 
@@ -355,5 +422,10 @@
         private System.Windows.Forms.Label lbH;
         private System.Windows.Forms.Label lbW;
         private System.Windows.Forms.Button btFont;
+        private System.Windows.Forms.NumericUpDown nudYpos;
+        private System.Windows.Forms.Label lbY;
+        private System.Windows.Forms.NumericUpDown nudXpos;
+        private System.Windows.Forms.Label lbX;
+        private System.Windows.Forms.Label lbPosition;
     }
 }

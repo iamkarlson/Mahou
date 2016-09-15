@@ -32,7 +32,8 @@ namespace Mahou
             		langDisplay.ShowInactiveTopmost();
             	else
             		langDisplay.HideWnd();
-				langDisplay.Location = new Point(Cursor.Position.X + 8, Cursor.Position.Y - 8);
+            	langDisplay.Location = new Point(Cursor.Position.X + MMain.MyConfs.ReadInt("TTipUI", "xpos"),
+            	                                 Cursor.Position.Y + MMain.MyConfs.ReadInt("TTipUI", "ypos"));
 				switch (Locales.GetCurrentLocale()) {
 					case 1041:
 						langDisplay.ChangeLD("Jp");

@@ -151,12 +151,14 @@ namespace Mahou
             //Tooltip UI sections
             if (!Int32.TryParse(this.Read("TTipUI", "Height"), out it))
                 this.Write("TTipUI", "Height", "14"); //Lang Tooltip height
-
             if (!Int32.TryParse(this.Read("TTipUI", "Width"), out it))
                 this.Write("TTipUI", "Width", "15"); //Lang Tooltip width
-
             if (String.IsNullOrEmpty(this.Read("TTipUI", "Font")))
                 this.Write("TTipUI", "Font", "Segoe UI; 7pt"); //Lang Tooltip font & it size
+            if (!Int32.TryParse(this.Read("TTipUI", "xpos"), out it))
+                this.Write("TTipUI", "xpos", "8"); //Lang Tooltip x pos
+            if (!Int32.TryParse(this.Read("TTipUI", "ypos"), out it))
+                this.Write("TTipUI", "ypos", "-8"); //Lang Tooltip y pos
         }
         public void Write(string section, string key, string value) //Writes "value" to "key" in "section"
         {

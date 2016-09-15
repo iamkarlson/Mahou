@@ -104,7 +104,8 @@ namespace Mahou
         {
         	MMain.mahou.IfNotExist();
             lbLCto.Enabled = lbRCto.Enabled = cbLCLocalesList.Enabled = cbRCLocalesList.Enabled = cbUseLRC.Checked;
-            nudRefreshRate.Enabled = lblRefRate.Enabled = lbColors.Enabled = btCol1.Enabled = btCol2.Enabled = cbDisplayLang.Checked;
+            nudRefreshRate.Enabled = lblRefRate.Enabled = lbColors.Enabled = btCol1.Enabled = btCol2.Enabled = btFont.Enabled =
+				lbSize.Enabled = lbPosition.Enabled = nudTTWidth.Enabled = nudTTHeight.Enabled = nudXpos.Enabled = nudYpos.Enabled = cbDisplayLang.Checked;
             MMain.mahou.RemoveAddCtrls();
         } 
         void Save() // Saves configurations
@@ -127,6 +128,8 @@ namespace Mahou
             MMain.MyConfs.Write("TTipUI", "Height",  nudTTHeight.Value.ToString());
             MMain.MyConfs.Write("TTipUI", "Width", nudTTWidth.Value.ToString());
             MMain.MyConfs.Write("TTipUI", "Font", fcv.ConvertToString(btFont.Font));
+            MMain.MyConfs.Write("TTipUI", "xpos", nudXpos.Value.ToString());
+            MMain.MyConfs.Write("TTipUI", "ypos", nudYpos.Value.ToString());
             MMain.mahou.langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLForeColor")),
                                      			 ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLBackColor")));
 	        MMain.mahou.langDisplay.ChangeSizes((Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font")), 
@@ -215,6 +218,8 @@ namespace Mahou
             nudTTHeight.Value = MMain.MyConfs.ReadInt("TTipUI", "Height");
             nudTTWidth.Value = MMain.MyConfs.ReadInt("TTipUI", "Width");
             btFont.Font = (Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font"));
+            nudXpos.Value = MMain.MyConfs.ReadInt("TTipUI", "xpos");
+            nudYpos.Value = MMain.MyConfs.ReadInt("TTipUI", "ypos");
         }
         void tmpRestore() // Restores temporaries
         {
@@ -250,6 +255,7 @@ namespace Mahou
             lbColors.Text = MMain.UI[47];
             btFont.Text = MMain.UI[52];
             lbSize.Text = MMain.UI[53];
+            lbPosition.Text = MMain.UI[54];
         }
         #endregion
         #region Tooltips
@@ -293,6 +299,16 @@ namespace Mahou
 			HelpTT.ToolTipTitle = lbColors.Text;
             HelpTT.Show(MMain.TTips[24], lbColors);
 	
+		}
+		void LbSizeMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = lbSize.Text;
+            HelpTT.Show(MMain.TTips[25], lbSize);
+		}
+		void LbPositionMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = lbPosition.Text;
+            HelpTT.Show(MMain.TTips[26], lbPosition);
 		}
         #endregion
     }

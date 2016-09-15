@@ -30,7 +30,7 @@ namespace Mahou
           /*///////////////Back to Update UI\\\\\\\\\\\\\\\\\
           /*48-51*/"Proxy","Server:port","Name/Password","Your proxy not working...",
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
-          /*52-53*/"Font","Size:" };
+          /*52-54*/"Font","Size:","Position:" };
         public static string[] ToolTipsEN = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"While this option enabled, [Convert word] and [Convert line] and [Convert selection with \"CS-Switch\" enabled]\n"+
@@ -63,7 +63,8 @@ namespace Mahou
           /*21*/"Enables more tries to get selected text in Convert selection.",
           /*22*/"If enabled, mouse cursor hovers text it will display a small tip of what langauge is now using.",
           /*23*/"Speed of checking cursor type.(if it equals \"I\" )",
-          /*24*/"Colors of small tip.(Left - foreground, Right - background"};
+          /*24*/"Colors and font of small tip.(Left - foreground, Right - background)",
+          /*25-26*/"Size of language tooltip.", "Position relative to mouse position."};
         public static string[] MessagesEN = new string[] {
           /*0-1*/"Mahou successfully updated!", "Update complete!",
           /*002*/"Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\n"+
@@ -100,7 +101,7 @@ namespace Mahou
           /*///////////////Back to Update UI\\\\\\\\\\\\\\\\\
           /*48-51*/"Прокси","Сервер:порт","Имя/Пароль","Ваш прокси не работает...",
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
-          /*52-53*/"Шрифт","Размер:" };
+          /*52-54*/"Шрифт","Размер:","Позиция:" };
         public static string[] ToolTipsRU = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"Пока включена, [Конверт слова] and [Конверт линии] and [Конверт выделения с \"КВ-Ключ\" включенной]\n"+
@@ -132,7 +133,8 @@ namespace Mahou
           /*21*/"Включает несколько попыток взятия выделенного текста в Конверт выделения.",
           /*22*/"Если включено, то при наведении мыши на текстовую форму будет показана маленькая подсказка о текущем языке ввода.",
           /*23*/"Скорость проверки курсора мыши.(равен ли он \"I\" )",
-          /*24*/"Цвета маленькой подсказки.(Слева - цвет текста, Справав - цвет фона"};
+          /*24*/"Цвета и шрифт маленькой подсказки.(Слева - цвет текста, Справав - цвет фона)",
+          /*25-26*/"Размер подсказки языка возле курсора.", "Позиция относительно позиции курсора."};
         public static string[] MessagesRU = new string[] {
           /*0-1*/"Mahou успешно обновлен!", "Обновление завершено!",
           /*002*/"Нажмите Pause(по умолчанию) для конвертации последнего введенного слова.\nНажмите Scroll(по умолчанию) пока выделенный текс в фокусе чтобы конвертивровать его.\nНажмите Shift+Pause(по умолчанию) для конвертации последней введенной линии.\n"+
