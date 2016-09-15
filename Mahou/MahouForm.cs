@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
-using IWshRuntimeLibrary;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 namespace Mahou
 {
@@ -804,22 +804,30 @@ namespace Mahou
                 Refresh();
             }
         }
-        void CreateShortcut() //Creates startup shortcut
+        void CreateShortcut() //Creates startup shortcut v2.0, now not uses com. So whole project not need the Windows SDK :p
         {
-            var currentPath = Assembly.GetExecutingAssembly().Location;
+        	var exelocation = Assembly.GetExecutingAssembly().Location;
             var shortcutLocation = System.IO.Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Startup),
                 "Mahou.lnk");
-            var description = "Mahou - Magick layout switcher";
             if (System.IO.File.Exists(shortcutLocation))
-            {
                 return;
-            }
-            var shell = new WshShell();
-            var shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
-            shortcut.Description = description;
-            shortcut.TargetPath = currentPath;
-            shortcut.Save();
+        	Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); //Windows Script Host Shell Object
+			dynamic shell = Activator.CreateInstance(t);
+			try {
+				var lnk = shell.CreateShortcut(shortcutLocation);
+				try {
+					lnk.TargetPath = exelocation;
+					lnk.WorkingDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+					lnk.IconLocation = exelocation + ", 0";
+					lnk.Description = "Mahou - Magick layout switcher";
+					lnk.Save();
+				} finally {
+					Marshal.FinalReleaseComObject(lnk);
+				}
+			} finally {
+				Marshal.FinalReleaseComObject(shell);
+			}
         }
         void DeleteShortcut() //Deletes startup shortcut
         {
