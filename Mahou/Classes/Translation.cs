@@ -28,8 +28,9 @@ namespace Mahou
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
           /*45-47*/"Display language:","Refresh rate(ms):", "Colors:",
           /*///////////////Back to Update UI\\\\\\\\\\\\\\\\\
-          /*48-51*/"Proxy","Server:port","Name/Password","Your proxy not working..."
-           };
+          /*48-51*/"Proxy","Server:port","Name/Password","Your proxy not working...",
+          /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
+          /*52-53*/"Font","Size:" };
         public static string[] ToolTipsEN = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"While this option enabled, [Convert word] and [Convert line] and [Convert selection with \"CS-Switch\" enabled]\n"+
@@ -97,7 +98,9 @@ namespace Mahou
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
           /*45-47*/"Отображ. язык:","Скор. обнов.(мс):", "Цвета:",
           /*///////////////Back to Update UI\\\\\\\\\\\\\\\\\
-          /*48-51*/"Прокси","Сервер:порт","Имя/Пароль","Ваш прокси не работает..." };
+          /*48-51*/"Прокси","Сервер:порт","Имя/Пароль","Ваш прокси не работает...",
+          /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
+          /*52-53*/"Шрифт","Размер:" };
         public static string[] ToolTipsRU = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"Пока включена, [Конверт слова] and [Конверт линии] and [Конверт выделения с \"КВ-Ключ\" включенной]\n"+

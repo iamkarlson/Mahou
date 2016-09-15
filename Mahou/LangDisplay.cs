@@ -19,6 +19,23 @@ namespace Mahou
 			lbLang.ForeColor = fore;
 			lbLang.BackColor = back;
 		}
+		public void ChangeSizes(Font fnt, int height, int width)
+		{
+			lbLang.Font = fnt;
+			lbLang.Height = height;
+			lbLang.Width = width;
+		}
+		public void ShowInactiveTopmost()
+		{
+			ShowWindow(Handle, SW_SHOWNOACTIVATE);
+			SetWindowPos(Handle.ToInt32(), HWND_TOPMOST,
+			Left, Top, Width, Height,
+				SWP_NOACTIVATE);
+		}
+		public void HideWnd()
+		{
+			ShowWindow(Handle, 0);
+		}
 		#region P/Invoke
 		const int SW_SHOWNOACTIVATE = 4;
 		const int HWND_TOPMOST = -1;
@@ -38,16 +55,5 @@ namespace Mahou
 		[DllImport("user32.dll")]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 		#endregion
-		public void ShowInactiveTopmost()
-		{
-			ShowWindow(Handle, SW_SHOWNOACTIVATE);
-			SetWindowPos(Handle.ToInt32(), HWND_TOPMOST,
-			Left, Top, Width, Height,
-				SWP_NOACTIVATE);
-		}
-		public void HideWnd()
-		{
-			ShowWindow(Handle, 0);
-		}
 	}
 }

@@ -47,8 +47,16 @@
         	this.btCol2 = new System.Windows.Forms.Button();
         	this.btCol1 = new System.Windows.Forms.Button();
         	this.lbColors = new System.Windows.Forms.Label();
+        	this.nudTTWidth = new System.Windows.Forms.NumericUpDown();
+        	this.nudTTHeight = new System.Windows.Forms.NumericUpDown();
+        	this.lbSize = new System.Windows.Forms.Label();
+        	this.lbH = new System.Windows.Forms.Label();
+        	this.lbW = new System.Windows.Forms.Label();
+        	this.btFont = new System.Windows.Forms.Button();
         	((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudRefreshRate)).BeginInit();
+        	((System.ComponentModel.ISupportInitialize)(this.nudTTWidth)).BeginInit();
+        	((System.ComponentModel.ISupportInitialize)(this.nudTTHeight)).BeginInit();
         	this.SuspendLayout();
         	// 
         	// cbUseLRC
@@ -65,7 +73,7 @@
         	// 
         	// btnOK
         	// 
-        	this.btnOK.Location = new System.Drawing.Point(9, 186);
+        	this.btnOK.Location = new System.Drawing.Point(9, 205);
         	this.btnOK.Name = "btnOK";
         	this.btnOK.Size = new System.Drawing.Size(75, 23);
         	this.btnOK.TabIndex = 1;
@@ -75,7 +83,7 @@
         	// 
         	// btnNO
         	// 
-        	this.btnNO.Location = new System.Drawing.Point(192, 186);
+        	this.btnNO.Location = new System.Drawing.Point(192, 205);
         	this.btnNO.Name = "btnNO";
         	this.btnNO.Size = new System.Drawing.Size(75, 23);
         	this.btnNO.TabIndex = 2;
@@ -187,7 +195,7 @@
         	// lblRefRate
         	// 
         	this.lblRefRate.AutoSize = true;
-        	this.lblRefRate.Location = new System.Drawing.Point(124, 126);
+        	this.lblRefRate.Location = new System.Drawing.Point(114, 126);
         	this.lblRefRate.Name = "lblRefRate";
         	this.lblRefRate.Size = new System.Drawing.Size(87, 13);
         	this.lblRefRate.TabIndex = 13;
@@ -215,24 +223,81 @@
         	// lbColors
         	// 
         	this.lbColors.AutoSize = true;
-        	this.lbColors.Location = new System.Drawing.Point(124, 155);
+        	this.lbColors.Location = new System.Drawing.Point(114, 155);
         	this.lbColors.Name = "lbColors";
         	this.lbColors.Size = new System.Drawing.Size(39, 13);
         	this.lbColors.TabIndex = 16;
         	this.lbColors.Text = "Colors:";
         	this.lbColors.MouseHover += new System.EventHandler(this.LbColorsMouseHover);
         	// 
+        	// nudTTWidth
+        	// 
+        	this.nudTTWidth.Location = new System.Drawing.Point(233, 179);
+        	this.nudTTWidth.Name = "nudTTWidth";
+        	this.nudTTWidth.Size = new System.Drawing.Size(35, 20);
+        	this.nudTTWidth.TabIndex = 17;
+        	// 
+        	// nudTTHeight
+        	// 
+        	this.nudTTHeight.Location = new System.Drawing.Point(178, 179);
+        	this.nudTTHeight.Name = "nudTTHeight";
+        	this.nudTTHeight.Size = new System.Drawing.Size(35, 20);
+        	this.nudTTHeight.TabIndex = 18;
+        	// 
+        	// lbSize
+        	// 
+        	this.lbSize.AutoSize = true;
+        	this.lbSize.Location = new System.Drawing.Point(114, 182);
+        	this.lbSize.Name = "lbSize";
+        	this.lbSize.Size = new System.Drawing.Size(30, 13);
+        	this.lbSize.TabIndex = 19;
+        	this.lbSize.Text = "Size:";
+        	// 
+        	// lbH
+        	// 
+        	this.lbH.AutoSize = true;
+        	this.lbH.Location = new System.Drawing.Point(162, 182);
+        	this.lbH.Name = "lbH";
+        	this.lbH.Size = new System.Drawing.Size(18, 13);
+        	this.lbH.TabIndex = 20;
+        	this.lbH.Text = "H:";
+        	// 
+        	// lbW
+        	// 
+        	this.lbW.AutoSize = true;
+        	this.lbW.Location = new System.Drawing.Point(214, 182);
+        	this.lbW.Name = "lbW";
+        	this.lbW.Size = new System.Drawing.Size(21, 13);
+        	this.lbW.TabIndex = 21;
+        	this.lbW.Text = "W:";
+        	// 
+        	// btFont
+        	// 
+        	this.btFont.Location = new System.Drawing.Point(162, 150);
+        	this.btFont.Name = "btFont";
+        	this.btFont.Size = new System.Drawing.Size(49, 23);
+        	this.btFont.TabIndex = 22;
+        	this.btFont.Text = "Font";
+        	this.btFont.UseVisualStyleBackColor = true;
+        	this.btFont.Click += new System.EventHandler(this.BtFontClick);
+        	// 
         	// MoreConfigs
         	// 
         	this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         	this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        	this.ClientSize = new System.Drawing.Size(279, 216);
+        	this.ClientSize = new System.Drawing.Size(279, 239);
+        	this.Controls.Add(this.lblRefRate);
+        	this.Controls.Add(this.cbDisplayLang);
+        	this.Controls.Add(this.btFont);
+        	this.Controls.Add(this.nudTTWidth);
+        	this.Controls.Add(this.lbW);
+        	this.Controls.Add(this.nudTTHeight);
+        	this.Controls.Add(this.lbH);
+        	this.Controls.Add(this.lbSize);
         	this.Controls.Add(this.lbColors);
         	this.Controls.Add(this.btCol1);
         	this.Controls.Add(this.btCol2);
         	this.Controls.Add(this.nudRefreshRate);
-        	this.Controls.Add(this.lblRefRate);
-        	this.Controls.Add(this.cbDisplayLang);
         	this.Controls.Add(this.nudMTCount);
         	this.Controls.Add(this.cbMoreTries);
         	this.Controls.Add(this.cbSymIgn);
@@ -257,6 +322,8 @@
         	this.Load += new System.EventHandler(this.MoreConfigs_Load);
         	((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).EndInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudRefreshRate)).EndInit();
+        	((System.ComponentModel.ISupportInitialize)(this.nudTTWidth)).EndInit();
+        	((System.ComponentModel.ISupportInitialize)(this.nudTTHeight)).EndInit();
         	this.ResumeLayout(false);
         	this.PerformLayout();
 
@@ -282,5 +349,11 @@
         private System.Windows.Forms.Button btCol2;
         private System.Windows.Forms.Button btCol1;
         private System.Windows.Forms.Label lbColors;
+        private System.Windows.Forms.NumericUpDown nudTTWidth;
+        private System.Windows.Forms.NumericUpDown nudTTHeight;
+        private System.Windows.Forms.Label lbSize;
+        private System.Windows.Forms.Label lbH;
+        private System.Windows.Forms.Label lbW;
+        private System.Windows.Forms.Button btFont;
     }
 }

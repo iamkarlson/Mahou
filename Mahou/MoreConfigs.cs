@@ -11,6 +11,8 @@ namespace Mahou
         int tmpSIKey = 0;
         string tmpSIMods = "None";
 		ColorDialog clrd = new ColorDialog();
+		FontDialog fntd = new FontDialog();
+    	public FontConverter fcv = new FontConverter();
         #endregion
         #region Button/Form/etc. events
         public MoreConfigs()
@@ -59,6 +61,12 @@ namespace Mahou
 		{
 			if (clrd.ShowDialog() == DialogResult.OK)
 				btCol2.BackColor = clrd.Color;
+		}
+		void BtFontClick(object sender, EventArgs e)
+		{
+			fntd.Font = btFont.Font;
+			if (fntd.ShowDialog() == DialogResult.OK)
+				btFont.Font = fntd.Font;
 		}
         void cbUseLRC_CheckedChanged(object sender, EventArgs e)
         {
@@ -116,8 +124,14 @@ namespace Mahou
             MMain.MyConfs.Write("Functions", "DisplayLang", cbDisplayLang.Checked.ToString());
             MMain.MyConfs.Write("Functions", "DLForeColor", ColorTranslator.ToHtml(btCol1.BackColor));
             MMain.MyConfs.Write("Functions", "DLBackColor", ColorTranslator.ToHtml(btCol2.BackColor));
+            MMain.MyConfs.Write("TTipUI", "Height",  nudTTHeight.Value.ToString());
+            MMain.MyConfs.Write("TTipUI", "Width", nudTTWidth.Value.ToString());
+            MMain.MyConfs.Write("TTipUI", "Font", fcv.ConvertToString(btFont.Font));
             MMain.mahou.langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLForeColor")),
-                                     ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLBackColor")));
+                                     			 ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLBackColor")));
+	        MMain.mahou.langDisplay.ChangeSizes((Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font")), 
+							                    MMain.MyConfs.ReadInt("TTipUI", "Height"), 
+							                    MMain.MyConfs.ReadInt("TTipUI", "Width"));
             bool hksymignnotready = false;
             if (tmpSIKey != 0)
             {
@@ -198,6 +212,9 @@ namespace Mahou
             cbDisplayLang.Checked = MMain.MyConfs.ReadBool("Functions", "DisplayLang");
         	btCol1.BackColor = ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLForeColor"));
         	btCol2.BackColor = ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLBackColor"));
+            nudTTHeight.Value = MMain.MyConfs.ReadInt("TTipUI", "Height");
+            nudTTWidth.Value = MMain.MyConfs.ReadInt("TTipUI", "Width");
+            btFont.Font = (Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font"));
         }
         void tmpRestore() // Restores temporaries
         {
@@ -231,6 +248,8 @@ namespace Mahou
             cbDisplayLang.Text = MMain.UI[45];
             lblRefRate.Text = MMain.UI[46];
             lbColors.Text = MMain.UI[47];
+            btFont.Text = MMain.UI[52];
+            lbSize.Text = MMain.UI[53];
         }
         #endregion
         #region Tooltips

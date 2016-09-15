@@ -35,18 +35,21 @@ namespace Mahou
 				langDisplay.Location = new Point(Cursor.Position.X + 8, Cursor.Position.Y - 8);
 				switch (Locales.GetCurrentLocale()) {
 					case 1041:
-						langDisplay.ChangeLD("JP");
+						langDisplay.ChangeLD("Jp");
 						break;
 					case 1049:
-						langDisplay.ChangeLD("RU");
+						langDisplay.ChangeLD("Ru");
 						break;
 					case 1033:
-						langDisplay.ChangeLD("EN");
+						langDisplay.ChangeLD("En");
 						break;
 				}
             };
             langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLForeColor")),
                                      ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLBackColor")));
+            langDisplay.ChangeSizes((Font)moreConfigs.fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font")), 
+                                    MMain.MyConfs.ReadInt("TTipUI", "Height"), 
+                                    MMain.MyConfs.ReadInt("TTipUI", "Width"));
             ICheck.Interval = MMain.MyConfs.ReadInt("Functions", "DLRefreshRate");
             if (MMain.MyConfs.ReadBool("Functions", "DisplayLang"))
             	ICheck.Start();

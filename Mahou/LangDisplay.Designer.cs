@@ -23,13 +23,14 @@
 			// 
 			this.lbLang.BackColor = System.Drawing.Color.Black;
 			this.lbLang.Cursor = System.Windows.Forms.Cursors.IBeam;
-			this.lbLang.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.lbLang.Font = new System.Drawing.Font("Segoe UI", 7F);
 			this.lbLang.ForeColor = System.Drawing.Color.White;
 			this.lbLang.Location = new System.Drawing.Point(0, 0);
 			this.lbLang.Name = "lbLang";
-			this.lbLang.Size = new System.Drawing.Size(20, 15);
+			this.lbLang.Size = new System.Drawing.Size(15, 14);
 			this.lbLang.TabIndex = 0;
-			this.lbLang.Text = "RU";
+			this.lbLang.Text = "Ru";
+			this.lbLang.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// LangDisplay
 			// 
