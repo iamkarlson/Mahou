@@ -38,13 +38,49 @@ namespace Mahou
 					case 1041:
 						langDisplay.ChangeLD("Jp");
 						break;
-					case 1049:
+                    case 1028:
+                    case 3076:
+                        langDisplay.ChangeLD("Ch");
+                        break;
+                    case 1049:
 						langDisplay.ChangeLD("Ru");
 						break;
 					case 1033:
 						langDisplay.ChangeLD("En");
 						break;
-				}
+                    case 1055:
+                        langDisplay.ChangeLD("Tu");
+                        break;
+                    case 1058:
+                        langDisplay.ChangeLD("Ua");
+                        break;
+                    case 2074:
+                    case 3098:
+                        langDisplay.ChangeLD("Se");
+                        break;
+                    case 1040:
+                    case 2064:
+                        langDisplay.ChangeLD("It");
+                        break;
+                    case 1036:
+                    case 5132:
+                        langDisplay.ChangeLD("Fr");
+                        break;
+                    case 3082:
+                    case 1034:
+                        langDisplay.ChangeLD("Sp");
+                        break;
+                    case 1031:
+                    case 5127:
+                    case 3079:
+                    case 4103:
+                    case 2055:
+                        langDisplay.ChangeLD("De");
+                        break;
+                    case 1045:
+                        langDisplay.ChangeLD("Po");
+                        break;
+                }
             };
             langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLForeColor")),
                                      ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions","DLBackColor")));

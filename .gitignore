@@ -2,3 +2,4 @@
 /Mahou/obj/*
 /Mahou/*.suo
 /Mahou/*.user
+/Mahou/.vs/*
