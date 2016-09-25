@@ -58,12 +58,19 @@
         	this.nudXpos = new System.Windows.Forms.NumericUpDown();
         	this.lbX = new System.Windows.Forms.Label();
         	this.lbPosition = new System.Windows.Forms.Label();
+        	this.pEMore = new System.Windows.Forms.Panel();
+        	this.lbDDelay = new System.Windows.Forms.Label();
+        	this.nudDoubleDelay = new System.Windows.Forms.NumericUpDown();
+        	this.cbDoublePress = new System.Windows.Forms.CheckBox();
+        	this.btnEMore = new System.Windows.Forms.Button();
         	((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudRefreshRate)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudTTWidth)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudTTHeight)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudYpos)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudXpos)).BeginInit();
+        	this.pEMore.SuspendLayout();
+        	((System.ComponentModel.ISupportInitialize)(this.nudDoubleDelay)).BeginInit();
         	this.SuspendLayout();
         	// 
         	// cbUseLRC
@@ -292,11 +299,6 @@
         	// nudYpos
         	// 
         	this.nudYpos.Location = new System.Drawing.Point(233, 205);
-        	this.nudYpos.Minimum = new decimal(new int[] {
-			100,
-			0,
-			0,
-			-2147483648});
         	this.nudYpos.Name = "nudYpos";
         	this.nudYpos.Size = new System.Drawing.Size(35, 20);
         	this.nudYpos.TabIndex = 23;
@@ -313,11 +315,6 @@
         	// nudXpos
         	// 
         	this.nudXpos.Location = new System.Drawing.Point(178, 205);
-        	this.nudXpos.Minimum = new decimal(new int[] {
-			100,
-			0,
-			0,
-			-2147483648});
         	this.nudXpos.Name = "nudXpos";
         	this.nudXpos.Size = new System.Drawing.Size(35, 20);
         	this.nudXpos.TabIndex = 24;
@@ -341,11 +338,77 @@
         	this.lbPosition.Text = "Position:";
         	this.lbPosition.MouseHover += new System.EventHandler(this.LbPositionMouseHover);
         	// 
+        	// pEMore
+        	// 
+        	this.pEMore.AutoSize = true;
+        	this.pEMore.Controls.Add(this.lbDDelay);
+        	this.pEMore.Controls.Add(this.nudDoubleDelay);
+        	this.pEMore.Controls.Add(this.cbDoublePress);
+        	this.pEMore.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.pEMore.Location = new System.Drawing.Point(0, 0);
+        	this.pEMore.Name = "pEMore";
+        	this.pEMore.Size = new System.Drawing.Size(279, 269);
+        	this.pEMore.TabIndex = 28;
+        	this.pEMore.Visible = false;
+        	// 
+        	// lbDDelay
+        	// 
+        	this.lbDDelay.AutoSize = true;
+        	this.lbDDelay.Location = new System.Drawing.Point(164, 14);
+        	this.lbDDelay.Name = "lbDDelay";
+        	this.lbDDelay.Size = new System.Drawing.Size(37, 13);
+        	this.lbDDelay.TabIndex = 30;
+        	this.lbDDelay.Text = "Delay:";
+        	this.lbDDelay.MouseHover += new System.EventHandler(this.LbDDelayMouseHover);
+        	// 
+        	// nudDoubleDelay
+        	// 
+        	this.nudDoubleDelay.Increment = new decimal(new int[] {
+			5,
+			0,
+			0,
+			0});
+        	this.nudDoubleDelay.Location = new System.Drawing.Point(226, 11);
+        	this.nudDoubleDelay.Maximum = new decimal(new int[] {
+			5000,
+			0,
+			0,
+			0});
+        	this.nudDoubleDelay.Name = "nudDoubleDelay";
+        	this.nudDoubleDelay.Size = new System.Drawing.Size(41, 20);
+        	this.nudDoubleDelay.TabIndex = 2;
+        	// 
+        	// cbDoublePress
+        	// 
+        	this.cbDoublePress.AutoSize = true;
+        	this.cbDoublePress.Location = new System.Drawing.Point(10, 12);
+        	this.cbDoublePress.Name = "cbDoublePress";
+        	this.cbDoublePress.Size = new System.Drawing.Size(103, 17);
+        	this.cbDoublePress.TabIndex = 0;
+        	this.cbDoublePress.Text = "Double hotkeys:";
+        	this.cbDoublePress.UseVisualStyleBackColor = true;
+        	this.cbDoublePress.CheckedChanged += new System.EventHandler(this.CbDoublePressCheckedChanged);
+        	this.cbDoublePress.MouseHover += new System.EventHandler(this.CbDoublePressMouseHover);
+        	// 
+        	// btnEMore
+        	// 
+        	this.btnEMore.Location = new System.Drawing.Point(101, 234);
+        	this.btnEMore.Name = "btnEMore";
+        	this.btnEMore.Size = new System.Drawing.Size(76, 23);
+        	this.btnEMore.TabIndex = 29;
+        	this.btnEMore.Text = "More";
+        	this.btnEMore.UseVisualStyleBackColor = true;
+        	this.btnEMore.Click += new System.EventHandler(this.BtnEMoreClick);
+        	// 
         	// MoreConfigs
         	// 
         	this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         	this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         	this.ClientSize = new System.Drawing.Size(279, 269);
+        	this.Controls.Add(this.btnEMore);
+        	this.Controls.Add(this.btnNO);
+        	this.Controls.Add(this.btnOK);
+        	this.Controls.Add(this.pEMore);
         	this.Controls.Add(this.nudYpos);
         	this.Controls.Add(this.lbY);
         	this.Controls.Add(this.nudXpos);
@@ -371,8 +434,6 @@
         	this.Controls.Add(this.cbLCLocalesList);
         	this.Controls.Add(this.lbRCto);
         	this.Controls.Add(this.lbLCto);
-        	this.Controls.Add(this.btnNO);
-        	this.Controls.Add(this.btnOK);
         	this.Controls.Add(this.cbUseLRC);
         	this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
         	this.MaximizeBox = false;
@@ -382,7 +443,6 @@
         	this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
         	this.Text = "More configs";
         	this.Activated += new System.EventHandler(this.MoreConfigs_Activated);
-        	this.Deactivate += new System.EventHandler(this.MoreConfigs_Deactivate);
         	this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MoreConfigs_FormClosing);
         	this.Load += new System.EventHandler(this.MoreConfigs_Load);
         	((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).EndInit();
@@ -391,13 +451,14 @@
         	((System.ComponentModel.ISupportInitialize)(this.nudTTHeight)).EndInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudYpos)).EndInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudXpos)).EndInit();
+        	this.pEMore.ResumeLayout(false);
+        	this.pEMore.PerformLayout();
+        	((System.ComponentModel.ISupportInitialize)(this.nudDoubleDelay)).EndInit();
         	this.ResumeLayout(false);
         	this.PerformLayout();
 
         }
-
         #endregion
-
         private System.Windows.Forms.CheckBox cbUseLRC;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnNO;
@@ -427,5 +488,10 @@
         private System.Windows.Forms.NumericUpDown nudXpos;
         private System.Windows.Forms.Label lbX;
         private System.Windows.Forms.Label lbPosition;
+        private System.Windows.Forms.Panel pEMore;
+        private System.Windows.Forms.Button btnEMore;
+        private System.Windows.Forms.NumericUpDown nudDoubleDelay;
+        private System.Windows.Forms.CheckBox cbDoublePress;
+        private System.Windows.Forms.Label lbDDelay;
     }
 }

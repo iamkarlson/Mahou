@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+
 namespace Mahou
 {
     public static class NativeClipboard
@@ -78,7 +79,7 @@ namespace Mahou
         }
         public static ClipboardData GetClipboardDatas() // Gets all clipboard datas, but only text-based datas supported...
         {
-            ClipboardData cd = new ClipboardData()
+            var cd = new ClipboardData()
             {
                 data = new List<byte[]>(),
                 format = new List<uint>()

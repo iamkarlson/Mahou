@@ -131,7 +131,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\HotkeyHandler.cs" />
+    <Compile Include="Classes\Hotkey.cs" />
     <Compile Include="Classes\ICheckings.cs" />
     <Compile Include="Classes\KMHook.cs" />
     <Compile Include="Classes\KInputs.cs" />

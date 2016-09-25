@@ -54,6 +54,9 @@ Mahou работает совершенно по другому в отличи�
 **v1.1.5.6**<br/>
 - Добавлена маленькая подсказка текущего языка при наведении мыши на текст.
 
+**v1.3.0.0**<br/>
+- Добавлена возможность двойных горячих клавиш(2x<kbd>Shift</kbd>, и т.д.).
+
 ### Горячие клавиши
 - <kbd>Pause</kbd> - Конверт последнего слова.
 - <kbd>Shift</kbd>+<kbd>Pause</kbd> - Конверт линии.
@@ -128,6 +131,9 @@ Even selected text switches just between **selected** layouts, though if you lik
 
 **v1.1.5.6**<br/>
 - Added small tip which displays current layout, when hovering text with mouse.
+
+**v1.3.0.0**<br/>
+- Added double hotkey ability(2x<kbd>Shift</kbd>, etc.).
 
 ### Hotkeys
 - <kbd>Pause</kbd> - Convert last input.

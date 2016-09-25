@@ -141,24 +141,39 @@ namespace Mahou
 
             if (String.IsNullOrEmpty(this.Read("ExtCtrls", "RCLocaleName")))
                 this.Write("ExtCtrls", "RCLocaleName", "");
+            
             //Proxy section
             if (String.IsNullOrEmpty(this.Read("Proxy", "ServerPort")))
                 this.Write("Proxy", "ServerPort", "");
+            
             if (String.IsNullOrEmpty(this.Read("Proxy", "UserName")))
                 this.Write("Proxy", "UserName", "");
+            
             if (String.IsNullOrEmpty(this.Read("Proxy", "Password")))
                 this.Write("Proxy", "Password", "");
+            
             //Tooltip UI sections
             if (!Int32.TryParse(this.Read("TTipUI", "Height"), out it))
                 this.Write("TTipUI", "Height", "14"); //Lang Tooltip height
+            
             if (!Int32.TryParse(this.Read("TTipUI", "Width"), out it))
                 this.Write("TTipUI", "Width", "15"); //Lang Tooltip width
+            
             if (String.IsNullOrEmpty(this.Read("TTipUI", "Font")))
                 this.Write("TTipUI", "Font", "Segoe UI; 7pt"); //Lang Tooltip font & it size
+            
             if (!Int32.TryParse(this.Read("TTipUI", "xpos"), out it))
                 this.Write("TTipUI", "xpos", "8"); //Lang Tooltip x pos
+            
             if (!Int32.TryParse(this.Read("TTipUI", "ypos"), out it))
                 this.Write("TTipUI", "ypos", "-8"); //Lang Tooltip y pos
+            
+            //DoubleKey section
+            if (String.IsNullOrEmpty(this.Read("DoubleKey", "Use")))
+                this.Write("DoubleKey", "Use", "false");
+            
+            if (!Int32.TryParse(this.Read("DoubleKey", "Delay"), out it))
+                this.Write("DoubleKey", "Delay", "350");
         }
         public void Write(string section, string key, string value) //Writes "value" to "key" in "section"
         {

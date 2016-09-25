@@ -2,7 +2,7 @@
 
 namespace Mahou
 {
-    class Translation
+    static class Translation
     {
         #region English
         public static string[] UIEN = new string[] {
@@ -30,7 +30,7 @@ namespace Mahou
           /*///////////////Back to Update UI\\\\\\\\\\\\\\\\\
           /*48-51*/"Proxy","Server:port","Name/Password","Your proxy not working...",
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
-          /*52-54*/"Font","Size:","Position:" };
+          /*52-58*/"Font","Size:","Position:", "More", "Back","Double hotkey:","Delay:" };
         public static string[] ToolTipsEN = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"While this option enabled, [Convert word] and [Convert line] and [Convert selection with \"CS-Switch\" enabled]\n"+
@@ -64,18 +64,20 @@ namespace Mahou
           /*22*/"If enabled, mouse cursor hovers text it will display a small tip of what langauge is now using.",
           /*23*/"Speed of checking cursor type.(if it equals \"I\" )",
           /*24*/"Colors and font of small tip.(Left - foreground, Right - background)",
-          /*25-26*/"Size of language tooltip.", "Position relative to mouse position."};
+          /*25-26*/"Size of language tooltip.", "Position relative to mouse position.",
+          /*27*/"Enables double hotkey ability,\nand makes it possible to set modifies to hotkey.",
+          /*28*/"Time to wait second hotkey press(ms)"};
         public static string[] MessagesEN = new string[] {
           /*0-1*/"Mahou successfully updated!", "Update complete!",
           /*002*/"Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\n"+
           "Press Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), conversion will switch typed text to Language 1(Ignored if Cycle Mode is ON).\n\n"+
           "**If you have problems with symbols conversion(selection) try \"switching languages (1=>2 & 2=>1)\" or \"CS-Switch\" option.\n\nHover on any control of main window for more info about it.\n\n"+
-          "************WINDOWS 10 USERS WHO USE METRO APPS************\nEnable \"Cycle Mode\", \"Emu\" and set Emu type to \"Win+Space\" these settings work better for Metro apps.\n\nRegards.", 
+          "************WINDOWS 10 USERS WHO USE METRO APPS************\nEnable \"Cycle Mode\", \"Emu\" and set Emu type to \"Win+Space\" these settings work better for Metro apps.\n\nTo reset settings just delete Mahou.ini in Mahou folder.\n\nRegards.", 
           /*3-5*/"****Attention****","You have assigned same hotkeys for Convert word & Convert line, that is impossible!!", "Warning!",
           /*6-7*/"You have pressed just modifiers for Convert word hotkey!!","You have pressed just modifiers for Convert selection hotkey!!",
           /*8-9*/"You have pressed just modifiers for Convert line hotkey!!","You have removed selected locales, reselect." };
         #endregion
-        #region Russian
+        #region Русский
         public static string[] UIRU = new string[] {
           /*///////////////Main UI\\\\\\\\\\\\\\\
           /*00-03*/"Код на Github","Автозапуск с Windows","Обновить","Горячие клавиши",
@@ -101,7 +103,7 @@ namespace Mahou
           /*///////////////Back to Update UI\\\\\\\\\\\\\\\\\
           /*48-51*/"Прокси","Сервер:порт","Имя/Пароль","Ваш прокси не работает...",
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
-          /*52-54*/"Шрифт","Размер:","Позиция:" };
+          /*52-58*/"Шрифт","Размер:","Позиция:", "Еще", "Назад", "Двойные гор. клавиши:", "Ожидание:"  };
         public static string[] ToolTipsRU = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"Пока включена, [Конверт слова] and [Конверт линии] and [Конверт выделения с \"КВ-Ключ\" включенной]\n"+
@@ -132,18 +134,20 @@ namespace Mahou
           /*20*/"Если включен, символы []{};':\",./<>? будут игнорироваться и не будут конвертированы.\nРаботает в Конверт слова, Конверт линии, Конверт выделения с Циклч. режим и КВ-Ключ включенными.\nНе будет работатб если у вас >2 раскладок и Циклч. режим включен!",
           /*21*/"Включает несколько попыток взятия выделенного текста в Конверт выделения.",
           /*22*/"Если включено, то при наведении мыши на текстовую форму будет показана маленькая подсказка о текущем языке ввода.",
-          /*23*/"Скорость проверки курсора мыши.(равен ли он \"I\" )",
+          /*23*/"Скорость проверки курсора мыши.(равен ли он \"I\", при наведении на текст/текстовую форму))",
           /*24*/"Цвета и шрифт маленькой подсказки.(Слева - цвет текста, Справав - цвет фона)",
-          /*25-26*/"Размер подсказки языка возле курсора.", "Позиция относительно позиции курсора."};
+          /*25-26*/"Размер подсказки языка возле курсора.", "Позиция относительно позиции курсора.",
+          /*27*/"Включает возможность двойных горячих клавиш,\nи возможность назначить только модификатор на горячую клавишу",
+          /*28*/"Время ожидания второго нажатия(мс)"};
         public static string[] MessagesRU = new string[] {
           /*0-1*/"Mahou успешно обновлен!", "Обновление завершено!",
           /*002*/"Нажмите Pause(по умолчанию) для конвертации последнего введенного слова.\nНажмите Scroll(по умолчанию) пока выделенный текс в фокусе чтобы конвертивровать его.\nНажмите Shift+Pause(по умолчанию) для конвертации последней введенной линии.\n"+
           "Нажмите Ctrl+Alt+Shift+Insert чтобы показать/скрыть главное окно.\nНажмите Ctrl+Alt+Shift+F12 чтобы завершить Mahou.\n\n*Заметьте что если you вводите текст не из выбранных раскладок в настройках, то конвертация конвертирует текст в Язык 1(Не актуально если включен Циклич. режим).\n\n"+
           "**Если у Вас проблемы с символами при Конвертации выделения попробуйте \"перключить языки местами(1=>2 & 2=>1)\" или включите \"КВ-Ключ\".\n\nНаведите мышь на любой элемент главного онка чтобы узнать подробнее о нем.\n\n"+
-          "************WINDOWS 10 Metro приложения************\nВключите \"Циклч. режим\", \"Эму\" и установите тип эмуляции на\"Win+Space\" эти настройки работают лучше для Metro приложений.\n\nУдачи.", 
+          "************WINDOWS 10 Metro приложения************\nВключите \"Циклч. режим\", \"Эму\" и установите тип эмуляции на\"Win+Space\" эти настройки работают лучше для Metro приложений.\n\nДля Mahou.ini in Mahou folder.\n\nУдачи.", 
           /*3-5*/"****ВНИМАНИЕ****","Вы установили одну и ту же горячую клавишу для Конверт слова и Конверт линии, это невозможно!!", "Внимание!",
-          /*6-7*/"Вы надали только модификаторы для Конверт слова!!","Вы надали только модификаторы для Конверт выделения!!",
-          /*8-9*/"Вы надали только модификаторы для Конверт линии!!","Вы убрали выбранные ранее раскладки, выберите заново." };
+          /*6-7*/"Вы нажали только модификаторы для Конверт слова!!","Вы нажали только модификаторы для Конверт выделения!!",
+          /*8-9*/"Вы нажали только модификаторы для Конверт линии!!","Вы убрали выбранные ранее раскладки, выберите заново." };
         #endregion
     }
 }

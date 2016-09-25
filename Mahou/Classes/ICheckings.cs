@@ -4,6 +4,9 @@ using System.Windows.Forms;
 
 public static class ICheckings
 {
+	/// <summary>
+	/// Checks if current cursor is IBeam.
+	/// </summary>
 	public static bool IsICursor()
 	{
 	    var h = Cursors.IBeam.Handle;
@@ -12,7 +15,6 @@ public static class ICheckings
 	    GetCursorInfo(out cInfo);
 	    return cInfo.hCursor == h;
 	}
-	
 	[StructLayout(LayoutKind.Sequential)]
 	struct POINT
 	{
