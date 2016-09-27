@@ -140,6 +140,7 @@ namespace Mahou
 			MMain.MyConfs.Write("TTipUI", "Font", fcv.ConvertToString(btFont.Font));
 			MMain.MyConfs.Write("TTipUI", "xpos", nudXpos.Value.ToString());
 			MMain.MyConfs.Write("TTipUI", "ypos", nudYpos.Value.ToString());
+			MMain.MyConfs.Write("Functions", "ExperimentalCSSwitch", cbExCSSwitch.Checked.ToString());
 			MMain.mahou.langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLForeColor")),
 				ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLBackColor")));
 			MMain.mahou.langDisplay.ChangeSizes((Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font")), 
@@ -203,6 +204,7 @@ namespace Mahou
 			nudYpos.Value = MMain.MyConfs.ReadInt("TTipUI", "ypos");
 			nudDoubleDelay.Value = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
 			cbDoublePress.Checked = MMain.MyConfs.ReadBool("DoubleKey", "Use");
+			cbExCSSwitch.Checked = MMain.MyConfs.ReadBool("Functions", "ExperimentalCSSwitch");
 		}
 		void tmpRestore() // Restores temporaries
 		{
@@ -241,6 +243,7 @@ namespace Mahou
 			btnEMore.Text = !pEMore.Visible ? MMain.UI[55] : MMain.UI[56];
 			cbDoublePress.Text = MMain.UI[57];
 			lbDDelay.Text = MMain.UI[58];
+			cbExCSSwitch.Text = MMain.UI[59];
 		}
 		#endregion
 		#region Tooltips
@@ -304,6 +307,11 @@ namespace Mahou
 		{
 			HelpTT.ToolTipTitle = lbDDelay.Text;
 			HelpTT.Show(MMain.TTips[28], lbDDelay);	
+		}
+		void CbExCSSwitchMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = cbExCSSwitch.Text;
+			HelpTT.Show(MMain.TTips[29], cbExCSSwitch);	
 		}
 		#endregion
 	}

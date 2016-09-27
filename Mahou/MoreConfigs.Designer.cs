@@ -59,6 +59,7 @@
         	this.lbX = new System.Windows.Forms.Label();
         	this.lbPosition = new System.Windows.Forms.Label();
         	this.pEMore = new System.Windows.Forms.Panel();
+        	this.cbExCSSwitch = new System.Windows.Forms.CheckBox();
         	this.lbDDelay = new System.Windows.Forms.Label();
         	this.nudDoubleDelay = new System.Windows.Forms.NumericUpDown();
         	this.cbDoublePress = new System.Windows.Forms.CheckBox();
@@ -341,6 +342,7 @@
         	// pEMore
         	// 
         	this.pEMore.AutoSize = true;
+        	this.pEMore.Controls.Add(this.cbExCSSwitch);
         	this.pEMore.Controls.Add(this.lbDDelay);
         	this.pEMore.Controls.Add(this.nudDoubleDelay);
         	this.pEMore.Controls.Add(this.cbDoublePress);
@@ -350,6 +352,17 @@
         	this.pEMore.Size = new System.Drawing.Size(279, 269);
         	this.pEMore.TabIndex = 28;
         	this.pEMore.Visible = false;
+        	// 
+        	// cbExCSSwitch
+        	// 
+        	this.cbExCSSwitch.AutoSize = true;
+        	this.cbExCSSwitch.Location = new System.Drawing.Point(10, 35);
+        	this.cbExCSSwitch.Name = "cbExCSSwitch";
+        	this.cbExCSSwitch.Size = new System.Drawing.Size(144, 17);
+        	this.cbExCSSwitch.TabIndex = 31;
+        	this.cbExCSSwitch.Text = "Experimental CS-Switch+";
+        	this.cbExCSSwitch.UseVisualStyleBackColor = true;
+        	this.cbExCSSwitch.MouseHover += new System.EventHandler(this.CbExCSSwitchMouseHover);
         	// 
         	// lbDDelay
         	// 
@@ -493,5 +506,6 @@
         private System.Windows.Forms.NumericUpDown nudDoubleDelay;
         private System.Windows.Forms.CheckBox cbDoublePress;
         private System.Windows.Forms.Label lbDDelay;
+        private System.Windows.Forms.CheckBox cbExCSSwitch;
     }
 }

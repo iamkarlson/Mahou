@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Mahou
@@ -380,22 +380,60 @@ namespace Mahou
 				var result = "";
 				int items = 0;
 				if (MMain.MyConfs.ReadBool("Functions", "CSSwitch")) {
-					var nowLocale = Locales.GetCurrentLocale();
 					self = true;
 					var wasLocale = Locales.GetCurrentLocale();
+					var wawasLocale = wasLocale;
+					var nowLocale = wasLocale == (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId")
+						? (uint)MMain.MyConfs.ReadInt("Locales", "locale2uId")
+						: (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
 					ChangeLayout();
+					var index = 0;
 					// Don't even think "Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n")" can't be used as variable...
 					foreach (char c in Regex.Replace(ClipStr, "\r\\D\n?|\n\\D\r?", "\n")) {
 						items++;
+						wasLocale = wawasLocale;
+						var s = new StringBuilder(10);
+						var sb = new StringBuilder(10);
 						var yk = new YuKey();
-						var scan = VkKeyScanEx(c, (IntPtr)nowLocale);
+						var scan = VkKeyScanEx(c, (IntPtr)wasLocale);
+						var state = ((scan >> 8) & 0xff);
+						var bytes = new byte[255];
+						if (state == 1)
+							bytes[(int)Keys.ShiftKey] = 0xFF;
+						var scan2 = VkKeyScanEx(c, (IntPtr)nowLocale);
+						var state2 = ((scan2 >> 8) & 0xff);
+						var bytes2 = new byte[255];
+						if (state2 == 1)
+							bytes2[(int)Keys.ShiftKey] = 0xFF;
+						if (MMain.MyConfs.ReadBool("Functions", "ExperimentalCSSwitch")) {
+							ToUnicodeEx((uint)scan, (uint)scan, bytes, s, s.Capacity, 0, (IntPtr)wasLocale);
+//						Console.WriteLine("1Char is in " + wasLocale + " " + s);
+//						Console.WriteLine(String.IsNullOrEmpty(s.ToString()));
+//						Console.WriteLine("Checking the " + (ClipStr[index].ToString() + " == " + s.ToString() + " -> " + (ClipStr[index].ToString() == s.ToString())));
+							if (ClipStr[index].ToString() == s.ToString()) {
+//							Console.WriteLine("NO/:");
+								KInputs.MakeInput(KInputs.AddString(InAnother(c, wasLocale, nowLocale)));
+								index++;
+								continue;
+							}
+							ToUnicodeEx((uint)scan2, (uint)scan2, bytes2, sb, sb.Capacity, 0, (IntPtr)nowLocale);
+//						Console.WriteLine("2Char is in " + nowLocale + " " + sb);
+//						Console.WriteLine(String.IsNullOrEmpty(sb.ToString()));
+//						Console.WriteLine("Checking the " + (ClipStr[index].ToString() + " == " + sb.ToString() + " -> " + (ClipStr[index].ToString() == sb.ToString())));
+							if (ClipStr[index].ToString() == sb.ToString()) {
+//							Console.WriteLine("YO/:");
+								PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, (uint)wasLocale);
+								wasLocale = nowLocale;
+								scan = scan2;
+								state = state2;
+							}
+						}
 						if (c == '\n') {
 							yk.yukey = Keys.Enter;
 							yk.upper = false;
 						} else {
 							if (scan != -1) {
 								var key = (Keys)(scan & 0xff);
-								var state = (VkKeyScanEx(c, (IntPtr)nowLocale) >> 8) & 0xff;
 								bool upper = false || state == 1;
 								yk = new YuKey() { yukey = key, upper = upper };
 								//Console.WriteLine(key + "~" + state);
@@ -419,6 +457,7 @@ namespace Mahou
 									KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LShiftKey, false) });
 							}
 						}
+						index++;
 					}
 				} else {
 					var l1 = (uint)MMain.MyConfs.ReadInt("Locales", "locale1uId");
@@ -426,10 +465,14 @@ namespace Mahou
 					var index = 0;
 					foreach (char c in ClipStr) {
 						var T = InAnother(c, l2, l1);
+						if (T == ClipStr[index].ToString())
+							Console.WriteLine("It is same 1" + T + " == " + ClipStr[index].ToString());
 						if (T == "")
 							T = InAnother(c, l1, l2);
+						if (T == ClipStr[index].ToString())
+							Console.WriteLine("It is same 2" + T + " == " + ClipStr[index].ToString());
 						if (T == "")
-							T = ClipStr[index].ToString();
+							T = ClipStr[index].ToString();							
 						result += T;
 						index++;
 					}
@@ -637,17 +680,14 @@ namespace Mahou
 		}
 		static string InAnother(char c, uint uID1, uint uID2) //Remakes c from uID1  to uID2
 		{
-			var upper = false;
 			var cc = c;
 			var chsc = VkKeyScanEx(cc, (IntPtr)uID1);
 			var state = (chsc >> 8) & 0xff;
-			//Checks if 'chsc' have upper state
-			if (state == 1)
-				upper = true;
 			var byt = new byte[256];
 			//it needs just 1 but,anyway let it be 10, i think that's better
 			var s = new StringBuilder(10);
-			if (upper) {
+			//Checks if 'chsc' have upper state
+			if (state == 1) {
 				byt[(int)Keys.ShiftKey] = 0xFF;
 			}
 			//"Convert magick✩" is the string below

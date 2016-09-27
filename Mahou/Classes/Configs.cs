@@ -113,6 +113,9 @@ namespace Mahou
             if (String.IsNullOrEmpty(this.Read("Functions", "DLBackColor")))
                 this.Write("Functions", "DLBackColor", "#000000");
 
+            if (!Boolean.TryParse(this.Read("Functions", "ExperimentalCSSwitch"), out bt))
+                this.Write("Functions", "ExperimentalCSSwitch", "false");
+
             //EnabledHotkeys section
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))
                 this.Write("EnabledHotkeys", "HKCLEnabled", "true"); //Hotkey convert last word enabled

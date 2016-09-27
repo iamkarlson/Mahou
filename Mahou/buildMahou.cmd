@@ -1,1 +1,1 @@
-%windir%\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe .\Mahou.sln /t:Build /p:Configuration=Release
+@%windir%\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe .\Mahou.sln /t:Build /p:Configuration=Release
