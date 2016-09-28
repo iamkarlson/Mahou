@@ -29,8 +29,15 @@ namespace Mahou
 		{
 			ShowWindow(Handle, SW_SHOWNOACTIVATE);
 			SetWindowPos(Handle.ToInt32(), HWND_TOPMOST,
-			Left, Top, Width, Height,
+				Left, Top, Width, Height,
 				SWP_NOACTIVATE);
+		}
+		protected override CreateParams CreateParams {
+			get {
+				var Params = base.CreateParams;
+				Params.ExStyle |= 0x80;
+				return Params;
+			}
 		}
 		public void HideWnd()
 		{
