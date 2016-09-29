@@ -59,6 +59,7 @@
         	this.lbX = new System.Windows.Forms.Label();
         	this.lbPosition = new System.Windows.Forms.Label();
         	this.pEMore = new System.Windows.Forms.Panel();
+        	this.cbTrBLT = new System.Windows.Forms.CheckBox();
         	this.cbExCSSwitch = new System.Windows.Forms.CheckBox();
         	this.lbDDelay = new System.Windows.Forms.Label();
         	this.nudDoubleDelay = new System.Windows.Forms.NumericUpDown();
@@ -342,6 +343,7 @@
         	// pEMore
         	// 
         	this.pEMore.AutoSize = true;
+        	this.pEMore.Controls.Add(this.cbTrBLT);
         	this.pEMore.Controls.Add(this.cbExCSSwitch);
         	this.pEMore.Controls.Add(this.lbDDelay);
         	this.pEMore.Controls.Add(this.nudDoubleDelay);
@@ -352,6 +354,17 @@
         	this.pEMore.Size = new System.Drawing.Size(279, 269);
         	this.pEMore.TabIndex = 28;
         	this.pEMore.Visible = false;
+        	// 
+        	// cbTrBLT
+        	// 
+        	this.cbTrBLT.AutoSize = true;
+        	this.cbTrBLT.Location = new System.Drawing.Point(10, 58);
+        	this.cbTrBLT.Name = "cbTrBLT";
+        	this.cbTrBLT.Size = new System.Drawing.Size(232, 17);
+        	this.cbTrBLT.TabIndex = 32;
+        	this.cbTrBLT.Text = "Transparent background in language tooltip";
+        	this.cbTrBLT.UseVisualStyleBackColor = true;
+        	this.cbTrBLT.MouseHover += new System.EventHandler(this.CbTrBLTMouseHover);
         	// 
         	// cbExCSSwitch
         	// 
@@ -507,5 +520,6 @@
         private System.Windows.Forms.CheckBox cbDoublePress;
         private System.Windows.Forms.Label lbDDelay;
         private System.Windows.Forms.CheckBox cbExCSSwitch;
+        private System.Windows.Forms.CheckBox cbTrBLT;
     }
 }

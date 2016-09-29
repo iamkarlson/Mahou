@@ -23,8 +23,8 @@ namespace Mahou
 		{
 			nudXpos.Minimum = nudYpos.Minimum = -100;
 			RefreshLocales();
-			DisEna();
 			load();
+			DisEna();
 			RefreshLanguage();
 			tmpRestore();
 			tbHKSymIgn.Text = MMain.mahou.OemReadable((MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods").ToString().Replace(",", " +") + " + " +
@@ -116,6 +116,7 @@ namespace Mahou
 			nudRefreshRate.Enabled = lblRefRate.Enabled = lbColors.Enabled = btCol1.Enabled = btCol2.Enabled = btFont.Enabled =
 				lbSize.Enabled = lbPosition.Enabled = nudTTWidth.Enabled = nudTTHeight.Enabled = nudXpos.Enabled = nudYpos.Enabled = cbDisplayLang.Checked;
 			lbDDelay.Enabled = nudDoubleDelay.Enabled = cbDoublePress.Checked;
+			btCol2.Enabled = !cbTrBLT.Checked;
 			MMain.mahou.RemoveAddCtrls();
 		}
 		void Save() // Saves configurations
@@ -141,6 +142,7 @@ namespace Mahou
 			MMain.MyConfs.Write("TTipUI", "xpos", nudXpos.Value.ToString());
 			MMain.MyConfs.Write("TTipUI", "ypos", nudYpos.Value.ToString());
 			MMain.MyConfs.Write("Functions", "ExperimentalCSSwitch", cbExCSSwitch.Checked.ToString());
+			MMain.MyConfs.Write("TTipUI", "TransparentBack", cbTrBLT.Checked.ToString());
 			MMain.mahou.langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLForeColor")),
 				ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLBackColor")));
 			MMain.mahou.langDisplay.ChangeSizes((Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font")), 
@@ -148,6 +150,7 @@ namespace Mahou
 				MMain.MyConfs.ReadInt("TTipUI", "Width"));
 			MMain.MyConfs.Write("DoubleKey", "Delay", nudDoubleDelay.Value.ToString());
 			MMain.MyConfs.Write("DoubleKey", "Use", cbDoublePress.Checked.ToString());
+			MMain.mahou.langDisplay.SetVisInvis();
 			if (tmpSIKey != 0) {
 				if (tmpSIKey == MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey") && tmpSIMods == MMain.MyConfs.Read("Hotkeys", "HKCLMods")) {
 					MessageBox.Show(MMain.Msgs[4], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -205,6 +208,7 @@ namespace Mahou
 			nudDoubleDelay.Value = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
 			cbDoublePress.Checked = MMain.MyConfs.ReadBool("DoubleKey", "Use");
 			cbExCSSwitch.Checked = MMain.MyConfs.ReadBool("Functions", "ExperimentalCSSwitch");
+			cbTrBLT.Checked = MMain.MyConfs.ReadBool("TTipUI", "TransparentBack");
 		}
 		void tmpRestore() // Restores temporaries
 		{
@@ -244,6 +248,7 @@ namespace Mahou
 			cbDoublePress.Text = MMain.UI[57];
 			lbDDelay.Text = MMain.UI[58];
 			cbExCSSwitch.Text = MMain.UI[59];
+			cbTrBLT.Text = MMain.UI[60];
 		}
 		#endregion
 		#region Tooltips
@@ -312,6 +317,11 @@ namespace Mahou
 		{
 			HelpTT.ToolTipTitle = cbExCSSwitch.Text;
 			HelpTT.Show(MMain.TTips[29], cbExCSSwitch);	
+		}
+		void CbTrBLTMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = cbTrBLT.Text;
+			HelpTT.Show(MMain.TTips[30], cbTrBLT);	
 		}
 		#endregion
 	}

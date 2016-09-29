@@ -57,6 +57,9 @@ Mahou работает совершенно по другому в отличи�
 **v1.3.0.0**<br/>
 - Добавлена возможность двойных горячих клавиш(2x<kbd>Shift</kbd>, и т.д.).
 
+**v1.3.1.0**<br/>
+- Добавлена возможность установки прозрачного фона для подсказки текущего языка.
+
 ### Горячие клавиши
 - <kbd>Pause</kbd> - Конверт последнего слова.
 - <kbd>Shift</kbd>+<kbd>Pause</kbd> - Конверт линии.
@@ -134,6 +137,9 @@ Even selected text switches just between **selected** layouts, though if you lik
 
 **v1.3.0.0**<br/>
 - Added double hotkey ability(2x<kbd>Shift</kbd>, etc.).
+
+**v1.3.1.0**<br/>
+- Added ability to set transparent background for language tooltip.
 
 ### Hotkeys
 - <kbd>Pause</kbd> - Convert last input.

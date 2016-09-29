@@ -9,10 +9,19 @@ namespace Mahou
 		public LangDisplay()
 		{
 			InitializeComponent();
+			SetVisInvis();
 		}
 		public void ChangeLD(string to)
 		{
 			lbLang.Text = to;
+			if (MMain.MyConfs.ReadBool("TTipUI", "TransparentBack")) {
+				Invalidate();
+				Update();
+			}
+		}
+		public void SetVisInvis()
+		{
+			lbLang.Visible = !MMain.MyConfs.ReadBool("TTipUI", "TransparentBack");
 		}
 		public void ChangeColors(Color fore, Color back)
 		{
@@ -38,6 +47,14 @@ namespace Mahou
 				Params.ExStyle |= 0x80;
 				return Params;
 			}
+		}
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			if (MMain.MyConfs.ReadBool("TTipUI", "TransparentBack")) {
+				e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+				e.Graphics.DrawString(lbLang.Text, lbLang.Font, new SolidBrush(lbLang.ForeColor), 0, 0);		
+			}
+			base.OnPaint(e);
 		}
 		public void HideWnd()
 		{

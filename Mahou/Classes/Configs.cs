@@ -160,16 +160,19 @@ namespace Mahou
                 this.Write("TTipUI", "Height", "14"); //Lang Tooltip height
             
             if (!Int32.TryParse(this.Read("TTipUI", "Width"), out it))
-                this.Write("TTipUI", "Width", "15"); //Lang Tooltip width
+                this.Write("TTipUI", "Width", "16"); //Lang Tooltip width
             
             if (String.IsNullOrEmpty(this.Read("TTipUI", "Font")))
-                this.Write("TTipUI", "Font", "Segoe UI; 7pt"); //Lang Tooltip font & it size
+                this.Write("TTipUI", "Font", "Georgia; 8pt"); //Lang Tooltip font & it size
             
             if (!Int32.TryParse(this.Read("TTipUI", "xpos"), out it))
                 this.Write("TTipUI", "xpos", "8"); //Lang Tooltip x pos
             
             if (!Int32.TryParse(this.Read("TTipUI", "ypos"), out it))
-                this.Write("TTipUI", "ypos", "-8"); //Lang Tooltip y pos
+                this.Write("TTipUI", "ypos", "0"); //Lang Tooltip y pos
+            
+            if (!Boolean.TryParse(this.Read("TTipUI", "TransparentBack"), out bt))
+                this.Write("TTipUI", "TransparentBack", "false"); //Transparent Background in tooltip
             
             //DoubleKey section
             if (String.IsNullOrEmpty(this.Read("DoubleKey", "Use")))

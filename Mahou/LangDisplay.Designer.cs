@@ -36,7 +36,7 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Pink;
-			this.ClientSize = new System.Drawing.Size(15, 14);
+			this.ClientSize = new System.Drawing.Size(200, 200);
 			this.ControlBox = false;
 			this.Controls.Add(this.lbLang);
 			this.Cursor = System.Windows.Forms.Cursors.IBeam;
