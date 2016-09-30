@@ -7,6 +7,10 @@ namespace Mahou
 {
 	public partial class MahouForm : Form
 	{
+		#region DLL (dummy hotkey)
+		[DllImport("user32.dll")]
+		public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, int vk);
+		#endregion
 		#region Variables
 		// Hotkeys, HKC => HotKey Convert
 		public Hotkey Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine, HKSymIgn;
@@ -17,12 +21,12 @@ namespace Mahou
 		int tempCLKey, tempCSKey, tempCLineKey;
 		// Temporary locales
 		Locales.Locale tempLoc1 = new Locales.Locale { Lang = "dummy", uId = 0 },
-					   tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0	};
+			tempLoc2 = new Locales.Locale { Lang = "dummy", uId = 0	};
 		public TrayIcon icon;
 		public Update update = new Update();
 		public Timer ICheck = new Timer();
 		public LangDisplay langDisplay = new LangDisplay();
-		MoreConfigs moreConfigs = new MoreConfigs();
+		public MoreConfigs moreConfigs = new MoreConfigs();
 		#endregion
 		public MahouForm()
 		{
@@ -242,6 +246,9 @@ namespace Mahou
 			icon = new TrayIcon(MMain.MyConfs.ReadBool("Functions", "IconVisibility"));
 			icon.Exit += exitToolStripMenuItem_Click;
 			icon.ShowHide += showHideToolStripMenuItem_Click;
+			//↓ Dummy(none) hotkey, makes it possible wndproc to handle messages at startup
+			//↓ when form isn't was shown. 
+			RegisterHotKey(Handle, 0xffff^0xffff, 0, 0);
 			RefreshIconAll();
 			InitializeHotkeys();
 			//Background startup check for updates
@@ -552,7 +559,7 @@ namespace Mahou
 		}
 		public void IfNotExist()
 		{
-			if (!System.IO.File.Exists(System.IO.Path.Combine(Mahou.Update.nPath, "Mahou.ini"))) {
+			if (!System.IO.File.Exists(Configs.filePath)) {
 				MMain.MyConfs = new Configs();
 				tempRestore();
 			}

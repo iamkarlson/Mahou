@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-
+using System.IO;
 namespace Mahou
 {
 	public partial class MoreConfigs : Form
@@ -13,6 +13,7 @@ namespace Mahou
 		ColorDialog clrd = new ColorDialog();
 		FontDialog fntd = new FontDialog();
 		public FontConverter fcv = new FontConverter();
+		public string snipfile = Path.Combine(Mahou.Update.nPath, "snippets.txt");
 		#endregion
 		#region Button/Form/etc. events
 		public MoreConfigs()
@@ -36,7 +37,7 @@ namespace Mahou
 		}
 		void MoreConfigs_Activated(object sender, EventArgs e)
 		{
-            RefreshLanguage();
+			RefreshLanguage();
 		}
 		void btnOK_Click(object sender, EventArgs e)
 		{
@@ -63,7 +64,7 @@ namespace Mahou
 			if (fntd.ShowDialog() == DialogResult.OK)
 				btFont.Font = fntd.Font;
 		}
-		void cbUseLRC_CheckedChanged(object sender, EventArgs e)
+		void DisEnaOnCheckedChanged(object sender, EventArgs e)
 		{
 			DisEna();
 		}
@@ -95,10 +96,6 @@ namespace Mahou
 			DisEna();
 			RefreshLanguage();
 		}
-		void CbDoublePressCheckedChanged(object sender, EventArgs e)
-		{
-			DisEna();
-		}
 		#endregion
 		#region Functions
 		void Close(FormClosingEventArgs e) // Closes window without destruction
@@ -117,6 +114,7 @@ namespace Mahou
 				lbSize.Enabled = lbPosition.Enabled = nudTTWidth.Enabled = nudTTHeight.Enabled = nudXpos.Enabled = nudYpos.Enabled = cbDisplayLang.Checked;
 			lbDDelay.Enabled = nudDoubleDelay.Enabled = cbDoublePress.Checked;
 			btCol2.Enabled = !cbTrBLT.Checked;
+			tbSnippets.Enabled = cbUseSnippets.Checked;
 			MMain.mahou.RemoveAddCtrls();
 		}
 		void Save() // Saves configurations
@@ -136,12 +134,13 @@ namespace Mahou
 			MMain.MyConfs.Write("Functions", "DisplayLang", cbDisplayLang.Checked.ToString());
 			MMain.MyConfs.Write("Functions", "DLForeColor", ColorTranslator.ToHtml(btCol1.BackColor));
 			MMain.MyConfs.Write("Functions", "DLBackColor", ColorTranslator.ToHtml(btCol2.BackColor));
+			MMain.MyConfs.Write("Functions", "ExperimentalCSSwitch", cbExCSSwitch.Checked.ToString());
+			MMain.MyConfs.Write("Functions", "Snippets", cbUseSnippets.Checked.ToString());
 			MMain.MyConfs.Write("TTipUI", "Height", nudTTHeight.Value.ToString());
 			MMain.MyConfs.Write("TTipUI", "Width", nudTTWidth.Value.ToString());
 			MMain.MyConfs.Write("TTipUI", "Font", fcv.ConvertToString(btFont.Font));
 			MMain.MyConfs.Write("TTipUI", "xpos", nudXpos.Value.ToString());
 			MMain.MyConfs.Write("TTipUI", "ypos", nudYpos.Value.ToString());
-			MMain.MyConfs.Write("Functions", "ExperimentalCSSwitch", cbExCSSwitch.Checked.ToString());
 			MMain.MyConfs.Write("TTipUI", "TransparentBack", cbTrBLT.Checked.ToString());
 			MMain.mahou.langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLForeColor")),
 				ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLBackColor")));
@@ -150,6 +149,8 @@ namespace Mahou
 				MMain.MyConfs.ReadInt("TTipUI", "Width"));
 			MMain.MyConfs.Write("DoubleKey", "Delay", nudDoubleDelay.Value.ToString());
 			MMain.MyConfs.Write("DoubleKey", "Use", cbDoublePress.Checked.ToString());
+			File.WriteAllText(snipfile, tbSnippets.Text);
+			KMHook.ReInitSnippets();
 			MMain.mahou.langDisplay.SetVisInvis();
 			if (tmpSIKey != 0) {
 				if (tmpSIKey == MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey") && tmpSIMods == MMain.MyConfs.Read("Hotkeys", "HKCLMods")) {
@@ -200,15 +201,20 @@ namespace Mahou
 			cbDisplayLang.Checked = MMain.MyConfs.ReadBool("Functions", "DisplayLang");
 			btCol1.BackColor = ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLForeColor"));
 			btCol2.BackColor = ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLBackColor"));
+			cbExCSSwitch.Checked = MMain.MyConfs.ReadBool("Functions", "ExperimentalCSSwitch");
+			cbUseSnippets.Checked = MMain.MyConfs.ReadBool("Functions", "Snippets");
 			nudTTHeight.Value = MMain.MyConfs.ReadInt("TTipUI", "Height");
 			nudTTWidth.Value = MMain.MyConfs.ReadInt("TTipUI", "Width");
 			btFont.Font = (Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font"));
 			nudXpos.Value = MMain.MyConfs.ReadInt("TTipUI", "xpos");
 			nudYpos.Value = MMain.MyConfs.ReadInt("TTipUI", "ypos");
+			cbTrBLT.Checked = MMain.MyConfs.ReadBool("TTipUI", "TransparentBack");
 			nudDoubleDelay.Value = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
 			cbDoublePress.Checked = MMain.MyConfs.ReadBool("DoubleKey", "Use");
-			cbExCSSwitch.Checked = MMain.MyConfs.ReadBool("Functions", "ExperimentalCSSwitch");
-			cbTrBLT.Checked = MMain.MyConfs.ReadBool("TTipUI", "TransparentBack");
+			if (File.Exists(snipfile)) {
+				tbSnippets.Text = File.ReadAllText(snipfile);
+				KMHook.ReInitSnippets();
+			}
 		}
 		void tmpRestore() // Restores temporaries
 		{
@@ -249,6 +255,7 @@ namespace Mahou
 			lbDDelay.Text = MMain.UI[58];
 			cbExCSSwitch.Text = MMain.UI[59];
 			cbTrBLT.Text = MMain.UI[60];
+			cbUseSnippets.Text = MMain.UI[61];
 		}
 		#endregion
 		#region Tooltips
@@ -322,6 +329,11 @@ namespace Mahou
 		{
 			HelpTT.ToolTipTitle = cbTrBLT.Text;
 			HelpTT.Show(MMain.TTips[30], cbTrBLT);	
+		}
+		void CbUseSnippetsMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = cbUseSnippets.Text;
+			HelpTT.Show(MMain.TTips[31], cbUseSnippets);	
 		}
 		#endregion
 	}

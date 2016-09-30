@@ -60,6 +60,9 @@ Mahou работает совершенно по другому в отличи�
 **v1.3.1.0**<br/>
 - Добавлена возможность установки прозрачного фона для подсказки текущего языка.
 
+**v1.4.0.0**<br/>
+- Добавлена возможность установки сниппетов(автозамена слов на другие слова/куски текста).
+
 ### Горячие клавиши
 - <kbd>Pause</kbd> - Конверт последнего слова.
 - <kbd>Shift</kbd>+<kbd>Pause</kbd> - Конверт линии.
@@ -140,6 +143,9 @@ Even selected text switches just between **selected** layouts, though if you lik
 
 **v1.3.1.0**<br/>
 - Added ability to set transparent background for language tooltip.
+
+**v1.4.0.0**<br/>
+- Added feature "Snippets"(expand words to other words/text fragments).
 
 ### Hotkeys
 - <kbd>Pause</kbd> - Convert last input.

@@ -10,7 +10,7 @@ namespace Mahou
     class Configs
     {
         //Path where Mahou is now + Mahou.ini
-        readonly string filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mahou.ini");
+        public static readonly string filePath = Path.Combine(Update.nPath, "Mahou.ini");
         public Configs()//Initializes settings, if some of elements or settinhs file, not exists it creates them with default value
         {
             if (!File.Exists(filePath)) //Create an UTF-16 configuration file
@@ -115,6 +115,9 @@ namespace Mahou
 
             if (!Boolean.TryParse(this.Read("Functions", "ExperimentalCSSwitch"), out bt))
                 this.Write("Functions", "ExperimentalCSSwitch", "false");
+            
+            if (!Boolean.TryParse(this.Read("Functions", "Snippets"), out bt))
+                this.Write("Functions", "Snippets", "false");
 
             //EnabledHotkeys section
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))

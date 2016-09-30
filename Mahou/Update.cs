@@ -41,7 +41,7 @@ namespace Mahou
 //            	Console.WriteLine(i);
 //            }
 			try {
-	if (UpdInfo != null && UpdInfo[2].Substring(0,1) == "v") {
+				if (UpdInfo != null && UpdInfo[2].Substring(0, 1) == "v") {
 					SetUInfo();
 					btDMahou.Enabled |= flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2]);
 					if (fromStartup) {
@@ -200,7 +200,7 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 				tmr.Start();
 			} else {
 				if (flVersion("v" + Application.ProductVersion) <
-				                flVersion(UpdInfo[2])) {
+				    flVersion(UpdInfo[2])) {
 					lbChecking.Text = MMain.UI[33];
 					tmr.Start();
 					SetUInfo();
@@ -229,8 +229,8 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 				request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
 				var response = (HttpWebResponse)await Task.Factory
                     .FromAsync<WebResponse>(request.BeginGetResponse,
-					                           request.EndGetResponse,
-					                           null);
+					               request.EndGetResponse,
+					               null);
 				//Console.WriteLine(response.StatusCode)
 				if (response.StatusCode == HttpStatusCode.OK) {
 					var data = new StreamReader(response.GetResponseStream(), true).ReadToEnd();
@@ -239,14 +239,14 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 					// I'm not kidding...
 					// They really works :)
 					var Title = Regex.Match(data,
-						                           "<h1 class=\"release-title\">\n.*<a href=\".*\">(.*)</a>").Groups[1].Value;
+						            "<h1 class=\"release-title\">\n.*<a href=\".*\">(.*)</a>").Groups[1].Value;
 					var Description = Regex.Replace(Regex.Match(data,
                                                 //These ↓↓↓↓↓↓↓↓ &&&  ↓↓↓↓↓↓ spaces looks unsafe, but really they works!
-						                                 "<div class=\"markdown-body\">\n        (.*)\n      </div>",
-						                                 RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, "<[^>]*>", "");
+						                  "<div class=\"markdown-body\">\n        (.*)\n      </div>",
+						                  RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, "<[^>]*>", "");
 					var Version = Regex.Match(data, "<span class=\"css-truncate-target\">(.*)</span>").Groups[1].Value;
 					var Link = "https://github.com" + Regex.Match(data,
-						                          "<ul class=\"release-downloads\">\n.*<li>\n.+href=\"(/.*\\.\\w{3})").Groups[1].Value;
+						           "<ul class=\"release-downloads\">\n.*<li>\n.+href=\"(/.*\\.\\w{3})").Groups[1].Value;
 					Info.Add(Title);
 					Info.Add(Regex.Replace(Description, "\n", "\r\n")); // Regex needed to properly display new lines.
 					Info.Add(Version);
@@ -288,16 +288,14 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 			await GetUpdateInfo();
 			try {
 				if (flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2])) {
-					MMain.mahou.Invoke((MethodInvoker)delegate {
-						if (MessageBox.Show(new Form() { TopMost = true },
-							    UpdInfo[0] + '\n' + UpdInfo[1], "Mahou - " + MMain.UI[33],
-							    MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK) {
-							MMain.mahou.update.StartPosition = FormStartPosition.CenterScreen;
-							fromStartup = true;
-							MMain.mahou.update.ShowDialog();
-							MMain.mahou.update.StartPosition = FormStartPosition.CenterParent;
-						}
-					});
+					if (MessageBox.Show(new Form() { TopMost = true },
+						     UpdInfo[0] + '\n' + UpdInfo[1], "Mahou - " + MMain.UI[33],
+						     MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK) {
+						MMain.mahou.update.StartPosition = FormStartPosition.CenterScreen;
+						fromStartup = true;
+						MMain.mahou.update.ShowDialog();
+						MMain.mahou.update.StartPosition = FormStartPosition.CenterParent;
+					}
 				}
 			} catch {
 			}

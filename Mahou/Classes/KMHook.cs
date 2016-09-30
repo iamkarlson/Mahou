@@ -34,8 +34,14 @@ namespace Mahou
 			shiftRP, ctrlRP, altRP, //RP = Re-Press
 			awas, swas, cwas, afterEOS, //*was = alt/shift/ctrl was
 			keyAfterCTRL, hklOK, hksOK, hklineOK, hkSIOK, hotkeywithmodsfired, csdoing;
+		static List<char> c_snip = new List<char>();
 		public static System.Windows.Forms.Timer doublekey = new System.Windows.Forms.Timer();
 		public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
+		public static string[] snipps = new []{ "mahou", "eml" };
+		public static string[] exps = new [] {
+			"Mahou (魔法) - Magical layout switcher.",
+			"BladeMight@gmail.com"
+		};
 		#endregion
 		#region Keyboard & Mouse hooks events
 		public static IntPtr SetHook(LowLevelProc proc)
@@ -177,6 +183,48 @@ namespace Mahou
 			if (thishk.Equals(MMain.mahou.ExitHk) && wParam == (IntPtr)(int)KMMessages.WM_KEYUP)
 				MMain.mahou.ExitProgram();
 			#endregion
+			#region Snippets
+			if (MMain.MyConfs.ReadBool("Functions", "Snippets")) {
+				if (((Key >= Keys.D0 && Key <= Keys.Z) || // This is 0-9 & A-Z
+				    Key >= Keys.Oem1 && Key <= Keys.OemBackslash // All other printables
+				    ) && !self && !win && !alt && !ctrl && wParam == (IntPtr)(int)KMMessages.WM_KEYUP) {
+					var stb = new StringBuilder(10);
+					var by = new byte[256];
+					if (shift) {
+						by[(int)Keys.ShiftKey] = 0xFF;
+					}
+					ToUnicodeEx((uint)vkCode, (uint)vkCode, by, stb, stb.Capacity, 0, (IntPtr)Locales.GetCurrentLocale());
+//				Console.WriteLine(stb.ToString()[0]);
+					c_snip.Add(stb.ToString()[0]);
+				}
+				if (wParam == (IntPtr)(int)KMMessages.WM_KEYUP && Key == Keys.Space) {
+					var snip = "";
+					foreach (var ch in c_snip) {
+						snip += ch;
+					}
+//				Console.WriteLine(snip);
+					for (int i = 0; i < snipps.Length; i++) {
+//					Console.WriteLine("!Current is = " + snipps[i]);
+						if (snip == snipps[i]) {
+//						Console.WriteLine("ITISEQ!");
+//							Console.WriteLine(c_snip.Count);
+							self = true;
+							for (int e = -1; e < c_snip.Count; e++) {
+								KInputs.MakeInput(new [] { KInputs.AddKey(Keys.Back, true),
+									KInputs.AddKey(Keys.Back, false) 
+								});
+							}
+//							Console.WriteLine(exps[0]);
+//							Console.WriteLine(snipps.Length);
+//							Console.WriteLine(exps.Length);
+							KInputs.MakeInput(KInputs.AddString(exps[i]));
+							self = false;
+						}
+					}
+					c_snip.Clear();
+				}
+			}
+			#endregion
 			#region Release Re-Pressed keys
 			if (hotkeywithmodsfired && wParam == (IntPtr)(int)KMMessages.WM_KEYUP && !self &&
 			    (Key == Keys.LShiftKey || Key == Keys.LMenu || Key == Keys.LControlKey)) {
@@ -262,14 +310,22 @@ namespace Mahou
 					if (MMain.c_line.Count != 0) {
 						MMain.c_line.RemoveAt(MMain.c_line.Count - 1);
 					}
+					if (MMain.MyConfs.ReadBool("Functions", "Snippets")) {
+						if (c_snip.Count != 0) {
+							c_snip.RemoveAt(c_snip.Count - 1);
+						}
+					}
 				}
-				//Pressing any of these Keys will empty current word
+				//Pressing any of these Keys will empty current word, and snippet
 				if (Key == Keys.Enter || Key == Keys.Home || Key == Keys.End ||
 				    Key == Keys.Tab || Key == Keys.PageDown || Key == Keys.PageUp ||
 				    Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up ||
-				    (win && Key == Keys.Back)) { //Any modifier + Back will clear word too
+				    (ctrl && Key == Keys.Back)) { //Ctrl modifier + Back will clear word too
 					MMain.c_word.Clear();
 					MMain.c_line.Clear();
+					if (MMain.MyConfs.ReadBool("Functions", "Snippets")) {
+						c_snip.Clear();
+					}
 				}
 				if (Key == Keys.Space && !self) {
 					if (MMain.MyConfs.ReadBool("Functions", "EatOneSpace") && MMain.c_word.Count != 0 &&
@@ -337,6 +393,9 @@ namespace Mahou
 				if ((KMMessages.WM_LBUTTONDOWN == (KMMessages)(int)wParam) || KMMessages.WM_RBUTTONDOWN == (KMMessages)(int)wParam) {
 					MMain.c_word.Clear();
 					MMain.c_line.Clear();
+					if (MMain.MyConfs.ReadBool("Functions", "Snippets")) {
+						c_snip.Clear();
+					}
 				}
 			}
 			return CallNextHookEx(MMain._mouse_hookID, nCode, wParam, lParam);
@@ -747,6 +806,32 @@ namespace Mahou
 					break;
 			}
 			SendModsUp(mods);
+		}
+		public static void ReInitSnippets()
+		{
+			if (System.IO.File.Exists(MMain.mahou.moreConfigs.snipfile)) {
+				var snippets = System.IO.File.ReadAllText(MMain.mahou.moreConfigs.snipfile);
+				var snili = new List<string>();
+				var expli = new List<string>();
+				var rx = new Regex("->(.*)");
+				foreach (Match rema in rx.Matches(snippets)) {
+					var noN = Regex.Replace(rema.Groups[1].Value, "(\n|\r)", "");
+//					Console.WriteLine(noN);
+					snili.Add(noN);
+				}
+				var rxex = new Regex(@"====>(\r\n|\r|\n)(.*?)(\r\n|\r|\n)<====", RegexOptions.Singleline);
+				foreach (Match rema in rxex.Matches(snippets)) {
+					var noRN = Regex.Replace(rema.Groups[2].Value, "\r", "");
+//					Console.WriteLine(noRN);
+					expli.Add(noRN);
+				}
+				snipps = snili.ToArray();
+//				Console.WriteLine(snipps[0]);
+//				Console.WriteLine(snili.ToArray()[0]);
+				exps = expli.ToArray();
+//				Console.WriteLine(exps[0]);
+//				Console.WriteLine(expli.ToArray()[0]);
+			}
 		}
 		public struct YuKey // YuKey is struct of key and it state(upper/lower) AND if it is Alt+[NumPad]
 		{

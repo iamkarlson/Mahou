@@ -59,6 +59,8 @@
         	this.lbX = new System.Windows.Forms.Label();
         	this.lbPosition = new System.Windows.Forms.Label();
         	this.pEMore = new System.Windows.Forms.Panel();
+        	this.cbUseSnippets = new System.Windows.Forms.CheckBox();
+        	this.tbSnippets = new System.Windows.Forms.TextBox();
         	this.cbTrBLT = new System.Windows.Forms.CheckBox();
         	this.cbExCSSwitch = new System.Windows.Forms.CheckBox();
         	this.lbDDelay = new System.Windows.Forms.Label();
@@ -84,7 +86,7 @@
         	this.cbUseLRC.TabIndex = 0;
         	this.cbUseLRC.Text = "Use specific layout changing by Left/Right CTRLS";
         	this.cbUseLRC.UseVisualStyleBackColor = true;
-        	this.cbUseLRC.CheckedChanged += new System.EventHandler(this.cbUseLRC_CheckedChanged);
+        	this.cbUseLRC.CheckedChanged += new System.EventHandler(this.DisEnaOnCheckedChanged);
         	this.cbUseLRC.MouseHover += new System.EventHandler(this.cbUseLRC_MouseHover);
         	// 
         	// btnOK
@@ -169,6 +171,7 @@
         	this.cbSymIgn.TabIndex = 8;
         	this.cbSymIgn.Text = "Symbol Ignore:";
         	this.cbSymIgn.UseVisualStyleBackColor = true;
+        	this.cbSymIgn.CheckedChanged += new System.EventHandler(this.DisEnaOnCheckedChanged);
         	this.cbSymIgn.MouseHover += new System.EventHandler(this.cbSymIgn_MouseHover);
         	// 
         	// cbMoreTries
@@ -198,7 +201,7 @@
         	this.cbDisplayLang.TabIndex = 11;
         	this.cbDisplayLang.Text = "Display language:";
         	this.cbDisplayLang.UseVisualStyleBackColor = true;
-        	this.cbDisplayLang.CheckedChanged += new System.EventHandler(this.cbUseLRC_CheckedChanged);
+        	this.cbDisplayLang.CheckedChanged += new System.EventHandler(this.DisEnaOnCheckedChanged);
         	this.cbDisplayLang.MouseHover += new System.EventHandler(this.CbDisplayLangMouseHover);
         	// 
         	// nudRefreshRate
@@ -343,6 +346,8 @@
         	// pEMore
         	// 
         	this.pEMore.AutoSize = true;
+        	this.pEMore.Controls.Add(this.cbUseSnippets);
+        	this.pEMore.Controls.Add(this.tbSnippets);
         	this.pEMore.Controls.Add(this.cbTrBLT);
         	this.pEMore.Controls.Add(this.cbExCSSwitch);
         	this.pEMore.Controls.Add(this.lbDDelay);
@@ -354,6 +359,31 @@
         	this.pEMore.Size = new System.Drawing.Size(279, 269);
         	this.pEMore.TabIndex = 28;
         	this.pEMore.Visible = false;
+        	// 
+        	// cbUseSnippets
+        	// 
+        	this.cbUseSnippets.AutoSize = true;
+        	this.cbUseSnippets.Location = new System.Drawing.Point(10, 81);
+        	this.cbUseSnippets.Name = "cbUseSnippets";
+        	this.cbUseSnippets.Size = new System.Drawing.Size(87, 17);
+        	this.cbUseSnippets.TabIndex = 34;
+        	this.cbUseSnippets.Text = "Use snippets";
+        	this.cbUseSnippets.UseVisualStyleBackColor = true;
+        	this.cbUseSnippets.CheckedChanged += new System.EventHandler(this.DisEnaOnCheckedChanged);
+        	this.cbUseSnippets.MouseHover += new System.EventHandler(this.CbUseSnippetsMouseHover);
+        	// 
+        	// tbSnippets
+        	// 
+        	this.tbSnippets.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+        	this.tbSnippets.Location = new System.Drawing.Point(10, 104);
+        	this.tbSnippets.Multiline = true;
+        	this.tbSnippets.Name = "tbSnippets";
+        	this.tbSnippets.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+        	this.tbSnippets.Size = new System.Drawing.Size(258, 121);
+        	this.tbSnippets.TabIndex = 33;
+        	this.tbSnippets.Text = "->mahou\r\n====>\r\nMahou (魔法) - Magical layout switcher.\r\n<====\r\n->eml\r\n====>\r\nBlade" +
+	"Might@gmail.com\r\n<====";
+        	this.tbSnippets.WordWrap = false;
         	// 
         	// cbTrBLT
         	// 
@@ -413,7 +443,7 @@
         	this.cbDoublePress.TabIndex = 0;
         	this.cbDoublePress.Text = "Double hotkeys:";
         	this.cbDoublePress.UseVisualStyleBackColor = true;
-        	this.cbDoublePress.CheckedChanged += new System.EventHandler(this.CbDoublePressCheckedChanged);
+        	this.cbDoublePress.CheckedChanged += new System.EventHandler(this.DisEnaOnCheckedChanged);
         	this.cbDoublePress.MouseHover += new System.EventHandler(this.CbDoublePressMouseHover);
         	// 
         	// btnEMore
@@ -521,5 +551,7 @@
         private System.Windows.Forms.Label lbDDelay;
         private System.Windows.Forms.CheckBox cbExCSSwitch;
         private System.Windows.Forms.CheckBox cbTrBLT;
+        public System.Windows.Forms.TextBox tbSnippets;
+        private System.Windows.Forms.CheckBox cbUseSnippets;
     }
 }
