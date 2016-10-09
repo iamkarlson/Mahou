@@ -381,8 +381,8 @@
         	this.tbSnippets.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
         	this.tbSnippets.Size = new System.Drawing.Size(258, 121);
         	this.tbSnippets.TabIndex = 33;
-        	this.tbSnippets.Text = "->mahou\r\n====>\r\nMahou (魔法) - Magical layout switcher.\r\n<====\r\n->eml\r\n====>\r\nBlade" +
-	"Might@gmail.com\r\n<====";
+        	this.tbSnippets.Text = "->mahou\r\n====>\r\nMahou (魔法) - Magical layout switcher.\r\n<====\r\n->eml\r\n====>BladeMi" +
+	"ght@gmail.com<====\r\n";
         	this.tbSnippets.WordWrap = false;
         	// 
         	// cbTrBLT

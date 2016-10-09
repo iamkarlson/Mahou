@@ -819,9 +819,9 @@ namespace Mahou
 //					Console.WriteLine(noN);
 					snili.Add(noN);
 				}
-				var rxex = new Regex(@"====>(\r\n|\r|\n)(.*?)(\r\n|\r|\n)<====", RegexOptions.Singleline);
+				var rxex = new Regex(@"(?<=====>)(.*?)(?=<====)", RegexOptions.Singleline);
 				foreach (Match rema in rxex.Matches(snippets)) {
-					var noRN = Regex.Replace(rema.Groups[2].Value, "\r", "");
+					var noRN = Regex.Replace(rema.Groups[1].Value, "\r", "");
 //					Console.WriteLine(noRN);
 					expli.Add(noRN);
 				}
