@@ -32,7 +32,7 @@ namespace Mahou
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
           /*52-58*/"Font","Size:","Position:", "More", "Back","Double hotkey:","Delay:",
   	      /*59-60*/"Experimental CS-Switch+","Transparent background in language tooltip",
-  	      /*61*/"Use snippets"};
+  	      /*61-62*/"Use snippets", "On change"};
         public static string[] ToolTipsEN = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"While this option enabled, [Convert word] and [Convert line] and [Convert selection with \"CS-Switch\" enabled]\n"+
@@ -71,7 +71,8 @@ namespace Mahou
           /*28*/"Time to wait second hotkey press(ms)", 
           /*29*/"Combines some abilities of Convert selection with enabled CS-Switch and when it disabled.(Enable CS-Switch for it to work)\nIt can:\n1.Conversion from multiple languages at once.\n2.Ignore symbols feature work in it.\n3.Auto get language of text(not all symbols(the ones that exist in both layouts) can be rightly recognized if wrong layout selected from begin)\n4.Ability to convert symbols that exist in both layouts different if change layout before conversion.",
           /*30*/"Makes background of language tooltip transparent.\nDon't forget to change text color.(because \"White\" is default)\nSome fonts may look bad, try changing to another.(\"Georgia\" or \"Palatino Linotype\" is recommend)",
-          /*31*/"If this enabled, pressing Space will expand small (which starts with \"->\") word, to big (which is between \"====>\" and \"<====\") word/text fragment."};
+          /*31*/"If this enabled, pressing Space will expand small (which starts with \"->\") word, to big (which is between \"====>\" and \"<====\") word/text fragment.",
+          /*32*/"Display language tooltip only on layout change.\nTime of displaying is 7x[Refresh rate]."};
         public static string[] MessagesEN = new string[] {
           /*0-1*/"Mahou successfully updated!", "Update complete!",
           /*002*/"Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\n"+
@@ -110,7 +111,7 @@ namespace Mahou
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
           /*52-58*/"Шрифт","Размер:","Позиция:", "Еще", "Назад", "Двойные гор. клавиши:", "Ожидание:",
   	      /*59*/"Экспериментальный КВ-Ключ+","Прозрачный фон в подсказке языка",
-  	      /*61*/"Использовать сниппеты" };
+  	      /*61-62*/"Использовать сниппеты","При смене" };
         public static string[] ToolTipsRU = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"Пока включена, [Конверт слова] and [Конверт линии] and [Конверт выделения с \"КВ-Ключ\" включенной]\n"+
@@ -148,7 +149,8 @@ namespace Mahou
           /*28*/"Время ожидания второго нажатия(мс)",
           /*29*/"Совмещает некоторые возможности Конверт выделения с КВ-Ключ включенным и когда выключен.(Для работы включите КВ-Ключ)\nВозможности:\n1.Конвертирование из разных языков за 1 конверт.\n2.Игнор. символов работает здесь.\n3.Авто-распознование языка текста(не все символы(те которые есть в обеих раскладках) могут быть распознаны правильно если выбран неправильный язык изначально)\n4.Возможность конвертирование символов которые есть в обеих раскладках по разному если менять язык перед конвертацией.",
           /*30*/"Делает фон подсказки языка прозрачным.\nНе забудьте поменять цвет текста.(т.к. \"Белый\" по умолчанию)\nНекоторые шрифты могут выглядеть не очень, попробуйте поменять шрифт.(\"Georgia\" или \"Palatino Linotype\" рекоммендуется)",
-          /*31*/"Если включено, нажатие Space превратит маленькое (то что начинается с \"->\") слово, в большое(то что между \"====>\" и \"<====\") слово/кусок текста."};
+          /*31*/"Если включено, нажатие Space превратит маленькое (то что начинается с \"->\") слово, в большое(то что между \"====>\" и \"<====\") слово/кусок текста.",
+          /*32*/"Показывает подсказку только при смене языка.\nВремя отображения = 7x[Скор. обнов.]."};
         public static string[] MessagesRU = new string[] {
           /*0-1*/"Mahou успешно обновлен!", "Обновление завершено!",
           /*002*/"Нажмите Pause(по умолчанию) для конвертации последнего введенного слова.\nНажмите Scroll(по умолчанию) пока выделенный текс в фокусе чтобы конвертивровать его.\nНажмите Shift+Pause(по умолчанию) для конвертации последней введенной линии.\n"+

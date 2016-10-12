@@ -13,7 +13,7 @@ namespace Mahou
 	class KMHook // Keyboard & Mouse Hook
 	{
 		#region Variables
-		public enum KMMessages // Keyboard & Mouse Messages
+		public enum KMMessages // KMMessages Values
 		{
 			WM_LBUTTONDOWN = 0x0201,
 			WM_LBUTTONUP = 0x0202,
@@ -44,20 +44,12 @@ namespace Mahou
 		};
 		#endregion
 		#region Keyboard & Mouse hooks events
-		public static IntPtr SetHook(LowLevelProc proc)
+		public static IntPtr SetHook(LowLevelProc proc, int type)
 		{
 			using (Process currProcess = Process.GetCurrentProcess())
 			using (ProcessModule currModule = currProcess.MainModule) {
-				return SetWindowsHookEx((int)KMMessages.WH_KEYBOARD_LL, proc,
-					GetModuleHandle(currModule.ModuleName), 0);
-			}
-		}
-		public static IntPtr SetMouseHook(LowLevelProc proc)
-		{
-			using (Process curProcess = Process.GetCurrentProcess())
-			using (ProcessModule curModule = curProcess.MainModule) {
-				return SetWindowsHookEx((int)KMMessages.WH_MOUSE_LL, proc,
-					GetModuleHandle(curModule.ModuleName), 0);
+				return SetWindowsHookEx(type, proc,
+					GetModuleHandle(currModule.ModuleName), 0);		
 			}
 		}
 		public static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
@@ -841,9 +833,9 @@ namespace Mahou
 		}
 		#endregion
 		#region DLL imports
-		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
 		public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
-
+		
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern IntPtr SetWindowsHookEx(int idHook,
 			LowLevelProc lpfn, IntPtr hMod, uint dwThreadId);

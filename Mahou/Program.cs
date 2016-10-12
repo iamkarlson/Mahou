@@ -83,8 +83,8 @@ namespace Mahou
 			if (!CheckHook()) {
 				return;
 			}
-			_mouse_hookID = KMHook.SetMouseHook(_mouse_proc);
-			_hookID = KMHook.SetHook(_proc);
+			_mouse_hookID = KMHook.SetHook(_mouse_proc, (int)KMHook.KMMessages.WH_MOUSE_LL);
+			_hookID = KMHook.SetHook(_proc, (int)KMHook.KMMessages.WH_KEYBOARD_LL);
 			Thread.Sleep(10); //Give some time for it to apply
 		}
 		public static void StopHook()
@@ -94,8 +94,7 @@ namespace Mahou
 			}
 			KMHook.UnhookWindowsHookEx(_hookID);
 			KMHook.UnhookWindowsHookEx(_mouse_hookID);
-			_hookID = IntPtr.Zero;
-			_mouse_hookID = IntPtr.Zero;
+			_hookID = _mouse_hookID = IntPtr.Zero;
 			Thread.Sleep(10); //Give some time for it to apply
 		}
 		public static bool CheckHook()

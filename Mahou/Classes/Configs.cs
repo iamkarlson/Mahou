@@ -118,6 +118,9 @@ namespace Mahou
             
             if (!Boolean.TryParse(this.Read("Functions", "Snippets"), out bt))
                 this.Write("Functions", "Snippets", "false");
+            
+            if (!Boolean.TryParse(this.Read("Functions", "DTTOnChange"), out bt))
+                this.Write("Functions", "DTTOnChange", "false");
 
             //EnabledHotkeys section
             if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))

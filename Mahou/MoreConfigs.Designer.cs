@@ -67,6 +67,7 @@
         	this.nudDoubleDelay = new System.Windows.Forms.NumericUpDown();
         	this.cbDoublePress = new System.Windows.Forms.CheckBox();
         	this.btnEMore = new System.Windows.Forms.Button();
+        	this.cbOnChange = new System.Windows.Forms.CheckBox();
         	((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudRefreshRate)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudTTWidth)).BeginInit();
@@ -207,14 +208,24 @@
         	// nudRefreshRate
         	// 
         	this.nudRefreshRate.Location = new System.Drawing.Point(214, 124);
+        	this.nudRefreshRate.Minimum = new decimal(new int[] {
+			1,
+			0,
+			0,
+			0});
         	this.nudRefreshRate.Name = "nudRefreshRate";
         	this.nudRefreshRate.Size = new System.Drawing.Size(54, 20);
         	this.nudRefreshRate.TabIndex = 12;
+        	this.nudRefreshRate.Value = new decimal(new int[] {
+			1,
+			0,
+			0,
+			0});
         	// 
         	// lblRefRate
         	// 
         	this.lblRefRate.AutoSize = true;
-        	this.lblRefRate.Location = new System.Drawing.Point(114, 126);
+        	this.lblRefRate.Location = new System.Drawing.Point(116, 126);
         	this.lblRefRate.Name = "lblRefRate";
         	this.lblRefRate.Size = new System.Drawing.Size(87, 13);
         	this.lblRefRate.TabIndex = 13;
@@ -456,6 +467,17 @@
         	this.btnEMore.UseVisualStyleBackColor = true;
         	this.btnEMore.Click += new System.EventHandler(this.BtnEMoreClick);
         	// 
+        	// cbOnChange
+        	// 
+        	this.cbOnChange.AutoSize = true;
+        	this.cbOnChange.Location = new System.Drawing.Point(10, 148);
+        	this.cbOnChange.Name = "cbOnChange";
+        	this.cbOnChange.Size = new System.Drawing.Size(79, 17);
+        	this.cbOnChange.TabIndex = 30;
+        	this.cbOnChange.Text = "On change";
+        	this.cbOnChange.UseVisualStyleBackColor = true;
+        	this.cbOnChange.MouseHover += new System.EventHandler(this.CbOnChangeMouseHover);
+        	// 
         	// MoreConfigs
         	// 
         	this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -491,6 +513,7 @@
         	this.Controls.Add(this.lbRCto);
         	this.Controls.Add(this.lbLCto);
         	this.Controls.Add(this.cbUseLRC);
+        	this.Controls.Add(this.cbOnChange);
         	this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
         	this.MaximizeBox = false;
         	this.MinimizeBox = false;
@@ -553,5 +576,6 @@
         private System.Windows.Forms.CheckBox cbTrBLT;
         public System.Windows.Forms.TextBox tbSnippets;
         private System.Windows.Forms.CheckBox cbUseSnippets;
+        private System.Windows.Forms.CheckBox cbOnChange;
     }
 }

@@ -27,201 +27,39 @@ namespace Mahou
 		public Timer ICheck = new Timer();
 		public LangDisplay langDisplay = new LangDisplay();
 		public MoreConfigs moreConfigs = new MoreConfigs();
+		uint latestL = 0;
+		bool onepass = true;
+		public Timer res = new Timer();
 		#endregion
 		public MahouForm()
 		{
 			InitializeComponent();
+			res.Tick += (_, __) => {
+//				Console.WriteLine("hiding");
+				onepass = true;
+				langDisplay.HideWnd();
+				res.Stop();
+			};
+			res.Interval = ICheck.Interval * 4;
 			ICheck.Tick += (_, __) => {
-				if (ICheckings.IsICursor())
-					langDisplay.ShowInactiveTopmost();
-				else
-					langDisplay.HideWnd();
+				if (MMain.MyConfs.ReadBool("Functions", "DTTOnChange")) {
+					if (onepass) {
+						latestL = Locales.GetCurrentLocale();
+						onepass = false;
+					}
+					if (latestL != Locales.GetCurrentLocale()) {
+						langDisplay.ShowInactiveTopmost();
+						res.Start();
+					}
+				} else {
+					if (ICheckings.IsICursor())
+						langDisplay.ShowInactiveTopmost();
+					else
+						langDisplay.HideWnd();
+				}
 				langDisplay.Location = new Point(Cursor.Position.X + MMain.MyConfs.ReadInt("TTipUI", "xpos"),
 					Cursor.Position.Y + MMain.MyConfs.ReadInt("TTipUI", "ypos"));
-				switch (Locales.GetCurrentLocale()) {
-					case 1025:
-					case 1067:
-					case 2049:
-					case 3073:
-					case 4097:
-					case 5121:
-					case 6145:
-					case 7169:
-					case 8193:
-					case 9217:
-					case 10241:
-					case 11265:
-					case 12289:
-					case 13313:
-					case 14337:
-					case 15361:
-						langDisplay.ChangeLD("Ar");
-						break;
-					case 1026:
-						langDisplay.ChangeLD("Bu");
-						break;
-					case 1028:
-					case 2052:
-					case 3076:
-					case 4100:
-					case 5124:
-						langDisplay.ChangeLD("Ch");
-						break;
-					case 1029:
-						langDisplay.ChangeLD("Cz");
-						break;
-					case 1030:
-						langDisplay.ChangeLD("Da");
-						break;
-					case 1031:
-					case 5127:
-					case 3079:
-					case 4103:
-					case 2055:
-						langDisplay.ChangeLD("De");
-						break;
-					case 1032:
-						langDisplay.ChangeLD("Gr");
-						break;
-					case 1033:
-					case 2057:
-					case 3081:
-					case 4105:
-					case 5129:
-					case 7177:
-						langDisplay.ChangeLD("En");
-						break;
-					case 1034:
-					case 3082:
-						langDisplay.ChangeLD("Sp");
-						break;
-					case 1035:
-						langDisplay.ChangeLD("Fi");
-						break;
-					case 1036:
-					case 5132:
-						langDisplay.ChangeLD("Fr");
-						break;
-					case 1037:
-						langDisplay.ChangeLD("He");
-						break;
-					case 1038:
-						langDisplay.ChangeLD("Hu");
-						break;
-					case 1039:
-						langDisplay.ChangeLD("Ic");
-						break;
-					case 1040:
-					case 2064:
-						langDisplay.ChangeLD("It");
-						break;
-					case 1041:
-						langDisplay.ChangeLD("Jp");
-						break;
-					case 1042:
-						langDisplay.ChangeLD("Ko");
-						break;
-					case 1043:
-						langDisplay.ChangeLD("Du");
-						break;
-					case 1044:
-					case 2068:
-						langDisplay.ChangeLD("No");
-						break;
-					case 1045:
-					case 1046:
-					case 2070:
-						langDisplay.ChangeLD("Po");
-						break;
-					case 1047:
-						langDisplay.ChangeLD("Rr");
-						break;
-					case 1048:
-					case 2072:
-						langDisplay.ChangeLD("Ro");
-						break;
-					case 1049:
-					case 2073:
-						langDisplay.ChangeLD("Ru");
-						break;
-					case 1050:
-					case 4122:
-						langDisplay.ChangeLD("Cr");
-						break;
-					case 1051:
-					case 1060:
-						langDisplay.ChangeLD("Sl");
-						break;
-					case 1052:
-					case 1156:
-						langDisplay.ChangeLD("Al");
-						break;
-					case 1053:
-					case 2077:
-						langDisplay.ChangeLD("Sw");
-						break;
-					case 1054:
-						langDisplay.ChangeLD("Th");
-						break;
-					case 1055:
-					case 1090:
-						langDisplay.ChangeLD("Tu");
-						break;
-					case 1056:
-					case 2080:
-						langDisplay.ChangeLD("Ur");
-						break;
-					case 1057:
-					case 1117:
-						langDisplay.ChangeLD("In");
-						break;
-					case 1058:
-						langDisplay.ChangeLD("Ua");
-						break;
-					case 1059:
-					case 1093:
-					case 2117:
-						langDisplay.ChangeLD("Be");
-						break;
-					case 1061:
-						langDisplay.ChangeLD("Es");
-						break;
-					case 1062:
-					case 1142:
-						langDisplay.ChangeLD("La");
-						break;
-					case 1063:
-						langDisplay.ChangeLD("Li");
-						break;						
-					case 1064:
-					case 1092:
-					case 1097:
-						langDisplay.ChangeLD("Ta");
-						break;
-					case 1065:
-						langDisplay.ChangeLD("Fa");
-						break;
-					case 1066:
-						langDisplay.ChangeLD("Vi");
-						break;
-					case 1068:
-					case 2092:
-						langDisplay.ChangeLD("Az");
-						break;	
-					case 1069:
-					case 1133:
-						langDisplay.ChangeLD("Ba");
-						break;					
-					case 1091:
-					case 2115:
-						langDisplay.ChangeLD("Uz");
-						break;
-					case 2074:
-					case 3098:
-						langDisplay.ChangeLD("Se");
-						break;
-						
-				}
+				langDisplay.RefreshLang();
 			};			
 			KMHook.doublekey.Tick += (_, __) => {
 				if (KMHook.hklOK)
@@ -248,7 +86,7 @@ namespace Mahou
 			icon.ShowHide += showHideToolStripMenuItem_Click;
 			//↓ Dummy(none) hotkey, makes it possible wndproc to handle messages at startup
 			//↓ when form isn't was shown. 
-			RegisterHotKey(Handle, 0xffff^0xffff, 0, 0);
+			RegisterHotKey(Handle, 0xffff ^ 0xffff, 0, 0);
 			RefreshIconAll();
 			InitializeHotkeys();
 			//Background startup check for updates

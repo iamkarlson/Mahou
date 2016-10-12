@@ -110,7 +110,7 @@ namespace Mahou
 		{
 			MMain.mahou.IfNotExist();
 			lbLCto.Enabled = lbRCto.Enabled = cbLCLocalesList.Enabled = cbRCLocalesList.Enabled = cbUseLRC.Checked;
-			nudRefreshRate.Enabled = lblRefRate.Enabled = lbColors.Enabled = btCol1.Enabled = btCol2.Enabled = btFont.Enabled =
+			nudRefreshRate.Enabled = cbOnChange.Enabled = lblRefRate.Enabled = lbColors.Enabled = btCol1.Enabled = btCol2.Enabled = btFont.Enabled =
 				lbSize.Enabled = lbPosition.Enabled = nudTTWidth.Enabled = nudTTHeight.Enabled = nudXpos.Enabled = nudYpos.Enabled = cbDisplayLang.Checked;
 			lbDDelay.Enabled = nudDoubleDelay.Enabled = cbDoublePress.Checked;
 			btCol2.Enabled = !cbTrBLT.Checked;
@@ -142,6 +142,7 @@ namespace Mahou
 			MMain.MyConfs.Write("TTipUI", "xpos", nudXpos.Value.ToString());
 			MMain.MyConfs.Write("TTipUI", "ypos", nudYpos.Value.ToString());
 			MMain.MyConfs.Write("TTipUI", "TransparentBack", cbTrBLT.Checked.ToString());
+			MMain.MyConfs.Write("Functions", "DTTOnChange", cbOnChange.Checked.ToString());
 			MMain.mahou.langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLForeColor")),
 				ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLBackColor")));
 			MMain.mahou.langDisplay.ChangeSizes((Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font")), 
@@ -175,6 +176,8 @@ namespace Mahou
 				MMain.mahou.ICheck.Start();
 			else
 				MMain.mahou.ICheck.Stop();
+			MMain.mahou.ICheck.Interval = Convert.ToInt32(nudRefreshRate.Value);
+			MMain.mahou.res.Interval = Convert.ToInt32(nudRefreshRate.Value) * 7;
 			MMain.mahou.RefreshIconAll();
 			MMain.mahou.InitializeHotkeys();
 
@@ -211,6 +214,7 @@ namespace Mahou
 			cbTrBLT.Checked = MMain.MyConfs.ReadBool("TTipUI", "TransparentBack");
 			nudDoubleDelay.Value = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
 			cbDoublePress.Checked = MMain.MyConfs.ReadBool("DoubleKey", "Use");
+			cbOnChange.Checked = MMain.MyConfs.ReadBool("Functions", "DTTOnChange");
 			if (File.Exists(snipfile)) {
 				tbSnippets.Text = File.ReadAllText(snipfile);
 				KMHook.ReInitSnippets();
@@ -256,6 +260,7 @@ namespace Mahou
 			cbExCSSwitch.Text = MMain.UI[59];
 			cbTrBLT.Text = MMain.UI[60];
 			cbUseSnippets.Text = MMain.UI[61];
+			cbOnChange.Text = MMain.UI[62];
 		}
 		#endregion
 		#region Tooltips
@@ -334,6 +339,11 @@ namespace Mahou
 		{
 			HelpTT.ToolTipTitle = cbUseSnippets.Text;
 			HelpTT.Show(MMain.TTips[31], cbUseSnippets);	
+		}
+		void CbOnChangeMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = cbOnChange.Text;
+			HelpTT.Show(MMain.TTips[32], cbOnChange);	
 		}
 		#endregion
 	}

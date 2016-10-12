@@ -32,7 +32,7 @@
 			this.lbLang.Text = "Ru";
 			this.lbLang.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// LangDisplay
+			// this
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Pink;
@@ -43,11 +43,11 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "LangDisplay";
+			this.Name = "this";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			this.Text = "LangDisplay";
+			this.Text = "this";
 			this.TopMost = true;
 			this.TransparencyKey = System.Drawing.Color.Pink;
 			this.ResumeLayout(false);
