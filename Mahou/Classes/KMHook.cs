@@ -312,7 +312,7 @@ namespace Mahou
 				if (Key == Keys.Enter || Key == Keys.Home || Key == Keys.End ||
 				    Key == Keys.Tab || Key == Keys.PageDown || Key == Keys.PageUp ||
 				    Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up ||
-				    (ctrl && Key == Keys.Back)) { //Ctrl modifier + Back will clear word too
+				    (ctrl && Key != Keys.None)) { //Ctrl modifier + Any key will clear word too
 					MMain.c_word.Clear();
 					MMain.c_line.Clear();
 					if (MMain.MyConfs.ReadBool("Functions", "Snippets")) {
