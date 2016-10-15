@@ -209,7 +209,12 @@ namespace Mahou
 //							Console.WriteLine(exps[0]);
 //							Console.WriteLine(snipps.Length);
 //							Console.WriteLine(exps.Length);
-							KInputs.MakeInput(KInputs.AddString(exps[i]));
+							try {
+								KInputs.MakeInput(KInputs.AddString(exps[i]));
+							} catch {
+								MessageBox.Show(MMain.Msgs[10], MMain.Msgs[11], MessageBoxButtons.OK, MessageBoxIcon.Error);
+								KInputs.MakeInput(KInputs.AddString(snip));
+							}
 							self = false;
 						}
 					}
@@ -294,8 +299,8 @@ namespace Mahou
 			keyAfterCTRL &= self || wParam != (IntPtr)(int)KMMessages.WM_KEYUP || (Key != Keys.LControlKey && Key != Keys.RControlKey);
 			#endregion
 			#region Other, when KeyDown
-			if (nCode >= 0 && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN) {
-				if (Key == Keys.Back && !self) { //Removes last item from current word when user press Backspace
+			if (nCode >= 0 && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN && !self) {
+				if (Key == Keys.Back) { //Removes last item from current word when user press Backspace
 					if (MMain.c_word.Count != 0) {
 						MMain.c_word.RemoveAt(MMain.c_word.Count - 1);
 					}
@@ -319,7 +324,7 @@ namespace Mahou
 						c_snip.Clear();
 					}
 				}
-				if (Key == Keys.Space && !self) {
+				if (Key == Keys.Space) {
 					if (MMain.MyConfs.ReadBool("Functions", "EatOneSpace") && MMain.c_word.Count != 0 &&
 					    MMain.c_word[MMain.c_word.Count - 1].yukey != Keys.Space) {
 						MMain.c_word.Add(new YuKey() {
@@ -338,7 +343,7 @@ namespace Mahou
 				}
 				if (((Key >= Keys.D0 && Key <= Keys.Z) || // This is 0-9 & A-Z
 				    Key >= Keys.Oem1 && Key <= Keys.OemBackslash // All other printables
-				    ) && !self && !win && !alt && !ctrl) {
+				    )&& !win && !alt && !ctrl) {
 					if (afterEOS) { //Clears word after Eat ONE space
 						MMain.c_word.Clear();
 						afterEOS = false;

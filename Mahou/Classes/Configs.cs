@@ -84,7 +84,7 @@ namespace Mahou
                 this.Write("Functions", "BlockCTRL", "false");
 
             if (!Boolean.TryParse(this.Read("Functions", "RePress"), out bt))
-                this.Write("Functions", "RePress", "false");
+                this.Write("Functions", "RePress", "true");
 
             if (!Boolean.TryParse(this.Read("Functions", "EatOneSpace"), out bt))
                 this.Write("Functions", "EatOneSpace", "false");

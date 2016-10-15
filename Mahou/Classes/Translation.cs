@@ -48,9 +48,9 @@ namespace Mahou
           /*07*/"Blocks hotkeys that use Control,\nwhen \"Switch layout by key\" is set to Left/Right Control.",
           /*08*/"Switching layout depends on \"Cycle Mode\" & \"Emu\" options.",
           /*09*/"If this option enabled, Cycle Mode will use Emulation of Alt+Shift/Win+Space instead \"sending window message\" that changes layout.",
-          /*10*/"If this option enabled, Covert selection will use layout switching.\nAll characters will be rewriten as they must.(no problems with symbols)",
+          /*10*/"If this option enabled, Covert selection will use layout switching.\nAll characters will be rewriten as they must.(no problems with symbols\nThere also an CS-Switch+ in More Configs page 2.",
           /*11*/"Only works when Cycle Mode is OFF.",
-          /*12*/"If enabled, modifiers will be repressed after conversion.\nBUT if you able to release it before conversion done, modifiers will stuck.\nUse at own risk (not recommenden).",
+          /*12*/"If enabled, modifiers will be repressed after conversion.\nDue to new hotkey managment modifiers NEVER stuck(recommenden).",
           /*13*/"If enabled, pressing ONE space AFTER word will not clear last word.",
           /*14*/"Enabling this, will reselect text after \"Convert selection\".",
           /*15*/"Select type for Emulate change layout.\nWin+Space works only in Windows 10!!\nWin+Space also will work better in Metro apps.",
@@ -74,14 +74,15 @@ namespace Mahou
           /*31*/"If this enabled, pressing Space will expand small (which starts with \"->\") word, to big (which is between \"====>\" and \"<====\") word/text fragment.",
           /*32*/"Display language tooltip only on layout change.\nTime of displaying is 7x[Refresh rate]."};
         public static string[] MessagesEN = new string[] {
-          /*0-1*/"Mahou successfully updated!", "Update complete!",
-          /*002*/"Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\n"+
+          /*00-01*/"Mahou successfully updated!", "Update complete!",
+          /*0002*/"Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\n"+
           "Press Ctrl+Alt+Shift+Insert to show Mahou main window.\nPress Ctrl+Alt+Shift+F12 to shutdown Mahou.\n\n*Note that if you typing in not of selected in settings layouts(locales/languages), conversion will switch typed text to Language 1(Ignored if Cycle Mode is ON).\n\n"+
           "**If you have problems with symbols conversion(selection) try \"switching languages (1=>2 & 2=>1)\" or \"CS-Switch\" option.\n\nHover on any control of main window for more info about it.\n\n"+
           "************WINDOWS 10 USERS WHO USE METRO APPS************\nEnable \"Cycle Mode\", \"Emu\" and set Emu type to \"Win+Space\" these settings work better for Metro apps.\n\nTo reset settings just delete Mahou.ini in Mahou folder.\n\nRegards.", 
-          /*3-5*/"****Attention****","You have assigned same hotkeys for Convert word & Convert line, that is impossible!!", "Warning!",
-          /*6-7*/"You have pressed just modifiers for Convert word hotkey!!","You have pressed just modifiers for Convert selection hotkey!!",
-          /*8-9*/"You have pressed just modifiers for Convert line hotkey!!","You have removed selected locales, reselect." };
+          /*03-05*/"****Attention****","You have assigned same hotkeys for Convert word & Convert line, that is impossible!!", "Warning!",
+          /*06-07*/"You have pressed just modifiers for Convert word hotkey!!","You have pressed just modifiers for Convert selection hotkey!!",
+          /*08-09*/"You have pressed just modifiers for Convert line hotkey!!","You have removed selected locales, reselect.",
+		  /*10-11*/"Snippets configured wrong...", "Mahou snippets error!"};
         #endregion
         #region Русский
         public static string[] UIRU = new string[] {
@@ -129,7 +130,7 @@ namespace Mahou
           /*09*/"Если включеня, Циклч. режим будет испльзовать Эмуляцию нажатия Alt+Shift/Win+Space вместо \"посылания сообщения окну\" которое переключает раскладку.",
           /*10*/"Если включена, Конверт выделения будет использовать переключение раскладки.\nВсе символы будут написаны как надо.(нет проблем с символами)",
           /*11*/"Работает только если Циклч. режим выключен.",
-          /*12*/"Если включена, модификаторы будут нажаты снова после конвертации.\nНО если Вы отпустите их прежде чем завершится конвертация, модификаторы залипнут.\nИспользуйте на свой риск(не рекомендуется).",
+          /*12*/"Если включена, модификаторы будут нажаты снова после конвертации.\nБлагодаря новому типу горячих клавиш, модификаторы не залипнут НИКОГДА(рекомендуется).",
           /*13*/"Если включена, нажатие ОДНОГО Space ПОСЛЕ слова не очистит полседнее слово.",
           /*14*/"Если включена, текст будет снова выделен после \"Конверт выделения\".",
           /*15*/"Выберите тип эмуляции переключения раскладки.\nWin+Space работает только в Windows 10!!\nWin+Space также в Metro приложениях работает лучше чем Alt+Shift.",
@@ -152,14 +153,15 @@ namespace Mahou
           /*31*/"Если включено, нажатие Space превратит маленькое (то что начинается с \"->\") слово, в большое(то что между \"====>\" и \"<====\") слово/кусок текста.",
           /*32*/"Показывает подсказку только при смене языка.\nВремя отображения = 7x[Скор. обнов.]."};
         public static string[] MessagesRU = new string[] {
-          /*0-1*/"Mahou успешно обновлен!", "Обновление завершено!",
-          /*002*/"Нажмите Pause(по умолчанию) для конвертации последнего введенного слова.\nНажмите Scroll(по умолчанию) пока выделенный текс в фокусе чтобы конвертивровать его.\nНажмите Shift+Pause(по умолчанию) для конвертации последней введенной линии.\n"+
+          /*00-01*/"Mahou успешно обновлен!", "Обновление завершено!",
+          /*0002*/"Нажмите Pause(по умолчанию) для конвертации последнего введенного слова.\nНажмите Scroll(по умолчанию) пока выделенный текс в фокусе чтобы конвертивровать его.\nНажмите Shift+Pause(по умолчанию) для конвертации последней введенной линии.\n"+
           "Нажмите Ctrl+Alt+Shift+Insert чтобы показать/скрыть главное окно.\nНажмите Ctrl+Alt+Shift+F12 чтобы завершить Mahou.\n\n*Заметьте что если you вводите текст не из выбранных раскладок в настройках, то конвертация конвертирует текст в Язык 1(Не актуально если включен Циклич. режим).\n\n"+
           "**Если у Вас проблемы с символами при Конвертации выделения попробуйте \"перключить языки местами(1=>2 & 2=>1)\" или включите \"КВ-Ключ\".\n\nНаведите мышь на любой элемент главного онка чтобы узнать подробнее о нем.\n\n"+
           "************WINDOWS 10 Metro приложения************\nВключите \"Циклч. режим\", \"Эму\" и установите тип эмуляции на\"Win+Space\" эти настройки работают лучше для Metro приложений.\n\nДля Mahou.ini in Mahou folder.\n\nУдачи.", 
-          /*3-5*/"****ВНИМАНИЕ****","Вы установили одну и ту же горячую клавишу для Конверт слова и Конверт линии, это невозможно!!", "Внимание!",
-          /*6-7*/"Вы нажали только модификаторы для Конверт слова!!","Вы нажали только модификаторы для Конверт выделения!!",
-          /*8-9*/"Вы нажали только модификаторы для Конверт линии!!","Вы убрали выбранные ранее раскладки, выберите заново." };
+          /*03-05*/"****ВНИМАНИЕ****","Вы установили одну и ту же горячую клавишу для Конверт слова и Конверт линии, это невозможно!!", "Внимание!",
+          /*06-07*/"Вы нажали только модификаторы для Конверт слова!!","Вы нажали только модификаторы для Конверт выделения!!",
+          /*08-09*/"Вы нажали только модификаторы для Конверт линии!!","Вы убрали выбранные ранее раскладки, выберите заново.",
+		  /*10-11*/"Сниппеты настроены не правильно...", "Mahou ошибка сниппетов!"};
         #endregion
     }
 }
