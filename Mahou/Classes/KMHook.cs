@@ -85,73 +85,75 @@ namespace Mahou
 				MMain.mahou.IfNotExist();
 				if (!MMain.MyConfs.ReadBool("DoubleKey", "Use"))
 					hklOK = hksOK = hklineOK = hkSIOK = true;
-				if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled")) {
-					if (thishk.Equals(MMain.mahou.HKCSelection) && hksOK) {
-						if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") &&
-						    MMain.MyConfs.Read("Hotkeys", "HKCSMods").Contains("Control")) {
-						} else {
-							if (Array.Exists(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCSMods")), b => b == true) &&
-							    MMain.MyConfs.ReadBool("Functions", "RePress")) {
-								hotkeywithmodsfired = true;
-								RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCSMods"));
+				if (!MMain.mahou.Active && !MMain.mahou.moreConfigs.Visible || !MMain.mahou.Active && !MMain.mahou.moreConfigs.Active) {
+					if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCSEnabled")) {
+						if (thishk.Equals(MMain.mahou.HKCSelection) && hksOK) {
+							if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") &&
+							    MMain.MyConfs.Read("Hotkeys", "HKCSMods").Contains("Control")) {
+							} else {
+								if (Array.Exists(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCSMods")), b => b == true) &&
+								    MMain.MyConfs.ReadBool("Functions", "RePress")) {
+									hotkeywithmodsfired = true;
+									RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCSMods"));
+								}
+								SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCSMods")));
+								IfKeyIsMod(Key);
+								var t = new Task(ConvertSelection);
+								t.RunSynchronously();
 							}
-							SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCSMods")));
-							IfKeyIsMod(Key);
-							var t = new Task(ConvertSelection);
-							t.RunSynchronously();
+						}
+						if (thishk.Equals(MMain.mahou.HKCSelection) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
+							hksOK = true;
+							doublekey.Interval = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
+							doublekey.Start();
 						}
 					}
-					if (thishk.Equals(MMain.mahou.HKCSelection) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
-						hksOK = true;
-						doublekey.Interval = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
-						doublekey.Start();
-					}
-				}
-				if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled")) {
-					if (thishk.Equals(MMain.mahou.HKCLast) && hklOK && !csdoing) {
-						if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") &&
-						    MMain.MyConfs.Read("Hotkeys", "HKCLMods").Contains("Control")) {
-						} else {
-							if (Array.Exists(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods")), b => b == true) &&
-							    MMain.MyConfs.ReadBool("Functions", "RePress")) {
-								hotkeywithmodsfired = true;
-								RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCLMods"));
+					if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled")) {
+						if (thishk.Equals(MMain.mahou.HKCLast) && hklOK && !csdoing) {
+							if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") &&
+							    MMain.MyConfs.Read("Hotkeys", "HKCLMods").Contains("Control")) {
+							} else {
+								if (Array.Exists(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods")), b => b == true) &&
+								    MMain.MyConfs.ReadBool("Functions", "RePress")) {
+									hotkeywithmodsfired = true;
+									RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCLMods"));
+								}
+								SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods")));
+								IfKeyIsMod(Key);
+								var t = new Task(new Action(() => ConvertLast(MMain.c_word)));
+								t.RunSynchronously();
 							}
-							SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods")));
-							IfKeyIsMod(Key);
-							var t = new Task(new Action(() => ConvertLast(MMain.c_word)));
-							t.RunSynchronously();
+						}
+						if (thishk.Equals(MMain.mahou.HKCLast) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
+							hklOK = true;
+							doublekey.Interval = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
+							doublekey.Start();
 						}
 					}
-					if (thishk.Equals(MMain.mahou.HKCLast) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
-						hklOK = true;
-						doublekey.Interval = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
-						doublekey.Start();
-					}
-				}
-				if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLineEnabled")) {
-					if (thishk.Equals(MMain.mahou.HKCLine) && hklineOK && !csdoing) {
-						if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") &&
-						    MMain.MyConfs.Read("Hotkeys", "HKCLineMods").Contains("Control")) {
-						} else {
-							if (Array.Exists(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")), b => b == true) &&
-							    MMain.MyConfs.ReadBool("Functions", "RePress")) {
-								hotkeywithmodsfired = true;
-								RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCLineMods"));
+					if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLineEnabled")) {
+						if (thishk.Equals(MMain.mahou.HKCLine) && hklineOK && !csdoing) {
+							if (MMain.MyConfs.ReadBool("Functions", "BlockCTRL") &&
+							    MMain.MyConfs.Read("Hotkeys", "HKCLineMods").Contains("Control")) {
+							} else {
+								if (Array.Exists(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")), b => b == true) &&
+								    MMain.MyConfs.ReadBool("Functions", "RePress")) {
+									hotkeywithmodsfired = true;
+									RePressAfter(MMain.MyConfs.Read("Hotkeys", "HKCLineMods"));
+								}
+								SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")));
+								IfKeyIsMod(Key);
+								var t = new Task(new Action(() => ConvertLast(MMain.c_line)));
+								t.RunSynchronously();
 							}
-							SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")));
-							IfKeyIsMod(Key);
-							var t = new Task(new Action(() => ConvertLast(MMain.c_line)));
-							t.RunSynchronously();
+						}
+						if (thishk.Equals(MMain.mahou.HKCLine) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
+							hklineOK = true;
+							doublekey.Interval = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
+							doublekey.Start();
 						}
 					}
-					if (thishk.Equals(MMain.mahou.HKCLine) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
-						hklineOK = true;
-						doublekey.Interval = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
-						doublekey.Start();
-					}
+					csdoing = false;
 				}
-				csdoing = false;
 				if (MMain.MyConfs.ReadBool("EnabledHotkeys", "HKSymIgnEnabled")) {
 					if (thishk.Equals(MMain.mahou.HKSymIgn) && hkSIOK) {
 						if (MMain.MyConfs.ReadBool("Functions", "SymIgnModeEnabled")) {
@@ -212,7 +214,9 @@ namespace Mahou
 							try {
 								KInputs.MakeInput(KInputs.AddString(exps[i]));
 							} catch {
-								MessageBox.Show(MMain.Msgs[10], MMain.Msgs[11], MessageBoxButtons.OK, MessageBoxIcon.Error);
+								// If not use TASK, form won't accept the keys(Enter/Escape/Alt+F4).
+								var tsk = new Task(() => MessageBox.Show(MMain.Msgs[10], MMain.Msgs[11], MessageBoxButtons.OK, MessageBoxIcon.Error));
+								tsk.Start();
 								KInputs.MakeInput(KInputs.AddString(snip));
 							}
 							self = false;
@@ -343,7 +347,7 @@ namespace Mahou
 				}
 				if (((Key >= Keys.D0 && Key <= Keys.Z) || // This is 0-9 & A-Z
 				    Key >= Keys.Oem1 && Key <= Keys.OemBackslash // All other printables
-				    )&& !win && !alt && !ctrl) {
+				    ) && !win && !alt && !ctrl) {
 					if (afterEOS) { //Clears word after Eat ONE space
 						MMain.c_word.Clear();
 						afterEOS = false;

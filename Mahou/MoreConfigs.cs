@@ -14,6 +14,7 @@ namespace Mahou
 		FontDialog fntd = new FontDialog();
 		public FontConverter fcv = new FontConverter();
 		public string snipfile = Path.Combine(Mahou.Update.nPath, "snippets.txt");
+		public bool Active;
 		#endregion
 		#region Button/Form/etc. events
 		public MoreConfigs()
@@ -30,6 +31,7 @@ namespace Mahou
 			tmpRestore();
 			tbHKSymIgn.Text = MMain.mahou.OemReadable((MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods").ToString().Replace(",", " +") + " + " +
 			MMain.mahou.Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey")).Replace("None + ", "")));
+			Deactivate += (se, ea) => {Active = false;};
 		}
 		void MoreConfigs_FormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -37,6 +39,7 @@ namespace Mahou
 		}
 		void MoreConfigs_Activated(object sender, EventArgs e)
 		{
+			Active = true;
 			RefreshLanguage();
 		}
 		void btnOK_Click(object sender, EventArgs e)
@@ -153,17 +156,6 @@ namespace Mahou
 			File.WriteAllText(snipfile, tbSnippets.Text);
 			KMHook.ReInitSnippets();
 			MMain.mahou.langDisplay.SetVisInvis();
-			if (tmpSIKey != 0) {
-				if (tmpSIKey == MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey") && tmpSIMods == MMain.MyConfs.Read("Hotkeys", "HKCLMods")) {
-					MessageBox.Show(MMain.Msgs[4], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				}
-				if (tmpSIKey == MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey") && tmpSIMods == MMain.MyConfs.Read("Hotkeys", "HKCSMods")) {
-					MessageBox.Show(MMain.Msgs[4], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				}
-				if (tmpSIKey == MMain.MyConfs.ReadInt("Hotkeys", "HKCLineKey") && tmpSIMods == MMain.MyConfs.Read("Hotkeys", "HKCLineMods")) {
-					MessageBox.Show(MMain.Msgs[4], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				}
-			}
 
 			if (!string.IsNullOrEmpty(tmpSIMods) && tmpSIKey != 0)
 				MMain.MyConfs.Write("Hotkeys", "HKSymIgnMods", tmpSIMods);

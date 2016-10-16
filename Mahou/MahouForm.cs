@@ -14,7 +14,7 @@ namespace Mahou
 		#region Variables
 		// Hotkeys, HKC => HotKey Convert
 		public Hotkey Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine, HKSymIgn;
-		bool messagebox;
+		public bool messagebox, Active;
 		// Temporary modifiers
 		string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None";
 		// Temporary keys
@@ -84,9 +84,9 @@ namespace Mahou
 			icon = new TrayIcon(MMain.MyConfs.ReadBool("Functions", "IconVisibility"));
 			icon.Exit += exitToolStripMenuItem_Click;
 			icon.ShowHide += showHideToolStripMenuItem_Click;
-			//↓ Dummy(none) hotkey, makes it possible wndproc to handle messages at startup
+			//↓ Dummy(none) hotkey, makes it possible WndProc to handle messages at startup
 			//↓ when form isn't was shown. 
-			RegisterHotKey(Handle, 0xffff ^ 0xffff, 0, 0);
+			RegisterHotKey(Handle, 0xffff ^ 0xffff, 0, 0); //HWND must be this form handle
 			RefreshIconAll();
 			InitializeHotkeys();
 			//Background startup check for updates
@@ -108,7 +108,7 @@ namespace Mahou
 		{
 			if (e.CloseReason == CloseReason.UserClosing) {
 				e.Cancel = true;
-				ToggleVisibility();
+				btnCancel.PerformClick();
 			}
 			tempRestore();
 		}
@@ -119,10 +119,12 @@ namespace Mahou
 		}
 		void MahouForm_Activated(object sender, EventArgs e)
 		{
+			Active = true;
 			RefreshLocales();
 		}
 		void MahouForm_Deactivate(object sender, EventArgs e)
 		{
+			Active = false;
 			RefreshLocales();
 		}
 		#endregion
@@ -405,45 +407,42 @@ namespace Mahou
 		void Apply() //Saves current selections to settings
 		{
 			IfNotExist();
-			if (tempCLKey != 0 && tempCLineKey != 0) {
-				if (tempCLineKey == tempCLKey && tempCLMods == tempCLineMods) {
-					messagebox = true;
-					MessageBox.Show(MMain.Msgs[4], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				} else
+			if (tempCLineKey == tempCLKey && tempCLMods == tempCLineMods) {
+				messagebox = true;
+				MessageBox.Show(MMain.Msgs[4], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Error);
+			} else {			
+				if (!string.IsNullOrEmpty(tempCLMods) && tempCLKey != 0)
+					MMain.MyConfs.Write("Hotkeys", "HKCLMods", tempCLMods);
+
+				if (tempCLKey != 0) {
+					MMain.MyConfs.Write("Hotkeys", "HKCLKey", tempCLKey.ToString());
 					messagebox = false;
-			}
+				} else {
+					messagebox = true;
+					MessageBox.Show(MMain.Msgs[6], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
 
-			if (!string.IsNullOrEmpty(tempCLMods) && tempCLKey != 0)
-				MMain.MyConfs.Write("Hotkeys", "HKCLMods", tempCLMods);
+				if (!string.IsNullOrEmpty(tempCSMods) && tempCSKey != 0)
+					MMain.MyConfs.Write("Hotkeys", "HKCSMods", tempCSMods);
 
-			if (tempCLKey != 0) {
-				MMain.MyConfs.Write("Hotkeys", "HKCLKey", tempCLKey.ToString());
-				messagebox = false;
-			} else {
-				messagebox = true;
-				MessageBox.Show(MMain.Msgs[6], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			}
+				if (tempCSKey != 0) {
+					MMain.MyConfs.Write("Hotkeys", "HKCSKey", tempCSKey.ToString());
+					messagebox = false;
+				} else {
+					messagebox = true;
+					MessageBox.Show(MMain.Msgs[7], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
 
-			if (!string.IsNullOrEmpty(tempCSMods) && tempCSKey != 0)
-				MMain.MyConfs.Write("Hotkeys", "HKCSMods", tempCSMods);
+				if (!string.IsNullOrEmpty(tempCLineMods) && tempCLineKey != 0)
+					MMain.MyConfs.Write("Hotkeys", "HKCLineMods", tempCLineMods);
 
-			if (tempCSKey != 0) {
-				MMain.MyConfs.Write("Hotkeys", "HKCSKey", tempCSKey.ToString());
-				messagebox = false;
-			} else {
-				messagebox = true;
-				MessageBox.Show(MMain.Msgs[7], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			}
-
-			if (!string.IsNullOrEmpty(tempCLineMods) && tempCLineKey != 0)
-				MMain.MyConfs.Write("Hotkeys", "HKCLineMods", tempCLineMods);
-
-			if (tempCLineKey != 0) {
-				MMain.MyConfs.Write("Hotkeys", "HKCLineKey", tempCLineKey.ToString());
-				messagebox = false;
-			} else {
-				messagebox = true;
-				MessageBox.Show(MMain.Msgs[8], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				if (tempCLineKey != 0) {
+					MMain.MyConfs.Write("Hotkeys", "HKCLineKey", tempCLineKey.ToString());
+					messagebox = false;
+				} else {
+					messagebox = true;
+					MessageBox.Show(MMain.Msgs[8], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
 			}
 			if (cbAutorun.Checked) {
 				CreateShortcut();
@@ -537,6 +536,7 @@ namespace Mahou
 				" + " + Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCSKey"), true)).Replace("None + ", ""));
 				tbCLineHK.Text = OemReadable((MMain.MyConfs.Read("Hotkeys", "HKCLineMods").Replace(",", " +") +
 				" + " + Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCLineKey"), true)).Replace("None + ", ""));
+				messagebox = false;
 			}
 			cbAutorun.Checked = System.IO.File.Exists(System.IO.Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.Startup),
