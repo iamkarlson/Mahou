@@ -328,12 +328,12 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 		}
 		void BtShowProxyClick(object sender, EventArgs e)
 		{
-			if (Size.Height == 310) {
+			if (Size.Height == 300) {
 				btShowProxy.BackgroundImage = Mahou.Properties.Resources.up_arrow;
 				Size = new Size(Size.Width, 410);
 			} else {
 				btShowProxy.BackgroundImage = Mahou.Properties.Resources.down_arrow;
-				Size = new Size(Size.Width, 310);
+				Size = new Size(Size.Width, 300);
 			}
 			
 		}
