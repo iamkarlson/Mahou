@@ -345,6 +345,8 @@ namespace Mahou
 				case Keys.D8:
 				case Keys.D9:
 					return k.ToString().Replace("D", "");
+				case Keys.Capital:
+					return "Caps Lock";
 				default:
 					return k.ToString();
 			}
@@ -442,6 +444,11 @@ namespace Mahou
 				} else {
 					messagebox = true;
 					MessageBox.Show(MMain.Msgs[8], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
+				if ((tempCLKey == 20 || tempCSKey == 20 || tempCLineKey == 20 ) && cbSwitchLayoutKeys.Text == "CapsLock")
+				{
+					messagebox = true;
+					MessageBox.Show(MMain.Msgs[12], MMain.Msgs[11], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
 			}
 			if (cbAutorun.Checked) {

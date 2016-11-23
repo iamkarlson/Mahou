@@ -65,8 +65,8 @@ namespace Mahou
 				alt = ((wParam == (IntPtr)(int)KMMessages.WM_SYSKEYDOWN) ? true : false) || ((wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN) ? true : false);
 			if (Key == Keys.RWin || Key == Keys.LWin) // Checks if win is down
                 win = (wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN) ? true : false;
-			//Console.WriteLine(shift.ToString() + alt.ToString() + ctrl);
-			//Console.WriteLine(Key.ToString() + " / " + ((int)wParam == (int)KMMessages.WM_SYSKEYDOWN) + " / " + ((int)wParam == (int)KMMessages.WM_KEYDOWN));
+//			Console.WriteLine(shift.ToString() + alt.ToString() + ctrl);
+//			Console.WriteLine(Key.ToString() + " / " + ((int)wParam == (int)KMMessages.WM_SYSKEYDOWN) + " / " + ((int)wParam == (int)KMMessages.WM_KEYDOWN));
 			#endregion)
 			#region Hotkeys
 			if (vkCode == 160 || vkCode == 161) //Shifts
@@ -75,11 +75,28 @@ namespace Mahou
 				vkCode = 17;
 			if (vkCode == 164 || vkCode == 165) //Alts
 				vkCode = 18;
+			if (vkCode == 240)
+				vkCode = 20;
 			var thishk = new Hotkey(vkCode, new []{ ctrl, shift, alt });
-			//Console.WriteLine(MMain.mahou.HKCLast.keyCode + "\t" + thishk.keyCode);
-			//Console.WriteLine(MMain.mahou.HKCLast.modifs[0] + "\t" + thishk.modifs[0]);
-			//Console.WriteLine(MMain.mahou.HKCLast.modifs[1] + "\t" + thishk.modifs[1]);
-			//Console.WriteLine(MMain.mahou.HKCLast.modifs[2] + "\t" + thishk.modifs[2]);
+//			Console.WriteLine(MMain.mahou.HKCLast.keyCode + "\t" + thishk.keyCode);
+//			Console.WriteLine(MMain.mahou.HKCLast.modifs[0] + "\t" + thishk.modifs[0]);
+//			Console.WriteLine(MMain.mahou.HKCLast.modifs[1] + "\t" + thishk.modifs[1]);
+//			Console.WriteLine(MMain.mahou.HKCLast.modifs[2] + "\t" + thishk.modifs[2]);
+			if (!self && thishk.keyCode == 20 &&
+			    (thishk.Equals(MMain.mahou.HKCLast) ||
+			    thishk.Equals(MMain.mahou.HKCLine) ||
+			    thishk.Equals(MMain.mahou.HKCSelection))) {
+//				Console.WriteLine("This is oK!");
+				self = true;
+				if (Control.IsKeyLocked(Keys.CapsLock)) { // Turn off if alraedy on
+					KeybdEvent(Keys.CapsLock, 0);
+					KeybdEvent(Keys.CapsLock, 2);
+				}
+				//Code below removes CapsLock original action, but if hold will not work and will stuck, press again to off.
+				KeybdEvent(Keys.CapsLock, 0);
+				KeybdEvent(Keys.CapsLock, 2);
+				self = false;
+			}
 			if (!MMain.mahou.Focused && !self &&
 			    wParam == (IntPtr)(int)KMMessages.WM_KEYUP) {			
 				MMain.mahou.IfNotExist();
