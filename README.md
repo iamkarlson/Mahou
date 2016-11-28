@@ -1,5 +1,6 @@
 # Русский :ru:
 
+![](http://i.piccy.info/i9/29fa819a849fa70f38ddfcf9c29d1c99/1480349941/6018/1094353/Mahou.jpg)
 # Mahou(魔法) - Волшебный переключатель раскладок.
 ### Как работает
 Mahou работает совершенно по другому в отличии от других переключателей раскладок, он переключает *не по следующей раскладке*, а по **указаных в настройках** раскладках. <br/>
@@ -63,6 +64,12 @@ Mahou работает совершенно по другому в отличи�
 **v1.4.0.0**<br/>
 - Добавлена возможность установки сниппетов(автозамена слов на другие слова/куски текста).
 
+**v1.4.1.6**<br/>
+- Добавлена возможность ввода Alt+Numpad символов с их последующей конвертацией.
+
+**v1.4.1.7**<br/>
+- Добавлена возможность подсветки Scroll Lock при языке 1 активном.
+
 ### Горячие клавиши
 - <kbd>Pause</kbd> - Конверт последнего слова.
 - <kbd>Shift</kbd>+<kbd>Pause</kbd> - Конверт линии.
@@ -84,6 +91,7 @@ Mahou находится под GPL v2+.
 
 # English :us:
 
+![](http://i.piccy.info/i9/29fa819a849fa70f38ddfcf9c29d1c99/1480349941/6018/1094353/Mahou.jpg)
 # Mahou(魔法) - The magic Layout Switcher
 ### How it works
 Mahou works completely different from other Layout Swtichers, it switches *not by next layout*, but by **specified in settings** layouts. <br/>
@@ -146,6 +154,13 @@ Even selected text switches just between **selected** layouts, though if you lik
 
 **v1.4.0.0**<br/>
 - Added feature "Snippets"(expand words to other words/text fragments).
+
+**v1.4.1.6**<br/>
+- Added feature to catch Alt+Numpad symbols to use them in convert last/line.
+
+**v1.4.1.7**<br/>
+- Added feature to highlight Scroll Lock when language 1 is active.
+
 
 ### Hotkeys
 - <kbd>Pause</kbd> - Convert last input.
