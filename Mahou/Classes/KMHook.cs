@@ -285,6 +285,18 @@ namespace Mahou
 				KeybdEvent(Keys.CapsLock, 2);
 				self = false;
 			}
+			// Additional fix for scroll tip.
+			if (!self && MMain.MyConfs.ReadBool("Functions", "ScrollTip") &&
+			    Key == Keys.Scroll && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN) {
+				self = true;
+				if (Control.IsKeyLocked(Keys.Scroll)) { // Turn off if alraedy on
+					KeybdEvent(Keys.Scroll, 0);
+					KeybdEvent(Keys.Scroll, 2);
+				}
+				KeybdEvent(Keys.Scroll, 0);
+				KeybdEvent(Keys.Scroll, 2);
+				self = false;
+			}
 			if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Left Control" &&
 			    Key == Keys.LControlKey && wParam == (IntPtr)(int)KMMessages.WM_KEYUP &&
 			    !MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls")) {
@@ -796,7 +808,7 @@ namespace Mahou
 			var ant = ToUnicodeEx((uint)chsc, (uint)chsc, byt, s, s.Capacity, 0, (IntPtr)uID2);
 			return chsc != -1 ? s.ToString() : "";
 		}
-		static void KeybdEvent(Keys key, int flags) // Simplified keybd_event with exteded recongize feature
+		public static void KeybdEvent(Keys key, int flags) // Simplified keybd_event with exteded recongize feature
 		{
 			//Do not remove this line, it needed for "Left Control Switch Layout" to work properly
 			Thread.Sleep(15);

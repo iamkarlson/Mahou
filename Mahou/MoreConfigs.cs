@@ -8,7 +8,7 @@ namespace Mahou
 	public partial class MoreConfigs : Form
 	{
 		#region Varibales
-		int tmpSIKey = 0;
+		int tmpSIKey = 0, page = 0;
 		string tmpSIMods = "None";
 		ColorDialog clrd = new ColorDialog();
 		FontDialog fntd = new FontDialog();
@@ -31,7 +31,9 @@ namespace Mahou
 			tmpRestore();
 			tbHKSymIgn.Text = MMain.mahou.OemReadable((MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods").ToString().Replace(",", " +") + " + " +
 			MMain.mahou.Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey")).Replace("None + ", "")));
-			Deactivate += (se, ea) => {Active = false;};
+			Deactivate += (se, ea) => {
+				Active = false;
+			};
 		}
 		void MoreConfigs_FormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -95,7 +97,23 @@ namespace Mahou
 		}
 		void BtnEMoreClick(object sender, EventArgs e)
 		{
-			pEMore.Visible = !pEMore.Visible;
+			page++;
+//			Console.WriteLine(page);
+			switch (page) {
+				case 0:
+					pEExtra.Visible = false;
+					pEMore.Visible = false;
+					break;
+				case 1:
+					pEMore.Visible = true;
+					pEExtra.Visible = false;
+					break;
+				case 2:
+					pEMore.Visible = false;
+					pEExtra.Visible = true;
+					page = -1;
+					break;
+			}
 			DisEna();
 			RefreshLanguage();
 		}
@@ -146,6 +164,7 @@ namespace Mahou
 			MMain.MyConfs.Write("TTipUI", "ypos", nudYpos.Value.ToString());
 			MMain.MyConfs.Write("TTipUI", "TransparentBack", cbTrBLT.Checked.ToString());
 			MMain.MyConfs.Write("Functions", "DTTOnChange", cbOnChange.Checked.ToString());
+			MMain.MyConfs.Write("Functions", "ScrollTip", cbScrollLight.Checked.ToString());
 			MMain.mahou.langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLForeColor")),
 				ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLBackColor")));
 			MMain.mahou.langDisplay.ChangeSizes((Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font")), 
@@ -168,6 +187,10 @@ namespace Mahou
 				MMain.mahou.ICheck.Start();
 			else
 				MMain.mahou.ICheck.Stop();
+			if (MMain.MyConfs.ReadBool("Functions", "ScrollTip"))
+				MMain.mahou.ScrlCheck.Start();
+			else
+				MMain.mahou.ScrlCheck.Stop();
 			MMain.mahou.ICheck.Interval = Convert.ToInt32(nudRefreshRate.Value);
 			MMain.mahou.res.Interval = Convert.ToInt32(nudRefreshRate.Value) * 7;
 			MMain.mahou.RefreshIconAll();
@@ -207,6 +230,7 @@ namespace Mahou
 			nudDoubleDelay.Value = MMain.MyConfs.ReadInt("DoubleKey", "Delay");
 			cbDoublePress.Checked = MMain.MyConfs.ReadBool("DoubleKey", "Use");
 			cbOnChange.Checked = MMain.MyConfs.ReadBool("Functions", "DTTOnChange");
+			cbScrollLight.Checked = MMain.MyConfs.ReadBool("Functions", "ScrollTip");
 			if (File.Exists(snipfile)) {
 				tbSnippets.Text = File.ReadAllText(snipfile);
 				KMHook.ReInitSnippets();
@@ -246,13 +270,14 @@ namespace Mahou
 			btFont.Text = MMain.UI[52];
 			lbSize.Text = MMain.UI[53];
 			lbPosition.Text = MMain.UI[54];
-			btnEMore.Text = !pEMore.Visible ? MMain.UI[55] : MMain.UI[56];
+			btnEMore.Text = !pEExtra.Visible ? MMain.UI[55] : MMain.UI[56];
 			cbDoublePress.Text = MMain.UI[57];
 			lbDDelay.Text = MMain.UI[58];
 			cbExCSSwitch.Text = MMain.UI[59];
 			cbTrBLT.Text = MMain.UI[60];
 			cbUseSnippets.Text = MMain.UI[61];
 			cbOnChange.Text = MMain.UI[62];
+			cbScrollLight.Text 	= MMain.UI[63];
 		}
 		#endregion
 		#region Tooltips
@@ -336,6 +361,11 @@ namespace Mahou
 		{
 			HelpTT.ToolTipTitle = cbOnChange.Text;
 			HelpTT.Show(MMain.TTips[32], cbOnChange);	
+		}
+		void CbScrollLightMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = cbScrollLight.Text;
+			HelpTT.Show(MMain.TTips[33], cbScrollLight);	
 		}
 		#endregion
 	}

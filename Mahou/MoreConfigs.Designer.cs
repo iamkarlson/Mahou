@@ -68,6 +68,8 @@
         	this.cbDoublePress = new System.Windows.Forms.CheckBox();
         	this.btnEMore = new System.Windows.Forms.Button();
         	this.cbOnChange = new System.Windows.Forms.CheckBox();
+        	this.pEExtra = new System.Windows.Forms.Panel();
+        	this.cbScrollLight = new System.Windows.Forms.CheckBox();
         	((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudRefreshRate)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudTTWidth)).BeginInit();
@@ -76,6 +78,7 @@
         	((System.ComponentModel.ISupportInitialize)(this.nudXpos)).BeginInit();
         	this.pEMore.SuspendLayout();
         	((System.ComponentModel.ISupportInitialize)(this.nudDoubleDelay)).BeginInit();
+        	this.pEExtra.SuspendLayout();
         	this.SuspendLayout();
         	// 
         	// cbUseLRC
@@ -367,7 +370,7 @@
         	this.pEMore.Dock = System.Windows.Forms.DockStyle.Fill;
         	this.pEMore.Location = new System.Drawing.Point(0, 0);
         	this.pEMore.Name = "pEMore";
-        	this.pEMore.Size = new System.Drawing.Size(279, 269);
+        	this.pEMore.Size = new System.Drawing.Size(279, 268);
         	this.pEMore.TabIndex = 28;
         	this.pEMore.Visible = false;
         	// 
@@ -478,14 +481,36 @@
         	this.cbOnChange.UseVisualStyleBackColor = true;
         	this.cbOnChange.MouseHover += new System.EventHandler(this.CbOnChangeMouseHover);
         	// 
+        	// pEExtra
+        	// 
+        	this.pEExtra.Controls.Add(this.cbScrollLight);
+        	this.pEExtra.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.pEExtra.Location = new System.Drawing.Point(0, 0);
+        	this.pEExtra.Name = "pEExtra";
+        	this.pEExtra.Size = new System.Drawing.Size(279, 268);
+        	this.pEExtra.TabIndex = 31;
+        	this.pEExtra.Visible = false;
+        	// 
+        	// cbScrollLight
+        	// 
+        	this.cbScrollLight.AutoSize = true;
+        	this.cbScrollLight.Location = new System.Drawing.Point(10, 12);
+        	this.cbScrollLight.Name = "cbScrollLight";
+        	this.cbScrollLight.Size = new System.Drawing.Size(250, 17);
+        	this.cbScrollLight.TabIndex = 0;
+        	this.cbScrollLight.Text = "Highlight ScrollLock when language 1 is active.";
+        	this.cbScrollLight.UseVisualStyleBackColor = true;
+        	this.cbScrollLight.MouseHover += new System.EventHandler(this.CbScrollLightMouseHover);
+        	// 
         	// MoreConfigs
         	// 
         	this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         	this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        	this.ClientSize = new System.Drawing.Size(279, 269);
+        	this.ClientSize = new System.Drawing.Size(279, 268);
         	this.Controls.Add(this.btnEMore);
-        	this.Controls.Add(this.btnNO);
         	this.Controls.Add(this.btnOK);
+        	this.Controls.Add(this.btnNO);
+        	this.Controls.Add(this.pEExtra);
         	this.Controls.Add(this.pEMore);
         	this.Controls.Add(this.nudYpos);
         	this.Controls.Add(this.lbY);
@@ -533,6 +558,8 @@
         	this.pEMore.ResumeLayout(false);
         	this.pEMore.PerformLayout();
         	((System.ComponentModel.ISupportInitialize)(this.nudDoubleDelay)).EndInit();
+        	this.pEExtra.ResumeLayout(false);
+        	this.pEExtra.PerformLayout();
         	this.ResumeLayout(false);
         	this.PerformLayout();
 
@@ -577,5 +604,7 @@
         public System.Windows.Forms.TextBox tbSnippets;
         private System.Windows.Forms.CheckBox cbUseSnippets;
         private System.Windows.Forms.CheckBox cbOnChange;
+        private System.Windows.Forms.Panel pEExtra;
+        private System.Windows.Forms.CheckBox cbScrollLight;
     }
 }

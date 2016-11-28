@@ -25,6 +25,7 @@ namespace Mahou
 		public TrayIcon icon;
 		public Update update = new Update();
 		public Timer ICheck = new Timer();
+		public Timer ScrlCheck = new Timer();
 		public LangDisplay langDisplay = new LangDisplay();
 		public MoreConfigs moreConfigs = new MoreConfigs();
 		uint latestL = 0;
@@ -60,7 +61,30 @@ namespace Mahou
 				langDisplay.Location = new Point(Cursor.Position.X + MMain.MyConfs.ReadInt("TTipUI", "xpos"),
 					Cursor.Position.Y + MMain.MyConfs.ReadInt("TTipUI", "ypos"));
 				langDisplay.RefreshLang();
-			};			
+			};
+			ScrlCheck.Tick += (_, __) => {
+				if (MMain.MyConfs.ReadBool("Functions", "ScrollTip") && !KMHook.self) {
+					KMHook.self = true;
+					if (Locales.GetCurrentLocale() == MMain.MyConfs.ReadInt("Locales","locale1uId"))
+					{
+						if (!Control.IsKeyLocked(Keys.Scroll)) { // Turn on 
+							KMHook.KeybdEvent(Keys.Scroll, 0);
+							KMHook.KeybdEvent(Keys.Scroll, 2);
+						}
+					}
+					else
+					{
+						if (Control.IsKeyLocked(Keys.Scroll)) { // Turn off
+							KMHook.KeybdEvent(Keys.Scroll, 0);
+							KMHook.KeybdEvent(Keys.Scroll, 2);
+						}
+					}
+					KMHook.self = false;
+				}
+			};
+			ScrlCheck.Interval = 250;
+			if (MMain.MyConfs.ReadBool("Functions", "ScrollTip"))
+				ScrlCheck.Start();
 			KMHook.doublekey.Tick += (_, __) => {
 				if (KMHook.hklOK)
 					KMHook.hklOK = false;
