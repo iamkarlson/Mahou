@@ -267,13 +267,13 @@ namespace Mahou
 			}
 			#endregion
 			#region Switch only key
-			if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
+			if (!self && !shift && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
 			    Key == Keys.CapsLock && wParam == (IntPtr)(int)KMMessages.WM_KEYUP) {
 				self = true;
 				ChangeLayout();
 				self = false;
 			}
-			if (!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
+			if (!self && !shift && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
 			    Key == Keys.CapsLock && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN) {
 				self = true;
 				if (Control.IsKeyLocked(Keys.CapsLock)) { // Turn off if alraedy on
