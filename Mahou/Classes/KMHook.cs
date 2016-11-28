@@ -33,7 +33,8 @@ namespace Mahou
 		public static bool self, win, alt, ctrl, shift,
 			shiftRP, ctrlRP, altRP, //RP = Re-Press
 			awas, swas, cwas, afterEOS, //*was = alt/shift/ctrl was
-			keyAfterCTRL, hklOK, hksOK, hklineOK, hkSIOK, hotkeywithmodsfired, csdoing;
+			keyAfterCTRL, hklOK, hksOK, hklineOK, hkSIOK, hotkeywithmodsfired, csdoing, incapt;
+		static List<Keys> tempNumpads = new List<Keys>();
 		static List<char> c_snip = new List<char>();
 		public static System.Windows.Forms.Timer doublekey = new System.Windows.Forms.Timer();
 		public delegate IntPtr LowLevelProc(int nCode, IntPtr wParam, IntPtr lParam);
@@ -391,16 +392,31 @@ namespace Mahou
 				}
 			}
 			#endregion
-			#region Alt+Numpad (not fully workable)
-			if (!self && alt && (Key >= Keys.NumPad0 && Key <= Keys.NumPad9) && wParam == (IntPtr)(int)KMMessages.WM_SYSKEYUP) {
-				MMain.c_word.Add(new YuKey() { yukey = Key, altnum = true });
-				MMain.c_line.Add(new YuKey() { yukey = Key, altnum = true });
-				//Console.WriteLine("Added the " + Key);
-				//foreach (var cha in MMain.c_word)
-				//{
-				//    Console.Write(cha.yukey + "/" + cha.altnum);
-				//}
-				//Console.WriteLine();
+			#region Alt+Numpad (fully workable)
+			if (!self && incapt &&
+			    (Key == Keys.RMenu || Key == Keys.LMenu || Key == Keys.Menu) &&
+			    wParam == (IntPtr)(int)KMMessages.WM_KEYUP) {
+//				Console.WriteLine("Capture of Numpads ended, captured:");
+//				foreach (var k in tempNumpads) {
+//					Console.WriteLine(k);
+//				}
+//				Console.WriteLine("tempNumpads Cleared.");
+//				Console.WriteLine("incapt reseted.");                 //new List => VERY important here!!!
+				MMain.c_word.Add(new YuKey() { altnum = true, numpads = new List<Keys>(tempNumpads) });
+				tempNumpads.Clear();                                  //It prevents pointer to tempNumpads, which is cleared.
+				incapt = false;
+//				Console.WriteLine("LIKE YOU"+MMain.c_word[MMain.c_word.Count-1].numpads.Count);
+//				Console.WriteLine("numpads are:"+MMain.c_word.Count);
+			}
+			if (!self && !incapt && alt && wParam == (IntPtr)(int)KMMessages.WM_SYSKEYDOWN) {
+//				Console.WriteLine("Starting capture of Numpads...");
+				incapt = true;
+			}
+			if (!self && alt && incapt) {
+				if (Key >= Keys.NumPad0 && Key <= Keys.NumPad9 && wParam == (IntPtr)(int)KMMessages.WM_SYSKEYUP) {
+//					Console.WriteLine("Alt is down, and \"" + Key + "\" is released.");
+					tempNumpads.Add(Key);
+				}
 			}
 			#endregion
 			return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
@@ -542,12 +558,12 @@ namespace Mahou
 					var index = 0;
 					foreach (char c in ClipStr) {
 						var T = InAnother(c, l2, l1);
-						if (T == ClipStr[index].ToString())
-							Console.WriteLine("It is same 1" + T + " == " + ClipStr[index].ToString());
+//						if (T == ClipStr[index].ToString())
+//							Console.WriteLine("It is same 1" + T + " == " + ClipStr[index].ToString());
 						if (T == "")
 							T = InAnother(c, l1, l2);
-						if (T == ClipStr[index].ToString())
-							Console.WriteLine("It is same 2" + T + " == " + ClipStr[index].ToString());
+//						if (T == ClipStr[index].ToString())
+//							Console.WriteLine("It is same 2" + T + " == " + ClipStr[index].ToString());
 						if (T == "")
 							T = ClipStr[index].ToString();							
 						result += T;
@@ -623,18 +639,27 @@ namespace Mahou
 					});
 				}
 				for (int i = 0; i < YuKeys.Length; i++) {
-					if (YuKeys[i].upper)
-						KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LShiftKey, true) });
-					if (YuKeys[i].altnum)
+					if (YuKeys[i].altnum) {
+//						Console.WriteLine("An YuKeys with numpads passed...");
 						KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LMenu, true) });
-					if (!SymbolIgnoreRules(YuKeys[i].yukey, YuKeys[i].upper, wasLocale)) {
-						KInputs.MakeInput(new [] { KInputs.AddKey(YuKeys[i].yukey, true) });
-						KInputs.MakeInput(new [] { KInputs.AddKey(YuKeys[i].yukey, false) });
-					}
-					if (YuKeys[i].upper)
-						KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LShiftKey, false) });
-					if (YuKeys[i].altnum)
+//						Console.WriteLine(YuKeys[i].numpads[0]);
+						foreach (var numpad in YuKeys[i].numpads)
+						{
+//							Console.WriteLine(numpad);
+							KInputs.MakeInput(new [] { KInputs.AddKey(numpad, true)});
+							KInputs.MakeInput(new [] { KInputs.AddKey(numpad, false)});
+						}
 						KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LMenu, false) });
+					} else {
+						if (YuKeys[i].upper)
+							KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LShiftKey, true) });
+						if (!SymbolIgnoreRules(YuKeys[i].yukey, YuKeys[i].upper, wasLocale)) {
+							KInputs.MakeInput(new [] { KInputs.AddKey(YuKeys[i].yukey, true) });
+							KInputs.MakeInput(new [] { KInputs.AddKey(YuKeys[i].yukey, false) });
+						}
+						if (YuKeys[i].upper)
+							KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LShiftKey, false) });
+					}
 				}
 				RePress();
 				self = false;
@@ -856,6 +881,7 @@ namespace Mahou
 			public Keys yukey;
 			public bool upper;
 			public bool altnum;
+			public List<Keys> numpads;
 		}
 		#endregion
 		#region DLL imports
