@@ -415,6 +415,7 @@ namespace Mahou
 //				Console.WriteLine("tempNumpads Cleared.");
 //				Console.WriteLine("incapt reseted.");                 //new List => VERY important here!!!
 				MMain.c_word.Add(new YuKey() { altnum = true, numpads = new List<Keys>(tempNumpads) });
+				MMain.c_line.Add(new YuKey() { altnum = true, numpads = new List<Keys>(tempNumpads) });
 				tempNumpads.Clear();                                  //It prevents pointer to tempNumpads, which is cleared.
 				incapt = false;
 //				Console.WriteLine("LIKE YOU"+MMain.c_word[MMain.c_word.Count-1].numpads.Count);
