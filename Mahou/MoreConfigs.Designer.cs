@@ -69,6 +69,7 @@
         	this.btnEMore = new System.Windows.Forms.Button();
         	this.cbOnChange = new System.Windows.Forms.CheckBox();
         	this.pEExtra = new System.Windows.Forms.Panel();
+        	this.cbCheckForUPD = new System.Windows.Forms.CheckBox();
         	this.cbScrollLight = new System.Windows.Forms.CheckBox();
         	((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.nudRefreshRate)).BeginInit();
@@ -483,6 +484,7 @@
         	// 
         	// pEExtra
         	// 
+        	this.pEExtra.Controls.Add(this.cbCheckForUPD);
         	this.pEExtra.Controls.Add(this.cbScrollLight);
         	this.pEExtra.Dock = System.Windows.Forms.DockStyle.Fill;
         	this.pEExtra.Location = new System.Drawing.Point(0, 0);
@@ -490,6 +492,17 @@
         	this.pEExtra.Size = new System.Drawing.Size(279, 268);
         	this.pEExtra.TabIndex = 31;
         	this.pEExtra.Visible = false;
+        	// 
+        	// cbCheckForUPD
+        	// 
+        	this.cbCheckForUPD.AutoSize = true;
+        	this.cbCheckForUPD.Location = new System.Drawing.Point(10, 35);
+        	this.cbCheckForUPD.Name = "cbCheckForUPD";
+        	this.cbCheckForUPD.Size = new System.Drawing.Size(198, 17);
+        	this.cbCheckForUPD.TabIndex = 1;
+        	this.cbCheckForUPD.Text = "Enable check for updates at startup.";
+        	this.cbCheckForUPD.UseVisualStyleBackColor = true;
+        	this.cbCheckForUPD.MouseHover += new System.EventHandler(this.CbCheckForUPDMouseHover);
         	// 
         	// cbScrollLight
         	// 
@@ -606,5 +619,6 @@
         private System.Windows.Forms.CheckBox cbOnChange;
         private System.Windows.Forms.Panel pEExtra;
         private System.Windows.Forms.CheckBox cbScrollLight;
+        private System.Windows.Forms.CheckBox cbCheckForUPD;
     }
 }

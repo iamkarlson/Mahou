@@ -32,7 +32,8 @@ namespace Mahou
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
           /*52-58*/"Font","Size:","Position:", "More", "Back","Double hotkey:","Delay:",
   	      /*59-60*/"Experimental CS-Switch+","Transparent background in language tooltip",
-  	      /*61-63*/"Use snippets", "On change","Highlight ScrollLock when language 1 is active."};
+  	      /*61-63*/"Use snippets", "On change","Highlight ScrollLock when language 1 is active.",
+          /*64-64*/"Enable check for updates at startup."};
         public static string[] ToolTipsEN = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"While this option enabled, [Convert word] and [Convert line] and [Convert selection with \"CS-Switch\" enabled]\n"+
@@ -73,7 +74,8 @@ namespace Mahou
           /*30*/"Makes background of language tooltip transparent.\nDon't forget to change text color.(because \"White\" is default)\nSome fonts may look bad, try changing to another.(\"Georgia\" or \"Palatino Linotype\" is recommend)",
           /*31*/"If this enabled, pressing Space will expand small (which starts with \"->\") word, to big (which is between \"====>\" and \"<====\") word/text fragment.",
           /*32*/"Display language tooltip only on layout change.\nTime of displaying is 7x[Refresh rate].",
-          /*33*/"Highlight Scroll Lock when active language 1, selected in main window."};
+          /*33*/"Highlight Scroll Lock when active language 1, selected in main window.",
+          /*34*/"If enabled Mahou will check for updates at startup."};
         public static string[] MessagesEN = new string[] {
           /*00-01*/"Mahou successfully updated!", "Update complete!",
           /*0002*/"Press Pause(by Default) to convert last inputted word.\nPress Scroll(by Default) while selected text is focused to convert it.\nPress Shift+Pause(by Default) to convert last inputted line.\n"+
@@ -113,8 +115,9 @@ namespace Mahou
           /*48-51*/"Прокси","Сервер:порт","Имя/Пароль","Ваш прокси не работает...",
           /*///////////////Back to MoreConfigs UI\\\\\\\\\\\\\\\\\
           /*52-58*/"Шрифт","Размер:","Позиция:", "Еще", "Назад", "Двойные гор. клавиши:", "Ожидание:",
-  	      /*59*/"Экспериментальный КВ-Ключ+","Прозрачный фон в подсказке языка",
-  	      /*61-62*/"Использовать сниппеты","При смене","Подсвечивать ScrollLock когда язык 1 активен." };
+  	      /*59-60*/"Экспериментальный КВ-Ключ+","Прозрачный фон в подсказке языка",
+  	      /*61-63*/"Использовать сниппеты","При смене","Подсвечивать ScrollLock когда язык 1 активен.",
+          /*64-64*/"Проверять обновления при запуске." };
         public static string[] ToolTipsRU = new string[] {
           /*///////////////Main TT\\\\\\\\\\\\\\\\\
           /*00*/"Пока включена, [Конверт слова] and [Конверт линии] and [Конверт выделения с \"КВ-Ключ\" включенной]\n"+
@@ -154,7 +157,8 @@ namespace Mahou
           /*30*/"Делает фон подсказки языка прозрачным.\nНе забудьте поменять цвет текста.(т.к. \"Белый\" по умолчанию)\nНекоторые шрифты могут выглядеть не очень, попробуйте поменять шрифт.(\"Georgia\" или \"Palatino Linotype\" рекоммендуется)",
           /*31*/"Если включено, нажатие Space превратит маленькое (то что начинается с \"->\") слово, в большое(то что между \"====>\" и \"<====\") слово/кусок текста.",
           /*32*/"Показывает подсказку только при смене языка.\nВремя отображения = 7x[Скор. обнов.].",
-          /*33*/"Подсвечивает лампочку Scroll Lock при активации языка 1, выбранного в главном окне."};
+          /*33*/"Подсвечивает лампочку Scroll Lock при активации языка 1, выбранного в главном окне.",
+          /*34*/"Если включено Mahou будет проверять обновления при запуске."};
         public static string[] MessagesRU = new string[] {
           /*00-01*/"Mahou успешно обновлен!", "Обновление завершено!",
           /*0002*/"Нажмите Pause(по умолчанию) для конвертации последнего введенного слова.\nНажмите Scroll(по умолчанию) пока выделенный текс в фокусе чтобы конвертивровать его.\nНажмите Shift+Pause(по умолчанию) для конвертации последней введенной линии.\n"+

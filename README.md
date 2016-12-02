@@ -70,6 +70,9 @@ Mahou работает совершенно по другому в отличи�
 **v1.4.1.7**<br/>
 - Добавлена возможность подсветки Scroll Lock при языке 1 активном.
 
+**v1.4.2.1**<br/>
+- Добавлена отключения проверки обновления при запуске.
+
 ### Горячие клавиши
 - <kbd>Pause</kbd> - Конверт последнего слова.
 - <kbd>Shift</kbd>+<kbd>Pause</kbd> - Конверт линии.
@@ -77,7 +80,7 @@ Mahou работает совершенно по другому в отличи�
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>Insert</kbd> - Показать/скрыть главное окно.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F12</kbd> - Завершить Mahou.
 
-### [Скачать или посмотреть заметки о выпусках.](https://github.com/BladeMight/Mahou/releases)
+### [Скачать или посмотреть заметки о выпусках.](https://github.com/BladeMight/Mahou/releases), используете Chocolatey? `cinst Mahou` для установки.
 
 ### Wiki
 Ознакомьтесь с [Mahou Wiki](https://github.com/BladeMight/Mahou/wiki).
@@ -169,7 +172,7 @@ Even selected text switches just between **selected** layouts, though if you lik
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>Insert</kbd> - To toggle configs windows visibility.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F12</kbd> - To exit Mahou.
 
-### [Download or view release notes.](https://github.com/BladeMight/Mahou/releases)
+### [Download or view release notes.](https://github.com/BladeMight/Mahou/releases), using Chocolatey? type `cinst Mahou` to install.
 
 ### Wiki
 Check out [Mahou Wiki](https://github.com/BladeMight/Mahou/wiki).

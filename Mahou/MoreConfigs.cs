@@ -165,6 +165,7 @@ namespace Mahou
 			MMain.MyConfs.Write("TTipUI", "TransparentBack", cbTrBLT.Checked.ToString());
 			MMain.MyConfs.Write("Functions", "DTTOnChange", cbOnChange.Checked.ToString());
 			MMain.MyConfs.Write("Functions", "ScrollTip", cbScrollLight.Checked.ToString());
+			MMain.MyConfs.Write("Functions", "UpdatesEnabled", cbCheckForUPD.Checked.ToString());
 			MMain.mahou.langDisplay.ChangeColors(ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLForeColor")),
 				ColorTranslator.FromHtml(MMain.MyConfs.Read("Functions", "DLBackColor")));
 			MMain.mahou.langDisplay.ChangeSizes((Font)fcv.ConvertFromString(MMain.MyConfs.Read("TTipUI", "Font")), 
@@ -231,6 +232,7 @@ namespace Mahou
 			cbDoublePress.Checked = MMain.MyConfs.ReadBool("DoubleKey", "Use");
 			cbOnChange.Checked = MMain.MyConfs.ReadBool("Functions", "DTTOnChange");
 			cbScrollLight.Checked = MMain.MyConfs.ReadBool("Functions", "ScrollTip");
+			cbCheckForUPD.Checked = MMain.MyConfs.ReadBool("Functions", "UpdatesEnabled");
 			if (File.Exists(snipfile)) {
 				tbSnippets.Text = File.ReadAllText(snipfile);
 				KMHook.ReInitSnippets();
@@ -278,6 +280,7 @@ namespace Mahou
 			cbUseSnippets.Text = MMain.UI[61];
 			cbOnChange.Text = MMain.UI[62];
 			cbScrollLight.Text 	= MMain.UI[63];
+			cbCheckForUPD.Text = MMain.UI[64];
 		}
 		#endregion
 		#region Tooltips
@@ -366,6 +369,11 @@ namespace Mahou
 		{
 			HelpTT.ToolTipTitle = cbScrollLight.Text;
 			HelpTT.Show(MMain.TTips[33], cbScrollLight);	
+		}
+		void CbCheckForUPDMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = cbCheckForUPD.Text;
+			HelpTT.Show(MMain.TTips[34], cbCheckForUPD);		
 		}
 		#endregion
 	}

@@ -65,15 +65,12 @@ namespace Mahou
 			ScrlCheck.Tick += (_, __) => {
 				if (MMain.MyConfs.ReadBool("Functions", "ScrollTip") && !KMHook.self) {
 					KMHook.self = true;
-					if (Locales.GetCurrentLocale() == MMain.MyConfs.ReadInt("Locales","locale1uId"))
-					{
+					if (Locales.GetCurrentLocale() == MMain.MyConfs.ReadInt("Locales", "locale1uId")) {
 						if (!Control.IsKeyLocked(Keys.Scroll)) { // Turn on 
 							KMHook.KeybdEvent(Keys.Scroll, 0);
 							KMHook.KeybdEvent(Keys.Scroll, 2);
 						}
-					}
-					else
-					{
+					} else {
 						if (Control.IsKeyLocked(Keys.Scroll)) { // Turn off
 							KMHook.KeybdEvent(Keys.Scroll, 0);
 							KMHook.KeybdEvent(Keys.Scroll, 2);
@@ -114,9 +111,11 @@ namespace Mahou
 			RefreshIconAll();
 			InitializeHotkeys();
 			//Background startup check for updates
-			var uche = new System.Threading.Thread(update.StartupCheck);
-			uche.Name = "Startup Check";
-			uche.Start();
+			if (MMain.MyConfs.ReadBool("Functions", "UpdatesEnabled")) {
+				var uche = new System.Threading.Thread(update.StartupCheck);
+				uche.Name = "Startup Check";
+				uche.Start();
+			}
 		}
 		#region Form Events
 		void MahouForm_Load(object sender, EventArgs e)
@@ -469,8 +468,7 @@ namespace Mahou
 					messagebox = true;
 					MessageBox.Show(MMain.Msgs[8], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
-				if ((tempCLKey == 20 || tempCSKey == 20 || tempCLineKey == 20 ) && cbSwitchLayoutKeys.Text == "CapsLock")
-				{
+				if ((tempCLKey == 20 || tempCSKey == 20 || tempCLineKey == 20) && cbSwitchLayoutKeys.Text == "CapsLock") {
 					messagebox = true;
 					MessageBox.Show(MMain.Msgs[12], MMain.Msgs[11], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
