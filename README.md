@@ -164,6 +164,9 @@ Even selected text switches just between **selected** layouts, though if you lik
 **v1.4.1.7**<br/>
 - Added feature to highlight Scroll Lock when language 1 is active.
 
+**v1.4.2.1**<br/>
+- Added feature to disable check for update at startup.
+
 
 ### Hotkeys
 - <kbd>Pause</kbd> - Convert last input.

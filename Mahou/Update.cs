@@ -140,6 +140,7 @@ namespace Mahou
 				//unzip downloaded one, and start it.
 				var UpdateMahou =
 					@"@ECHO OFF
+chcp 65001
 SET MAHOUDIR=" + nPath + @"
 TASKKILL /PID " + MahouPID + @" /F
 DEL """ + nPath + @"Mahou.exe""
