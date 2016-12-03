@@ -183,6 +183,7 @@ Even selected text switches just between **selected** layouts, though if you lik
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>Insert</kbd> - To toggle configs windows visibility.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F12</kbd> - To exit Mahou.
 - [More...](https://github.com/BladeMight/Mahou/wiki/Functions-list#hotkeys)
+
 ### [Download or view release notes.](https://github.com/BladeMight/Mahou/releases) 
 
 ### Using Chocolatey? type `cinst Mahou` to install.
