@@ -1,4 +1,4 @@
-# Русский :ru:
+# Русский :ru: [English](https://github.com/BladeMight/Mahou#english-us)
 
 ![](http://i.piccy.info/i9/29fa819a849fa70f38ddfcf9c29d1c99/1480349941/6018/1094353/Mahou.jpg)
 # Mahou(魔法) - Волшебный переключатель раскладок.
@@ -82,8 +82,11 @@ Mahou работает совершенно по другому в отличи�
 - <kbd>Scroll</kbd> - Конверт выделения.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>Insert</kbd> - Показать/скрыть главное окно.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F12</kbd> - Завершить Mahou.
+- [Подробнее...](https://github.com/BladeMight/Mahou/wiki/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D1%84%D1%83%D0%BD%D0%BA%D1%86%D0%B8%D0%B9#%D0%93%D0%BE%D1%80%D1%8F%D1%87%D0%B8%D0%B5-%D0%BA%D0%BB%D0%B0%D0%B2%D0%B8%D1%88%D0%B8)
 
-### [Скачать или посмотреть заметки о выпусках.](https://github.com/BladeMight/Mahou/releases), используете Chocolatey? `cinst Mahou` для установки.
+### [Скачать или посмотреть заметки о выпусках.](https://github.com/BladeMight/Mahou/releases)
+
+### Используете Chocolatey? `cinst Mahou` для установки.
 
 ### Wiki
 Ознакомьтесь с [Mahou Wiki](https://github.com/BladeMight/Mahou/wiki).
@@ -179,15 +182,16 @@ Even selected text switches just between **selected** layouts, though if you lik
 - <kbd>Scroll</kbd> - Convert selected text.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>Insert</kbd> - To toggle configs windows visibility.
 - <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F12</kbd> - To exit Mahou.
+- [More...](https://github.com/BladeMight/Mahou/wiki/Functions-list#hotkeys)
+### [Download or view release notes.](https://github.com/BladeMight/Mahou/releases) 
 
-### [Download or view release notes.](https://github.com/BladeMight/Mahou/releases), using Chocolatey? type `cinst Mahou` to install.
+### Using Chocolatey? type `cinst Mahou` to install.
 
 ### Wiki
 Check out [Mahou Wiki](https://github.com/BladeMight/Mahou/wiki).
 
 ### License
 Mahou is under GPL v2+
-
 
 ### Contact
 If you found an issue write [here](https://github.com/BladeMight/Mahou/issues)
