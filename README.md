@@ -73,6 +73,9 @@ Mahou работает совершенно по другому в отличи�
 **v1.4.2.1**<br/>
 - Добавлена отключения проверки обновления при запуске.
 
+**v1.4.3.0**<br/>
+- Переписана функция конверт линии для поддержки новой функции, Конверт нескольких последних слов.
+
 ### Горячие клавиши
 - <kbd>Pause</kbd> - Конверт последнего слова.
 - <kbd>Shift</kbd>+<kbd>Pause</kbd> - Конверт линии.
@@ -167,6 +170,8 @@ Even selected text switches just between **selected** layouts, though if you lik
 **v1.4.2.1**<br/>
 - Added feature to disable check for update at startup.
 
+**v1.4.3.0**<br/>
+- Rewrited convert line feature to support new feature, Convert Multiple last words.
 
 ### Hotkeys
 - <kbd>Pause</kbd> - Convert last input.

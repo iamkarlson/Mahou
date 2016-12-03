@@ -69,6 +69,8 @@
         	this.btnEMore = new System.Windows.Forms.Button();
         	this.cbOnChange = new System.Windows.Forms.CheckBox();
         	this.pEExtra = new System.Windows.Forms.Panel();
+        	this.tbConMorWor = new System.Windows.Forms.TextBox();
+        	this.lbConMorWor = new System.Windows.Forms.Label();
         	this.cbCheckForUPD = new System.Windows.Forms.CheckBox();
         	this.cbScrollLight = new System.Windows.Forms.CheckBox();
         	((System.ComponentModel.ISupportInitialize)(this.nudMTCount)).BeginInit();
@@ -484,6 +486,8 @@
         	// 
         	// pEExtra
         	// 
+        	this.pEExtra.Controls.Add(this.tbConMorWor);
+        	this.pEExtra.Controls.Add(this.lbConMorWor);
         	this.pEExtra.Controls.Add(this.cbCheckForUPD);
         	this.pEExtra.Controls.Add(this.cbScrollLight);
         	this.pEExtra.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -492,6 +496,26 @@
         	this.pEExtra.Size = new System.Drawing.Size(279, 268);
         	this.pEExtra.TabIndex = 31;
         	this.pEExtra.Visible = false;
+        	// 
+        	// tbConMorWor
+        	// 
+        	this.tbConMorWor.Location = new System.Drawing.Point(144, 81);
+        	this.tbConMorWor.Name = "tbConMorWor";
+        	this.tbConMorWor.Size = new System.Drawing.Size(124, 20);
+        	this.tbConMorWor.TabIndex = 3;
+        	this.tbConMorWor.Text = "Ctrl + Shift + F11";
+        	this.tbConMorWor.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TbConMorWorKeyDown);
+        	this.tbConMorWor.MouseHover += new System.EventHandler(this.TbConMorWorMouseHover);
+        	// 
+        	// lbConMorWor
+        	// 
+        	this.lbConMorWor.AutoSize = true;
+        	this.lbConMorWor.Location = new System.Drawing.Point(27, 58);
+        	this.lbConMorWor.Name = "lbConMorWor";
+        	this.lbConMorWor.Size = new System.Drawing.Size(151, 13);
+        	this.lbConMorWor.TabIndex = 2;
+        	this.lbConMorWor.Text = "Convert multiple words hotkey:";
+        	this.lbConMorWor.MouseHover += new System.EventHandler(this.LbConMorWorMouseHover);
         	// 
         	// cbCheckForUPD
         	// 
@@ -620,5 +644,7 @@
         private System.Windows.Forms.Panel pEExtra;
         private System.Windows.Forms.CheckBox cbScrollLight;
         private System.Windows.Forms.CheckBox cbCheckForUPD;
+        private System.Windows.Forms.TextBox tbConMorWor;
+        private System.Windows.Forms.Label lbConMorWor;
     }
 }

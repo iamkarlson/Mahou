@@ -8,8 +8,8 @@ namespace Mahou
 	public partial class MoreConfigs : Form
 	{
 		#region Varibales
-		int tmpSIKey = 0, page = 0;
-		string tmpSIMods = "None";
+		int tmpSIKey = 0, page = 0, tempConMorWorKey = 0;
+		string tmpSIMods = "None", tempConMorWorMods = "None";
 		ColorDialog clrd = new ColorDialog();
 		FontDialog fntd = new FontDialog();
 		public FontConverter fcv = new FontConverter();
@@ -30,7 +30,9 @@ namespace Mahou
 			RefreshLanguage();
 			tmpRestore();
 			tbHKSymIgn.Text = MMain.mahou.OemReadable((MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods").ToString().Replace(",", " +") + " + " +
-			MMain.mahou.Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey")).Replace("None + ", "")));
+				MMain.mahou.Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey")).Replace("None + ", "")));
+			tbConMorWor.Text = MMain.mahou.OemReadable((MMain.MyConfs.Read("Hotkeys", "HKConvertMoreMods").ToString().Replace(",", " +") + " + " +
+				MMain.mahou.Remake((Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKConvertMore")).Replace("None + ", "")));
 			Deactivate += (se, ea) => {
 				Active = false;
 			};
@@ -91,6 +93,28 @@ namespace Mahou
 						break;
 					default:
 						tmpSIKey = (int)e.KeyCode;
+						break;
+				}
+			}
+		}
+		void TbConMorWorKeyDown(object sender, KeyEventArgs e)
+		{
+			if (MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
+				tbConMorWor.Text = MMain.mahou.OemReadable(MMain.mahou.Remake(e.KeyCode));
+				tempConMorWorMods = "None";
+				tempConMorWorKey = (int)e.KeyCode;				
+			} else {
+				tbConMorWor.Text = MMain.mahou.OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " +
+				MMain.mahou.Remake(e.KeyCode)).Replace("None + ", ""));
+				tempConMorWorMods = e.Modifiers.ToString().Replace(",", " +");
+				switch ((int)e.KeyCode) {
+					case 16:
+					case 17:
+					case 18:
+						tempConMorWorKey = 0;
+						break;
+					default:
+						tempConMorWorKey = (int)e.KeyCode;
 						break;
 				}
 			}
@@ -176,12 +200,18 @@ namespace Mahou
 			File.WriteAllText(snipfile, tbSnippets.Text);
 			KMHook.ReInitSnippets();
 			MMain.mahou.langDisplay.SetVisInvis();
-
+			
 			if (!string.IsNullOrEmpty(tmpSIMods) && tmpSIKey != 0)
 				MMain.MyConfs.Write("Hotkeys", "HKSymIgnMods", tmpSIMods);
-
 			if (tmpSIKey != 0)
 				MMain.MyConfs.Write("Hotkeys", "HKSymIgnKey", tmpSIKey.ToString());
+			else
+				MessageBox.Show(MMain.Msgs[6], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			
+			if (!string.IsNullOrEmpty(tempConMorWorMods) && tempConMorWorKey != 0)
+				MMain.MyConfs.Write("Hotkeys", "HKConvertMoreMods", tempConMorWorMods);
+			if (tempConMorWorKey != 0)
+				MMain.MyConfs.Write("Hotkeys", "HKConvertMore", tempConMorWorKey.ToString());
 			else
 				MessageBox.Show(MMain.Msgs[6], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			if (MMain.MyConfs.ReadBool("Functions", "DisplayLang"))
@@ -243,6 +273,8 @@ namespace Mahou
 			MMain.mahou.IfNotExist();
 			tmpSIKey = MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey");
 			tmpSIMods = MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods");
+			tempConMorWorKey = MMain.MyConfs.ReadInt("Hotkeys", "HKConvertMore");
+			tempConMorWorMods = MMain.MyConfs.Read("Hotkeys", "HKConvertMoreMods");
 		}
 		void RefreshLocales() // Refreshes locales in comboboxes
 		{
@@ -281,6 +313,7 @@ namespace Mahou
 			cbOnChange.Text = MMain.UI[62];
 			cbScrollLight.Text 	= MMain.UI[63];
 			cbCheckForUPD.Text = MMain.UI[64];
+			lbConMorWor.Text = MMain.UI[65];
 		}
 		#endregion
 		#region Tooltips
@@ -374,6 +407,16 @@ namespace Mahou
 		{
 			HelpTT.ToolTipTitle = cbCheckForUPD.Text;
 			HelpTT.Show(MMain.TTips[34], cbCheckForUPD);		
+		}
+		void LbConMorWorMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = lbConMorWor.Text;
+			HelpTT.Show(MMain.TTips[35], lbConMorWor);		
+		}
+		void TbConMorWorMouseHover(object sender, EventArgs e)
+		{
+			HelpTT.ToolTipTitle = lbConMorWor.Text;
+			HelpTT.Show(MMain.TTips[35], tbConMorWor);	
 		}
 		#endregion
 	}

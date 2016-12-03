@@ -13,7 +13,7 @@ namespace Mahou
 		#endregion
 		#region Variables
 		// Hotkeys, HKC => HotKey Convert
-		public Hotkey Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine, HKSymIgn;
+		public Hotkey Mainhk, ExitHk, HKCLast, HKCSelection, HKCLine, HKSymIgn, HKConMorWor;
 		public bool messagebox, Active;
 		// Temporary modifiers
 		string tempCLMods = "None", tempCSMods = "None", tempCLineMods = "None";
@@ -421,6 +421,8 @@ namespace Mahou
 				Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")));
 			HKSymIgn = new Hotkey(MMain.MyConfs.ReadInt("Hotkeys", "HKSymIgnKey"), 
 				Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKSymIgnMods")));
+			HKConMorWor = new Hotkey(MMain.MyConfs.ReadInt("Hotkeys", "HKConvertMore"), 
+				Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKConvertMoreMods")));
 		}
 		public void IfNotExist()
 		{

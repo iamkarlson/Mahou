@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -33,7 +34,8 @@ namespace Mahou
 		public static bool self, win, alt, ctrl, shift,
 			shiftRP, ctrlRP, altRP, //RP = Re-Press
 			awas, swas, cwas, afterEOS, //*was = alt/shift/ctrl was
-			keyAfterCTRL, hklOK, hksOK, hklineOK, hkSIOK, hotkeywithmodsfired, csdoing, incapt;
+			keyAfterCTRL, hklOK, hksOK, hklineOK, hkSIOK,
+			hotkeywithmodsfired, csdoing, incapt, waitfornum;
 		static List<Keys> tempNumpads = new List<Keys>();
 		static List<char> c_snip = new List<char>();
 		public static System.Windows.Forms.Timer doublekey = new System.Windows.Forms.Timer();
@@ -57,6 +59,34 @@ namespace Mahou
 		{
 			int vkCode = Marshal.ReadInt32(lParam);
 			var Key = (Keys)vkCode; // "Key" will further be used instead of "(Keys)vkCode"
+			#region Multiple last words convert
+			if (waitfornum && wParam == (IntPtr)(int)KMMessages.WM_KEYUP && !shift && !ctrl && !alt) {
+				waitfornum = false;
+				if (Key >= Keys.D1 && Key <= Keys.D9) {
+					self = true;
+					KInputs.MakeInput(new [] { KInputs.AddKey(Keys.Back, true),
+						KInputs.AddKey(Keys.Back, false)
+					});
+					self = false;
+					int wordnum = Convert.ToInt32(Key.ToString().Replace("D", ""));
+//					Console.WriteLine("wrdn"+wordnum);
+					var words = new List<YuKey>();
+					try {
+						foreach (var word in MMain.c_words.GetRange(MMain.c_words.Count-wordnum,wordnum)) {
+							words.AddRange(word);
+						}
+//						Console.WriteLine("lico = " + line.Count);
+					} catch {
+//						Application.Exit();
+					}
+					var t = new Task(new Action(() => ConvertLast(words)));
+					t.RunSynchronously();
+				}
+			}
+			if (MMain.c_words.Count == 0) {
+				MMain.c_words.Add(new List<YuKey>());
+			}
+			#endregion
 			#region Checks modifiers that are down
 			if (Key == Keys.LShiftKey || Key == Keys.RShiftKey || Key == Keys.ShiftKey)
 				shift = ((wParam == (IntPtr)(int)KMMessages.WM_SYSKEYDOWN) ? true : false) || ((wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN) ? true : false);
@@ -160,7 +190,11 @@ namespace Mahou
 								}
 								SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLineMods")));
 								IfKeyIsMod(Key);
-								var t = new Task(new Action(() => ConvertLast(MMain.c_line)));
+								var line = new List<YuKey>();
+								foreach (var word in MMain.c_words) {
+									line.AddRange(word);
+								}
+								var t = new Task(new Action(() => ConvertLast(line)));
 								t.RunSynchronously();
 							}
 						}
@@ -190,6 +224,8 @@ namespace Mahou
 				}
 			}
 			//these are global, so they don't need to be stoped when window is visible.
+			if (thishk.Equals(MMain.mahou.HKConMorWor) && wParam == (IntPtr)(int)KMMessages.WM_KEYUP)
+				waitfornum = true;
 			if (thishk.Equals(MMain.mahou.Mainhk) && wParam == (IntPtr)(int)KMMessages.WM_KEYUP)
 				MMain.mahou.ToggleVisibility();
 			if (thishk.Equals(MMain.mahou.ExitHk) && wParam == (IntPtr)(int)KMMessages.WM_KEYUP)
@@ -333,13 +369,21 @@ namespace Mahou
 			keyAfterCTRL &= self || wParam != (IntPtr)(int)KMMessages.WM_KEYUP || (Key != Keys.LControlKey && Key != Keys.RControlKey);
 			#endregion
 			#region Other, when KeyDown
-			if (nCode >= 0 && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN && !self) {
+			if (nCode >= 0 && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN && !self && !waitfornum) {
 				if (Key == Keys.Back) { //Removes last item from current word when user press Backspace
 					if (MMain.c_word.Count != 0) {
 						MMain.c_word.RemoveAt(MMain.c_word.Count - 1);
 					}
-					if (MMain.c_line.Count != 0) {
-						MMain.c_line.RemoveAt(MMain.c_line.Count - 1);
+					if (MMain.c_words.Count != 0) {
+						removeat:
+						try {
+//							Console.WriteLine("MinONE! " + MMain.c_words[MMain.c_words.Count - 1].Count + " LANA " + MMain.c_words.Count);
+							MMain.c_words[MMain.c_words.Count - 1].RemoveAt(MMain.c_words[MMain.c_words.Count - 1].Count - 1);
+						} catch {
+							MMain.c_words.RemoveAt(MMain.c_words.Count - 1);
+//							Console.WriteLine("LastRemoved!");
+							goto removeat;
+						}
 					}
 					if (MMain.MyConfs.ReadBool("Functions", "Snippets")) {
 						if (c_snip.Count != 0) {
@@ -353,12 +397,13 @@ namespace Mahou
 				    Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up ||
 				    (ctrl && Key != Keys.None)) { //Ctrl modifier + Any key will clear word too
 					MMain.c_word.Clear();
-					MMain.c_line.Clear();
 					if (MMain.MyConfs.ReadBool("Functions", "Snippets")) {
 						c_snip.Clear();
 					}
 				}
 				if (Key == Keys.Space) {
+					MMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() { yukey = Keys.Space });
+					MMain.c_words.Add(new List<YuKey>());
 					if (MMain.MyConfs.ReadBool("Functions", "EatOneSpace") && MMain.c_word.Count != 0 &&
 					    MMain.c_word[MMain.c_word.Count - 1].yukey != Keys.Space) {
 						MMain.c_word.Add(new YuKey() {
@@ -370,10 +415,6 @@ namespace Mahou
 						MMain.c_word.Clear();
 						afterEOS = false;
 					}
-					MMain.c_line.Add(new YuKey() {
-						yukey = Keys.Space,
-						upper = false
-					});
 				}
 				if (((Key >= Keys.D0 && Key <= Keys.Z) || // This is 0-9 & A-Z
 				    Key >= Keys.Oem1 && Key <= Keys.OemBackslash // All other printables
@@ -387,7 +428,7 @@ namespace Mahou
 							yukey = Key,
 							upper = false
 						});
-						MMain.c_line.Add(new YuKey() {
+						MMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() {
 							yukey = Key,
 							upper = false
 						});
@@ -396,7 +437,7 @@ namespace Mahou
 							yukey = Key,
 							upper = true
 						});
-						MMain.c_line.Add(new YuKey() {
+						MMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() {
 							yukey = Key,
 							upper = true
 						});
@@ -414,8 +455,14 @@ namespace Mahou
 //				}
 //				Console.WriteLine("tempNumpads Cleared.");
 //				Console.WriteLine("incapt reseted.");                 //new List => VERY important here!!!
-				MMain.c_word.Add(new YuKey() { altnum = true, numpads = new List<Keys>(tempNumpads) });
-				MMain.c_line.Add(new YuKey() { altnum = true, numpads = new List<Keys>(tempNumpads) });
+				MMain.c_word.Add(new YuKey() {
+					altnum = true,
+					numpads = new List<Keys>(tempNumpads)
+				});
+				MMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() {
+					altnum = true,
+					numpads = new List<Keys>(tempNumpads)
+				});
 				tempNumpads.Clear();                                  //It prevents pointer to tempNumpads, which is cleared.
 				incapt = false;
 //				Console.WriteLine("LIKE YOU"+MMain.c_word[MMain.c_word.Count-1].numpads.Count);
@@ -439,7 +486,7 @@ namespace Mahou
 			if (nCode >= 0) {
 				if ((KMMessages.WM_LBUTTONDOWN == (KMMessages)(int)wParam) || KMMessages.WM_RBUTTONDOWN == (KMMessages)(int)wParam) {
 					MMain.c_word.Clear();
-					MMain.c_line.Clear();
+					MMain.c_words.Clear();
 					if (MMain.MyConfs.ReadBool("Functions", "Snippets")) {
 						c_snip.Clear();
 					}
@@ -656,11 +703,10 @@ namespace Mahou
 //						Console.WriteLine("An YuKeys with numpads passed...");
 						KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LMenu, true) });
 //						Console.WriteLine(YuKeys[i].numpads[0]);
-						foreach (var numpad in YuKeys[i].numpads)
-						{
+						foreach (var numpad in YuKeys[i].numpads) {
 //							Console.WriteLine(numpad);
-							KInputs.MakeInput(new [] { KInputs.AddKey(numpad, true)});
-							KInputs.MakeInput(new [] { KInputs.AddKey(numpad, false)});
+							KInputs.MakeInput(new [] { KInputs.AddKey(numpad, true) });
+							KInputs.MakeInput(new [] { KInputs.AddKey(numpad, false) });
 						}
 						KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LMenu, false) });
 					} else {

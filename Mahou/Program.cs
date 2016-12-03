@@ -17,7 +17,7 @@ namespace Mahou
 		#endregion
 		#region All Main variables, arrays etc.
 		public static List<KMHook.YuKey> c_word = new List<KMHook.YuKey>();
-		public static List<KMHook.YuKey> c_line = new List<KMHook.YuKey>();
+		public static List<List<KMHook.YuKey>> c_words = new List<List<KMHook.YuKey>>();
 		public static IntPtr _hookID = IntPtr.Zero;
 		public static IntPtr _mouse_hookID = IntPtr.Zero;
 		public static KMHook.LowLevelProc _proc = KMHook.HookCallback;

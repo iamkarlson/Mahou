@@ -48,6 +48,12 @@ namespace Mahou
             if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKSymIgnMods"))) //Hotkey Symbol ignore mode modifiers
                 this.Write("Hotkeys", "HKSymIgnMods", "Shift + Control + Alt");
 
+            if (!Int32.TryParse(this.Read("Hotkeys", "HKConvertMore"), out it))
+                this.Write("Hotkeys", "HKConvertMore", "122"); //Hotkey Convert more words
+
+            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKConvertMoreMods"))) //Hotkey Convert more words modifiers
+                this.Write("Hotkeys", "HKConvertMoreMods", "Shift + Control");
+
             //Locales section
             if (!UInt32.TryParse(this.Read("Locales", "locale1uId"), out uit))
                 this.Write("Locales", "locale1uId", ""); //Locale 1 id
