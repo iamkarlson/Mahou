@@ -1,4 +1,4 @@
-# Русский :ru: [English](https://github.com/BladeMight/Mahou#english-us)
+# Русский :ru: [English](#english-us)
 
 ![](http://i.piccy.info/i9/29fa819a849fa70f38ddfcf9c29d1c99/1480349941/6018/1094353/Mahou.jpg)
 # Mahou(魔法) - Волшебный переключатель раскладок.
