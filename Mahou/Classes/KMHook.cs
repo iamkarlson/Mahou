@@ -389,19 +389,41 @@ namespace Mahou {
 					if(MMain.c_word.Count != 0) {
 						MMain.c_word.RemoveAt(MMain.c_word.Count - 1);
 					}
-					if (MMain.c_words.Count != 0) {
-						removeat:
+					if(MMain.c_words.Count > 0) {
+						int count = MMain.c_words.Count;
+						List<YuKey> cWord = MMain.c_words[count - 1];
+						/*
+						 * get rid from goto
+						 */
+						//removeat:
+						//try {
+						//    Console.WriteLine("MinONE! " + MMain.c_words[MMain.c_words.Count - 1].Count + " LANA " + MMain.c_words.Count);
+						//    cWord.RemoveAt(cWord.Count - 1);
+						//} catch {
+						//    if(MMain.c_words.Count > 0) {
+						//        MMain.c_words.RemoveAt(MMain.c_words.Count - 1);
+						//        Console.WriteLine("LastRemoved!");
+						//        goto removeat;
+						//    }
+						//}
+
 						try {
-//							Console.WriteLine("MinONE! " + MMain.c_words[MMain.c_words.Count - 1].Count + " LANA " + MMain.c_words.Count);
-							MMain.c_words[MMain.c_words.Count - 1].RemoveAt(MMain.c_words[MMain.c_words.Count - 1].Count - 1);
-						} catch {
-							MMain.c_words.RemoveAt(MMain.c_words.Count - 1);
-//							Console.WriteLine("LastRemoved!");
-							goto removeat;
-						}
-					}
-					if (MMain.MyConfs.ReadBool("Functions", "Snippets")) {
-						if (c_snip.Count != 0) {
+							if(cWord.Count <= 0) {
+								MMain.c_words.RemoveAt(MMain.c_words.Count - 1);
+								count = MMain.c_words.Count;
+								cWord = count > 0 ? MMain.c_words[count - 1] : null;
+							}
+
+							if(cWord != null) {
+								cWord.RemoveAt(cWord.Count - 1);
+							}
+
+						} catch(Exception ex) {
+							log.Error(ex, "Cannot perform back");
+
+						}                    }
+					if(MMain.MyConfs.ReadBool("Functions", "Snippets")) {
+						if(c_snip.Count > 0) {
 							c_snip.RemoveAt(c_snip.Count - 1);
 						}
 					}
